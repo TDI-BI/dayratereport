@@ -24,7 +24,7 @@ export default function Home() {
       <div>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
         <div className='tblHead'>
           <div className='tblHeadItm'>
-            <strong>Date (Y/M/D)</strong>
+            <strong>Date</strong>
           </div>
           <div className='tblHeadItm'>
             <strong>worked?</strong>
@@ -41,7 +41,7 @@ export default function Home() {
             <div className='tblBodyItm'>
               {
                 //day.toString()
-                day.toISOString().substring(0, 10)
+                day.getMonth().toString()+'/'+day.getDate().toString()+'/'+day.getFullYear().toString()
               }
             </div>
             <div className='tblBodyItm'>
@@ -49,18 +49,13 @@ export default function Home() {
             </div>
             <div className='tblBodyItm'>
               {/*ill probably make this auto suggest at some point, or turn it into a drop down*/}
-              <input type='text' className='shipInput' id={day.toString()+'ship'}>
-              </input>
+              <input type='text' className='shipInput' id={day.toString()+'ship'}></input>
             </div>
           </div>  
         )
         }
         <div className='tblFoot'>
-          <div className='tblFootBtn'> save </div> 
-          {
-            /*lets do a little pop-up that says saved when we click this 
-            save should also create/update entrys for days in our list*/
-          }
+          <div className='tblFootBtn'> save </div> {/*lets do a little pop-up that says saved when we click this */}
           <div className='tblFootBtn'> submit </div>
         </div>
 
