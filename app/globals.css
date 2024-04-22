@@ -25,9 +25,70 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+.head{
+  line-height:50px;
+  height:50px;
+}
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+}
+
+
+
+.headBtn{
+  text-align: center;
+  height:100%;
+  width:100px;
+  background-color:rgb(129, 133, 137, 0);
+  transition:300ms;
+}
+.tblHead{
+  display:inline-flex; flex-direction:row;
+}
+.tblHeadItm{
+  width: 200px;
+  text-align: center;
+  outline-color:white;
+  outline-width:2px;
+  outline-style: inset;
+}
+.tblBody{
+  background-color:rgb(129, 133, 137, 0);
+  display:inline-flex; flex-direction:row;
+  transition:300ms;
+}
+.tblBodyItm{
+  
+  padding:10px;
+  width: 200px;
+  outline-color:white;
+  outline-width:2px;
+  outline-style: inset;
+}
+.stuff{
+  display:block;
+  flex-direction:column;  
+}
+.shipInput{
+  width:180px;
+  background: transparent;
+  border: none;
+}
+.tblFoot{
+  display:inline-flex; flex-direction:row;
+}
+.tblFootBtn{
+  background-color:rgb(129, 133, 137, 0);
+  outline-color:white;
+  width:300px;
+  padding:10px;
+  text-align:center;
+  transition:300ms;
+}
+
+.tblBody:hover, .tblFootBtn:hover, .headBtn:hover{
+  background-color:rgb(129, 133, 137, .5);
 }
