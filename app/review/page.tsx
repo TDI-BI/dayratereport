@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Page() {
 
     return (
@@ -5,8 +7,8 @@ export default function Page() {
             <p>COMFIRM INFORMATION</p>
 
             <div className='tblFoot'>
-                <a href='../'><div className='tblFootBtn'> confirm and submit </div></a>
-                <a href='../'><div className='tblFootBtn'> back </div></a>
+                <Link href='../'><div className='tblFootBtn'> confirm and submit </div></Link>
+                <Link href='../'><div className='tblFootBtn'> back </div></Link>
             </div>
         </main>
     )

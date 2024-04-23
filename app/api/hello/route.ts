@@ -1,6 +1,11 @@
 import mysql from 'mysql2/promise';
 
+async function c2db(){
+  
+}
+
 export const GET = async (request: Request) => {
+  //i need to find a way to wrap this in a function and call it
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useEffect } from "react";
 
 function getWeek(){ // i will be honest i found this function online
   const today=new Date();
@@ -15,12 +16,21 @@ function getWeek(){ // i will be honest i found this function online
   return curWeek;
 }
 
+async function getPageData(){
+  
+  const apiUrlEndpoint = 'http://localhost:3000/api/hello'
+  const response = await fetch(apiUrlEndpoint);
+  const res = await response.json();
+  console.log(res)
+}
+
 export default function Home() {
   let week= getWeek();
+
+
   return (
 
-    <main className="flex min-h-screen flex-col items-center">
-
+    <main className="flex min-h-screen flex-col items-center">  
       <div>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
         <div className='tblHead'>
           <div className='tblHeadItm'>
@@ -54,8 +64,8 @@ export default function Home() {
         )
       }
         <div className='tblFoot'>
-          <a href='https://www.google.com'><div className='tblFootBtn'>save</div></a> {/*lets do a little pop-up that says saved when we click this */}
-          <a href='submission'><div className='tblFootBtn'> submit </div></a>
+          <Link href='api/hello'><div className='tblFootBtn'>save</div></Link> {/*lets do a little pop-up that says saved when we click this */}
+          <Link href='review'><div className='tblFootBtn'> review </div></Link>
         </div>
     </main>
   );
