@@ -34,14 +34,13 @@ export default function Home() {
           </div>
         </div>
       </div>
-
-        {
+      { //this generates our week 
         week.map((day)=>
-          <div className='tblBody' id={day.toString()+' item'}>
+          <div className='tblBody' id={day.toISOString().substring(0, 10)+' item'}>
             <div className='tblBodyItm'>
               {
                 //day.toString()
-                day.getMonth().toString()+'/'+day.getDate().toString()+'/'+day.getFullYear().toString()
+                day.toISOString().substring(0, 10)
               }
             </div>
             <div className='tblBodyItm'>
@@ -49,16 +48,15 @@ export default function Home() {
             </div>
             <div className='tblBodyItm'>
               {/*ill probably make this auto suggest at some point, or turn it into a drop down*/}
-              <input type='text' className='shipInput' id={day.toString()+'ship'}></input>
+              <input type='text' className='shipInput' id={day.toISOString().substring(0, 10)+' ship'}></input>
             </div>
           </div>  
         )
-        }
+      }
         <div className='tblFoot'>
-          <div className='tblFootBtn'> save </div> {/*lets do a little pop-up that says saved when we click this */}
-          <div className='tblFootBtn'> submit </div>
+          <a href='https://www.google.com'><div className='tblFootBtn'>save</div></a> {/*lets do a little pop-up that says saved when we click this */}
+          <a href='submission'><div className='tblFootBtn'> submit </div></a>
         </div>
-
     </main>
   );
 }
