@@ -1,5 +1,6 @@
+"use client"; // this is a client componnent (?) idk why i just need this to run things
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 function getWeek(){ // i will be honest i found this function online
   const today=new Date();
@@ -16,21 +17,33 @@ function getWeek(){ // i will be honest i found this function online
   return curWeek;
 }
 
-async function getPageData(){
-  
-  const apiUrlEndpoint = 'http://localhost:3000/api/hello'
-  const response = await fetch(apiUrlEndpoint);
-  const res = await response.json();
-  console.log(res)
-}
+
 
 export default function Home() {
   let week= getWeek();
+
+  const [dataResponse, setdataResponse] = useState([]);
+  useEffect(() => {
+    async function getPageData(){
+      const apiUrlEndpoint = 'http://localhost:3000/api/hello'
+      const response = await fetch(apiUrlEndpoint);
+      const res = await response.json();
+      console.log(res.resp);// -> desnt work idk why
+      setdataResponse(res.resp);
+    }
+    getPageData();
+  }, []);
 
 
   return (
 
     <main className="flex min-h-screen flex-col items-center">  
+      <div>
+      {/* // throws crazy errors but its a working example of pulling from the server at least
+        dataResponse.map((items) => <div> {items.msg} </div>)
+      */}
+      </div>
+
       <div>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
         <div className='tblHead'>
           <div className='tblHeadItm'>
@@ -54,10 +67,12 @@ export default function Home() {
               }
             </div>
             <div className='tblBodyItm'>
-              <input type='checkbox' id={day.toString()+'worked'/*this is probably redundant and will get cut*/}></input>
+              <input type='checkbox'  id={day.toString()+'worked'/*this is probably redundant and will get cut*/}></input>
             </div>
             <div className='tblBodyItm'>
-              {/*ill probably make this auto suggest at some point, or turn it into a drop down*/}
+              {/*ill probably make this auto suggest at some point, or turn it into a drop down*/
+              //im going to be honest this is probably best suited to just be a dbproject in like php lol
+              }
               <input type='text' className='shipInput' id={day.toISOString().substring(0, 10)+' ship'}></input>
             </div>
           </div>  
