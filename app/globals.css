@@ -26,6 +26,8 @@ body {
     rgb(var(--background-start-rgb));
 }
 .head{
+  width:100%;
+  display:inline-flex; flex-direction:row;
   line-height:50px;
   height:50px;
 }
@@ -36,12 +38,10 @@ body {
   }
 }
 
-
-
 .headBtn{
   text-align: center;
   height:100%;
-  width:100px;
+  width:50%; /* kind of silly, ill figure it out later */
   background-color:rgb(129, 133, 137, 0);
   transition:300ms;
 }
@@ -83,7 +83,7 @@ body {
 .tblFootBtn{
   background-color:rgb(129, 133, 137, 0);
   outline-color:white;
-  width:300px;
+  width:200px;
   padding:10px;
   text-align:center;
   transition:300ms;

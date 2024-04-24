@@ -23,7 +23,10 @@ export default function RootLayout({
         <div className='head'>
           
           <div className='headBtn'>
-            logout
+              logout
+          </div>
+          <div className='headBtn'>
+              profile
           </div>
           {/*we will put a header here*/}
         </div>

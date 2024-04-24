@@ -1,4 +1,4 @@
-"use client"; // this is a client componnent (?) idk why i just need this to run things
+"use client"; // needed for interactivity
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
