@@ -41,11 +41,9 @@ export default function Home() {
       let cday=day;
       let cship=document.getElementById(cday+'_ship').value; // literally fraudulent error, maybe something wrong with my editors config
       //console.log(cday);
-      if(cship){ 
-        console.log(cday + ': ' +cship);
-        //build our query!
-        saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
-      }
+      console.log(cday + ': ' +cship);
+      //build our query!
+      saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })
   }
 
