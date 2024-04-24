@@ -1,8 +1,10 @@
 import mysql from 'mysql2/promise';
 import { NextRequest } from 'next/server';
 
-export const GET = async (request: Request) => {
+export const GET = async (request: NextRequest) => {
   //i need to find a way to wrap this in a function and call it
+  const { searchParams } = request.nextUrl;
+  const msg = searchParams.get('msg') || 'hello world';
   const connection = await mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -11,7 +13,7 @@ export const GET = async (request: Request) => {
   });
 
   try {
-    const values:string[] = ['hello world'];
+    const values: string[] = [msg];
     const query = "SELECT * FROM msgs where msg=(?)";
     
     const [results] = await connection.execute(query, values);

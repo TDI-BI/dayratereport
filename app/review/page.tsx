@@ -7,10 +7,9 @@ export default function Page() {
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPageData(){
-        const apiUrlEndpoint = 'http://localhost:3000/api/hello'
+        const apiUrlEndpoint = 'http://localhost:3000/api/hello?msg=hello_world';
         const response = await fetch(apiUrlEndpoint);
         const res = await response.json();
-        console.log(res.resp);// -> desnt work idk why
         setdataResponse(res.resp);
       }
       getPageData();
