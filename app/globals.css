@@ -24,6 +24,7 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+    overflow-y:hidden; /* bad solution but i m doing this for the scrollbar which shouldnt pop up on desktop*/
 }
 .head{
   width:100%;
@@ -41,7 +42,7 @@ body {
 .headBtn{
   text-align: center;
   height:100%;
-  width:50%; /* kind of silly, ill figure it out later */
+  width:calc(100vw / 3); /* kind of silly, ill figure it out later */
   background-color:rgb(129, 133, 137, 0);
   transition:300ms;
 }
