@@ -26,9 +26,19 @@ export default function Home() {
     week.forEach((day)=>{
 
       let cday=day.toISOString().substring(0, 10);
+      let cship=document.getElementById(cday+'_ship').value;
       //console.log(cday);
-      if(document.getElementById(cday+'_ship').value) console.log(cday + ': ' +document.getElementById(cday+'_ship').value);
-      
+      if(cship) console.log(cday + ': ' +cship);
+
+      const postData ={
+        method:   'Post',
+        body: JSON.stringify({
+          uid:1,
+          day:cday,
+          ship:cship,
+        })
+      }
+
     
     })
   }

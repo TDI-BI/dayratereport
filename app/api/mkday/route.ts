@@ -13,7 +13,7 @@ export const GET = async (request: Request) => {
 
     //we are gonna take our input here
     const values:string[] = ['uidtest', 'daytest', 'shiptest']; // we probably want some overlap occuring here,
-    //maybe we format it to
+    //i just need to figure out how to make this pull anything lolge
     
     const query = "DELETE FROM days WHERE day='2' and uid='1'"; // this properly deletes & covers overlap
     const [results] = await connection.execute(query, values);

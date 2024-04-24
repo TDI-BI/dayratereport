@@ -1,8 +1,5 @@
 import mysql from 'mysql2/promise';
-
-async function c2db(){
-  
-}
+import { NextRequest } from 'next/server';
 
 export const GET = async (request: Request) => {
   //i need to find a way to wrap this in a function and call it
@@ -14,8 +11,9 @@ export const GET = async (request: Request) => {
   });
 
   try {
-    const query = "SELECT * FROM msgs";
-    const values:string[] = [];
+    const values:string[] = ['hello world'];
+    const query = "SELECT * FROM msgs where msg=(?)";
+    
     const [results] = await connection.execute(query, values);
     connection.end();
 
