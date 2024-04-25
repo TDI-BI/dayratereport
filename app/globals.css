@@ -62,7 +62,8 @@ body {
   transition:300ms;
 }
 .tblBodyItm{
-  
+  line-height:30px;
+  height:50px;
   padding:10px;
   width: 200px;
   outline-color:white;
@@ -74,9 +75,22 @@ body {
   flex-direction:column;  
 }
 .shipInput{
+  padding-left:7px;
+  padding-right:7px;
+  height:30px;
   width:180px;
   background: transparent;
   border: none;
+  transition:300ms;
+  border-bottom:1px solid;
+  border-color:rgb(255, 255, 255, 0);
+}
+.shipInput:hover{
+  border-color:rgb(255, 255, 255, 1);
+}
+.shipInput:focus{
+  outline:none;
+  border-color:rgb(255, 255, 255, 1);
 }
 .tblFoot{
   display:inline-flex; flex-direction:row;
@@ -92,4 +106,9 @@ body {
 
 .tblBody:hover, .tblFootBtn:hover, .headBtn:hover{
   background-color:rgb(129, 133, 137, .5);
+}
+
+.loginfeild{
+  height:50px;
+  line-height:50px;
 }

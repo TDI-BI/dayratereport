@@ -1,12 +1,14 @@
 import mysql from 'mysql2/promise';
 import { NextRequest } from 'next/server';
+import { getSession } from '@/actions';
 
 export const GET = async (request:  NextRequest) => {
+  const session = await getSession();
   //get our passed parameters
   const { searchParams } = request.nextUrl;
   const ship = searchParams.get('ship') || '';
   const day = searchParams.get('day') || '';
-  const uid = searchParams.get('uid') || '';
+  const uid = session.username; // will update this to UID at some point, but not now ig
 
   //i need to find a way to wrap this in a utility function and call it
   const connection = await mysql.createConnection({
@@ -16,8 +18,9 @@ export const GET = async (request:  NextRequest) => {
     database: 'dayratereport',
   });
   try{ // esentially just making a homemade UPSERT here
-    
 
+    if(!session.isLoggedIn) return{error: "user not logged in "}
+    
     //we are gonna take our input here
     const values:string[] = []; // we probably want some overlap occuring here,
     //i just need to figure out how to make this pull anything lolge
