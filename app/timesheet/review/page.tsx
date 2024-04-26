@@ -27,7 +27,7 @@ export default function Page() {
     }) 
 
     return (
-        <main className="flex min-h-screen flex-col items-center">
+        <main className="flex min-h-screen flex-c   ol items-center">
             <p><strong>COMFIRM REPORT</strong></p>
             {/* LETS WORK ON REPORT FORMATTING*/}
             <p> PERIOD REPORT FOR: {name}</p>
@@ -35,7 +35,7 @@ export default function Page() {
                 period.map((day) => 
                 <div>
                     <div className="reportLine" key={day}> 
-                        <p className='reportTxt'>{day}</p> : <p className='reportTxt'>{dict[day]}</p> 
+                        <p className='reportTxt'>{day}</p> : <p className='reportTxt'>{dict[day] ? dict[day] : ''}</p> 
                     </div>
                 </div>) // for now we are jtus gonna try to pull 1 line
                 
