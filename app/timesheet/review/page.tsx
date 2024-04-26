@@ -16,12 +16,15 @@ export default function Page() {
       getPeriodInf();
     }, []);
 
+    // really gotta think of a better way to do this tbh
     let name=''
     let daysworked=0
-    dataResponse.forEach((item) =>{
+    var dict: {[id: string] : string} = {};
+    dataResponse.forEach((item) => { // should build our dictionary mybe
         name=item.uid;
         if(item.ship) daysworked+=1;
-    });
+        dict[item.day]=item.ship
+    }) 
 
     return (
         <main className="flex min-h-screen flex-col items-center">
@@ -29,10 +32,10 @@ export default function Page() {
             {/* LETS WORK ON REPORT FORMATTING*/}
             <p> PERIOD REPORT FOR: {name}</p>
             <div>{ // throws crazy errors but its a working example of pulling from the server at least
-                dataResponse.map((items) => 
+                period.map((day) => 
                 <div>
-                    <div className="reportLine" key={items.day}> 
-                        <p className='reportTxt'>{items.day}</p> : <p className='reportTxt'>{items.ship}</p> 
+                    <div className="reportLine" key={day}> 
+                        <p className='reportTxt'>{day}</p> : <p className='reportTxt'>{dict[day]}</p> 
                     </div>
                 </div>) // for now we are jtus gonna try to pull 1 line
                 

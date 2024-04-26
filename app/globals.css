@@ -105,7 +105,7 @@ body {
   transition:300ms;
 }
 
-.tblBody:hover, .tblFootBtn:hover, .headBtn:hover{
+.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .loginBtn:hover{
   background-color:rgb(129, 133, 137, .5);
 }
 
@@ -130,4 +130,11 @@ body {
 .reportTxt{
   width:130px;
   text-align: center;
+}
+.loginBtn{
+  background-color:rgb(129, 133, 137, 0);
+  width:280px;
+  padding:10px;
+  text-align:center;
+  transition:300ms;
 }
