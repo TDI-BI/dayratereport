@@ -11,11 +11,11 @@ const Navbar = async () => {
         {session.isLoggedIn && <LogoutForm/>}        
         {!session.isLoggedIn && <Link href='/login' ><div className='headBtn'>login</div></Link>}
 
-        <Link href='/timesheet' >
+        <Link href={session.isLoggedIn? '/timesheet' : '/login'} >
         <div className='headBtn'>timesheet</div>
         </Link>
 
-        <Link href='/profile' >
+        <Link href={session.isLoggedIn? '/profile' : '/login'}>
         <div className='headBtn'>profile</div>
         </Link>
     </nav>

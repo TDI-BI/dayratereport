@@ -10,9 +10,9 @@ const profile = async () => {
     return(
         <main className="flex min-h-screen flex-col items-center"> 
                 <div id="bweh">
-                    <form action={changeUsername}> 
+                    <form action={changeUsername}> {/*i need to learn how to use tailwind*/}
                         username: <input className='shipInput' type='text' name='username' placeholder={session.username}/>
-                        <br></br><button> update </button>
+                        <button> <div className='tblFootBtn'>update</div> </button>
                     </form> 
                     <p> email: {session.userEmail} </p>
                 </div>

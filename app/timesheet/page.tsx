@@ -1,7 +1,7 @@
 "use client"; // needed for interactivity
 import Link from "next/link";
-import { useState } from "react";
-import { getPeriod } from '../utils/payperiod';
+import { useState, useEffect } from "react";
+import { getPeriod } from '@/utils/payperiod';
 
 //need to make this async and password protect it at some point
 export default function home(){ // we might want to find a way to protect this ig
@@ -9,7 +9,7 @@ export default function home(){ // we might want to find a way to protect this i
   let period= getPeriod();
 
   //this and save are a package deal. these update our database with the currently filled in values!
-  const [dataResponse, setdataResponse] = useState([]);
+  useState([]); // we dont really care for a response here so were just running it blind
   const saveDay = async (info:string) =>{ // got this from a tutorial, not really fully sure how this works
     const apiUrlEndpoint = 'http://localhost:3000/api/mkday'+info;
     const response = await fetch(apiUrlEndpoint);
@@ -27,6 +27,28 @@ export default function home(){ // we might want to find a way to protect this i
     })
   }
   //end package deal
+
+  //construct timesheet
+  const [dataResponse, setdataResponse] = useState([]);
+    useEffect(() => {
+      async function getPeriodInf(){
+        const apiUrlEndpoint = 'http://localhost:3000/api/getperiodinf';
+        const response = await fetch(apiUrlEndpoint);
+        const res = await response.json();
+        setdataResponse(res.resp);  
+      }
+      getPeriodInf();
+    }, []);
+    //now lets make our dict that is day -> ship
+
+  var dict: {[id: string] : string} = {};
+  dataResponse.forEach((item) => { // should build our dictionary mybe
+    dict[item.day]=item.ship
+  }) 
+  //end timesheet
+
+  
+
 
   return (
     <main className="flex min-h-screen flex-col items-center">  
@@ -48,8 +70,8 @@ export default function home(){ // we might want to find a way to protect this i
       </div>
 
       { //this generates our payperiod table 
-        period.map((day)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
-          <div className='tblBody' id={day+' item'}>
+        period.map((day:string)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
+          <div key={day}className='tblBody' id={day+' item'}>
             <div className='tblBodyItm'>
               {
                 //day.toString()
@@ -61,7 +83,7 @@ export default function home(){ // we might want to find a way to protect this i
               <input type='checkbox'/>
             </div>
             <div className='tblBodyItm'>
-              <input type='text' className='shipInput' id={day+'_ship'} placeholder={'test'}/>
+              <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''}/>
             </div>
           </div>  
         )

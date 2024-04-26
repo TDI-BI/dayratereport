@@ -5,9 +5,11 @@ import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import {revalidatePath} from 'next/cache'
 
-let username='eygwa'
+let username='chris'//'eygwa'
 let password='1234'
-let email='ava.irlol@gmail.com'
+let email='microwaveman@chrismail.com'
+
+
 
 
 export const getSession = async()=>{
@@ -25,9 +27,10 @@ export const login = async(
 )=>{
     const session = await getSession()
     const formUsername = formData.get('username') as string
-    const formPassword = formData.get('formPassword') as string
+    const formPassword = formData.get('password') as string
     //CHECK USER IN DB
-    if(formUsername!==username){
+    if(formUsername!==username || formPassword!=password){
+        console.log(formPassword + " " + password);
         return {error: 'wrong creds'}
     }
     session.userId= '1'

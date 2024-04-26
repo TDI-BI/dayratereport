@@ -47,7 +47,8 @@ body {
   transition:300ms;
 }
 .tblHead{
-  display:inline-flex; flex-direction:row;
+  display:inline-flex; 
+  flex-direction:row;
 }
 .tblHeadItm{
   width: 200px;
@@ -111,4 +112,22 @@ body {
 .loginfeild{
   height:50px;
   line-height:50px;
+}
+
+.reportLine{
+  display:inline-flex; flex-direction:row;
+  height:30px;
+  line-height: 30px;
+  transition:300ms;
+  border-bottom:1px solid;
+  border-color:rgb(255, 255, 255, 0);
+}
+
+.reportLine:hover{
+  border-color:rgb(255, 255, 255, 1);
+}
+
+.reportTxt{
+  width:130px;
+  text-align: center;
 }
