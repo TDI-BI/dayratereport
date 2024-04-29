@@ -52,8 +52,6 @@ export default function home(){ // we might want to find a way to protect this i
 
   return (
     <main className="flex min-h-screen flex-col items-center">  
-    
-      
       <div className='headWrap'>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
         <div className='tblHead'>
           <div className='tblHeadItm'>

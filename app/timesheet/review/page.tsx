@@ -27,7 +27,7 @@ export default function Page() {
     }) 
 
     return (
-        <main className="flex min-h-screen flex-c   ol items-center">
+        <main className="flex min-h-screen flex-col items-center">
             <p><strong>COMFIRM REPORT</strong></p>
             {/* LETS WORK ON REPORT FORMATTING*/}
             <p> PERIOD REPORT FOR: {name}</p>
