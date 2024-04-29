@@ -21,6 +21,12 @@ export default function home(){ // we might want to find a way to protect this i
       let cday=day;
       let cship=document.getElementById(cday+'_ship').value; // literally fraudulent error, maybe something wrong with my editors config
       if(cship=='') cship = document.getElementById(cday+'_ship').getAttribute('placeholder');
+      if(cship=='none')cship='';
+
+      //update our table
+      document.getElementById(cday+'_ship').value='';
+      document.getElementById(cday+'_ship')?.setAttribute('placeholder', cship);
+
       console.log(cday + ': ' +cship);
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);

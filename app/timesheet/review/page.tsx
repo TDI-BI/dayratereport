@@ -31,7 +31,7 @@ export default function Page() {
             <p><strong>COMFIRM REPORT</strong></p>
             {/* LETS WORK ON REPORT FORMATTING*/}
             <p> PERIOD REPORT FOR: {name}</p>
-            <div>{ // throws crazy errors but its a working example of pulling from the server at least
+            <div className='div2print'>{
                 period.map((day) => 
                 <div>
                     <div className="reportLine" key={day}> 
