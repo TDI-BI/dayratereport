@@ -33,19 +33,21 @@ export default function Page() {
 
     function submit(){
         const doc = new jsPDF();
-        doc.style
         let data:string[][] = []
-        doc.text('travel log for: '+name, 70, 10)
+        doc.text('travel log for: '+name, 100, 10, {align: 'center'})
         let dinf=''
-
 
         period.map((day) => {   
             dict[day] ? dinf = dict[day] : dinf = '';
+
             data.push([day, dinf])
         })
 
-        autoTable(doc, { head: [["date", "ship"]], body: data})
-
+        autoTable(doc, { 
+            head: [["date","ship"]], 
+            body: data,
+        })
+        doc.text('days worked: '+daysworked, 100, 150, {align: 'center'})
 
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
     }

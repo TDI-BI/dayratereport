@@ -26,15 +26,13 @@ export default function home(){ // we might want to find a way to protect this i
       //update our table
       document.getElementById(cday+'_ship').value='';
       document.getElementById(cday+'_ship')?.setAttribute('placeholder', cship);
-
-      console.log(cday + ': ' +cship);
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })
   }
   //end package deal
 
-  //construct timesheet
+  //construct travellog
   const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
@@ -51,11 +49,7 @@ export default function home(){ // we might want to find a way to protect this i
   dataResponse.forEach((item) => { // should build our dictionary mybe
     dict[item.day]=item.ship
   }) 
-  //end timesheet
-
-  
-
-
+  //end travellog
   return (
     <main className="flex min-h-screen flex-col items-center">  
       <div className='headWrap'>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
@@ -84,7 +78,7 @@ export default function home(){ // we might want to find a way to protect this i
             </div>
             {/* DELETE THIS AS SOON AS I GET PERMISSION TO DO SO */}
             <div className='tblBodyItm'>
-              <input type='checkbox'/>
+              <input type='checkbox' id={day+'_worked'} checked={dict[day] ? true: false}/>
             </div>
             <div className='tblBodyItm'>
               <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''}/>
@@ -94,7 +88,7 @@ export default function home(){ // we might want to find a way to protect this i
       }
         <div className='tblFoot'>
           <button className='tblFootBtn' onClick={save}>save</button> {/*lets do a little pop-up that says saved when we click this */}
-          <Link href='timesheet/review'><div className='tblFootBtn'> review </div></Link>
+          <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
         </div>
     </main>
   );

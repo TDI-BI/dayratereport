@@ -11,8 +11,8 @@ const Navbar = async () => {
         {session.isLoggedIn && <LogoutForm/>}        
         {!session.isLoggedIn && <Link href='/login' ><div className='headBtn'>login</div></Link>}
 
-        <Link href={session.isLoggedIn? '/timesheet' : '/login'} >
-        <div className='headBtn'>timesheet</div>
+        <Link href={session.isLoggedIn? '/travellog' : '/login'} >
+        <div className='headBtn'>travel log</div>
         </Link>
 
         <Link href={session.isLoggedIn? '/profile' : '/login'}>

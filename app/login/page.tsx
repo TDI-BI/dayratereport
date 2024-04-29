@@ -5,7 +5,7 @@ const logpage = async () =>{
     const session = await getSession();
     return(
         <main className="flex min-h-screen flex-col items-center"> 
-            {session.isLoggedIn ? redirect('/timesheet') : <LoginForm/>}
+            {session.isLoggedIn ? redirect('/travellog') : <LoginForm/>}
         </main>
     )
 }
