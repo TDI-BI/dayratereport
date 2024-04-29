@@ -1,7 +1,7 @@
 "use client"; // needed for interactivity
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getPeriod } from '../../../utils/payperiod';
+import { getPeriod } from '@/utils/payperiod';
 
 export default function Page() {
     let period = getPeriod();
