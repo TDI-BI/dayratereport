@@ -5,7 +5,7 @@ import {getSession }from '@/actions'
 const Navbar = async () => {
     const session = await getSession()
 
-    //console.log(session)    
+    console.log(session)    
     return(    
     <nav className='head'>
         {session.isLoggedIn && <LogoutForm/>}        
