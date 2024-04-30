@@ -14,12 +14,12 @@ export const GET = async () => {
             to: session.userEmail,
             subject: 'lets test ehe ability to handle events',
             html: '<p><strong>we should have an image attached here</strong></p>',
-            /*attachments:[
+            attachments:[
                 {
-                  filename:"icon.jpg",
-                  path:"http://localhost:3000/files/GMZ5PqzWEAAvKdI.jpg" //  i may want to pass a file link and read it here
+                  filename:"report_for_"+session.username+".pdf",
+                  path:"https://beastmode.com" //  i may want to pass a file link and read it here
                 }
-              ]*/
+              ]
         });
 
         return Response.json(data);
