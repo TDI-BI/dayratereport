@@ -14,8 +14,6 @@ export const GET = async (request: NextRequest) => {
   });
   dparam+=")"
   //building the query like this feels deeply unserious but whatever lol
-
-
   
   const session = await getSession();
   //i need to find a way to wrap this in a function and call it
@@ -31,11 +29,8 @@ export const GET = async (request: NextRequest) => {
 
   try {
     if(!session.isLoggedIn) return {error: "not logged in"}
-    console.log('in here')  
     const values: string[] = [];
     const query = "SELECT * FROM days WHERE uid='"+uid+"' AND "+dparam; //q shuold generate
-
-    console.log(query);
     
     const [results] = await connection.execute(query, values);
     connection.end();

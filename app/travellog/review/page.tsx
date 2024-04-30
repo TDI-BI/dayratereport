@@ -53,7 +53,7 @@ export default function Page() {
 
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
 
-        const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf';
+        const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0];
         const response = fetch(apiUrlEndpoint); // not oging to await bc htis is the end ig, also dont care abt response rn
         //need to add some session flag that doesnt let you spam the email hitting send over and over
         

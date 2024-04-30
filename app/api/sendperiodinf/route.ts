@@ -1,10 +1,14 @@
 //import { EmailTemplate } from '@/components/emailtemplate'; //-> reccomended we use this but im not sure i care lol
 import { Resend } from 'resend';
 import { getSession } from '@/actions';
+import { NextRequest } from 'next/server';
+
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export const GET = async () => {
+export const GET = async (request:  NextRequest) => {
+    const { searchParams } = request.nextUrl;
+    const day = searchParams.get('day') || '';
     
     const session = await getSession();
     console.log(session.userEmail)
@@ -12,12 +16,15 @@ export const GET = async () => {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: session.userEmail,
-            subject: 'lets test ehe ability to handle events',
-            html: '<p><strong>we should have an image attached here</strong></p>',
+            subject: 'travel report for ' + session.username + ' from period starting ' + day,
+            html: 
+                "<p><strong>ultimately, we will be putting a report in here</strong></p>"+
+                "<br> <p>but for now we will just have to deal with this demo</p>"+
+                "<br> this file is unopenable, not worth trying",
             attachments:[
                 {
                   filename:"report_for_"+session.username+".pdf",
-                  path:"https://beastmode.com" //  i may want to pass a file link and read it here
+                  path:"https://www.google.com" //  i may want to pass a file link and read it here
                 }
               ]
         });
