@@ -7,7 +7,7 @@ import {revalidatePath} from 'next/cache'
 
 let username='chris'//'eygwa'
 let password='1234'
-let email='microwaveman@chrismail.com'
+let email='dayratereportdonotrespond@gmail.com'
 
 
 
@@ -30,7 +30,7 @@ export const login = async(
     const formPassword = formData.get('password') as string
     //CHECK USER IN DB
     if(formUsername!==username || formPassword!=password){
-        console.log(formPassword + " " + password);
+        //console.log(formPassword + " " + password);
         return {error: 'wrong creds'}
     }
     session.userId= '1'

@@ -4,6 +4,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
+import {redirect} from 'next/navigation'
 
 
 
@@ -32,6 +33,7 @@ export default function Page() {
     }) 
 
     function submit(){
+         // not working for some reason/
         const doc = new jsPDF();
         let data:string[][] = []
         doc.text('travel log for: '+name, 100, 10, {align: 'center'})
@@ -50,6 +52,11 @@ export default function Page() {
         doc.text('days worked: '+daysworked, 100, 150, {align: 'center'})
 
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
+
+        const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf';
+        const response = fetch(apiUrlEndpoint); // not oging to await bc htis is the end ig, also dont care abt response rn
+        //need to add some session flag that doesnt let you spam the email hitting send over and over
+        
     }
 
 

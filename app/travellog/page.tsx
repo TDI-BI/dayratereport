@@ -78,7 +78,7 @@ export default function home(){ // we might want to find a way to protect this i
             </div>
             {/* DELETE THIS AS SOON AS I GET PERMISSION TO DO SO */}
             <div className='tblBodyItm'>
-              <input type='checkbox' id={day+'_worked'} checked={dict[day] ? true: false}/>
+              <input type='checkbox' id={day+'_worked'} defaultChecked={dict[day] ? true: false}/>
             </div>
             <div className='tblBodyItm'>
               <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''}/>
