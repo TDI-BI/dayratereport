@@ -31,7 +31,10 @@ export default function Page() {
         dict[item.day]=item.ship
     }) 
 
-    function submit(){
+
+
+
+    function submit(){ // im sure this function is due for a re-write at some point
          // not working for some reason/
         const doc = new jsPDF();
         let data:string[][] = []
@@ -59,19 +62,20 @@ export default function Page() {
         let pdf = doc.output().split('\n'); // gives us an array by line
         let pdfStr='';
         pdf.forEach((line) => { // convert from array to string
-            pdfStr+=line + 'nline' // this is our linebreak character
+            pdfStr+=line + 'zNL' // this is our linebreak character
         })
         //console.log(pdfStr);
         
-        doc.save("report_for_" + name + "_" + period[0] +".pdf");
+        //doc.save("report_for_" + name + "_" + period[0] +".pdf");
 
-        console.log('new processing 3')
+        console.log('file build 3')
         //commented this out for rn just to not flood my own inbox
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint); // not oging to await bc htis is the end ig, also dont care abt response rn
         //need to add some session flag that doesnt let you spam the email hitting send over and over
-        
     }
+
+    
     return (
         <main className="flex min-h-screen flex-col items-center">
             <div className='report'>

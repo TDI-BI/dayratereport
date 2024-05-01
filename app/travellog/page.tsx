@@ -16,19 +16,22 @@ export default function home(){ // we might want to find a way to protect this i
     //const res = await response.json(); //-> at some point our return will be a success message with a popup
     //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
   }
-  function save(){
+  function save(){ // rewrite this at some point lol
     period.forEach((day)=>{
       let cday=day;
       let cship=document.getElementById(cday+'_ship').value; // literally fraudulent error, maybe something wrong with my editors config
       if(cship=='') cship = document.getElementById(cday+'_ship').getAttribute('placeholder');
       if(cship=='' && document.getElementById(cday+'_worked').checked) cship='unspecified';
-      
+
+      if(document.getElementById(cday+'_ship').getAttribute('placeholder') && !document.getElementById(cday+'_worked').checked){
+        cship=''
+      }
       if(cship=='none')cship='';
 
       //update our table
       document.getElementById(cday+'_ship').value='';
       document.getElementById(cday+'_ship')?.setAttribute('placeholder', cship);
-      if(cship) document.getElementById(cday+'_worked').checked = true;
+      cship ? document.getElementById(cday+'_worked').checked = true : document.getElementById(cday+'_worked').checked = false;
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })

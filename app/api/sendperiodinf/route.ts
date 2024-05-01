@@ -10,9 +10,10 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
+    const extraInfo:string = ' ftest';
 
     //process string
-    let pdl = pdf.split('nline')
+    let pdl = pdf.split('zNL')  
     let pds=''
     pdl.forEach((item)=>{ // THIS WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!
         pds+=item+' \n '
@@ -24,13 +25,14 @@ export const GET = async (request:  NextRequest) => {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: session.userEmail,
-            subject: 'travel report for ' + session.username + ' from period starting ' + day + 'extra info',
-            text: pds,
+            subject: 'travel report for ' + session.username + ' from period starting ' + day + extraInfo,
+            text: 'the following attached file is a travel report for '+session.username +'for pay period starting on' + day + 
+            'nextsteps',
 
             attachments:[
                 {
-                  filename:"report_for_"+session.username+".pdf",
-                  path:"https://www.google.com" //  i may want to pass a file link and read it here
+                  filename:"report_for_"+session.username+"_"+day+".pdf",
+                  content: btoa(pds),
                 }
               ]
         });
