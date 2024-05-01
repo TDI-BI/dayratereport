@@ -11,7 +11,7 @@ export default function home(){ // we might want to find a way to protect this i
   //this and save are a package deal. these update our database with the currently filled in values!
   useState([]); // we dont really care for a response here so were just running it blind
   const saveDay = async (info:string) =>{ // got this from a tutorial, not really fully sure how this works
-    const apiUrlEndpoint = 'http://localhost:3000/api/mkday'+info;
+    const apiUrlEndpoint ='http://localhost:3000/api/mkday'+info;
     const response = await fetch(apiUrlEndpoint);
     //const res = await response.json(); //-> at some point our return will be a success message with a popup
     //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
@@ -21,11 +21,14 @@ export default function home(){ // we might want to find a way to protect this i
       let cday=day;
       let cship=document.getElementById(cday+'_ship').value; // literally fraudulent error, maybe something wrong with my editors config
       if(cship=='') cship = document.getElementById(cday+'_ship').getAttribute('placeholder');
+      if(cship=='' && document.getElementById(cday+'_worked').checked) cship='unspecified';
+      
       if(cship=='none')cship='';
 
       //update our table
       document.getElementById(cday+'_ship').value='';
       document.getElementById(cday+'_ship')?.setAttribute('placeholder', cship);
+      if(cship) document.getElementById(cday+'_worked').checked = true;
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })
@@ -48,7 +51,9 @@ export default function home(){ // we might want to find a way to protect this i
   var dict: {[id: string] : string} = {};
   dataResponse.forEach((item) => { // should build our dictionary mybe
     dict[item.day]=item.ship
+    if(item.ship) document.getElementById(item.day+'_worked').checked = true;
   }) 
+
   //end travellog
   return (
     <main className="flex min-h-screen flex-col items-center">  
@@ -76,9 +81,9 @@ export default function home(){ // we might want to find a way to protect this i
                 day
               }
             </div>
-            {/* DELETE THIS AS SOON AS I GET PERMISSION TO DO SO */}
+            {/* DELETE THIS AS SOON AS I GET PE RMISSION TO DO SO */}
             <div className='tblBodyItm'>
-              <input type='checkbox' id={day+'_worked'} defaultChecked={dict[day] ? true: false}/>
+              <input type='checkbox' id={day+'_worked'} />
             </div>
             <div className='tblBodyItm'>
               <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''}/>

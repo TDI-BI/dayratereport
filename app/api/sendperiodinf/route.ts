@@ -9,6 +9,14 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
+    const pdf = searchParams.get('pdf') || '';
+
+    //process string
+    let pdl = pdf.split('nline')
+    let pds=''
+    pdl.forEach((item)=>{ // THIS WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!
+        pds+=item+' \n '
+    })
     
     const session = await getSession();
     console.log(session.userEmail)
@@ -16,11 +24,9 @@ export const GET = async (request:  NextRequest) => {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev',
             to: session.userEmail,
-            subject: 'travel report for ' + session.username + ' from period starting ' + day,
-            html: 
-                "<p><strong>ultimately, we will be putting a report in here</strong></p>"+
-                "<br> <p>but for now we will just have to deal with this demo</p>"+
-                "<br> this file is unopenable, not worth trying",
+            subject: 'travel report for ' + session.username + ' from period starting ' + day + 'extra info',
+            text: pds,
+
             attachments:[
                 {
                   filename:"report_for_"+session.username+".pdf",
@@ -28,9 +34,10 @@ export const GET = async (request:  NextRequest) => {
                 }
               ]
         });
-
+        console.log('no error, sent')
         return Response.json(data);
     } catch (error) {
+        console.log('some error occured')
         return Response.json({ error });
     }
 }
