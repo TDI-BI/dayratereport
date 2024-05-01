@@ -38,7 +38,6 @@ export default function Page() {
          // not working for some reason/
         const doc = new jsPDF();
         let data:string[][] = []
-        //doc.text('travel log for: '+name, 100, 10, {align: 'center'})
         let dinf=''
         let w = ''
         period.map((day) => {   
@@ -47,6 +46,7 @@ export default function Page() {
             data.push([day, w, dinf])
         })
 
+        //make pdf
         autoTable(doc, { 
             head: [["date","worked?","ship"]], 
             body: data,
@@ -59,23 +59,20 @@ export default function Page() {
             170, 
             {align: 'center'}
         )
+
+        //process pdf
         let pdf = doc.output().split('\n'); // gives us an array by line
         let pdfStr='';
         pdf.forEach((line) => { // convert from array to string
             pdfStr+=line + 'zNL' // this is our linebreak character
         })
-        //console.log(pdfStr);
         
-        //doc.save("report_for_" + name + "_" + period[0] +".pdf");
-
-        console.log('file build 3')
-        //commented this out for rn just to not flood my own inbox
+        //download and send
+        doc.save("report_for_" + name + "_" + period[0] +".pdf");
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
-        const response = fetch(apiUrlEndpoint); // not oging to await bc htis is the end ig, also dont care abt response rn
-        //need to add some session flag that doesnt let you spam the email hitting send over and over
+        const response = fetch(apiUrlEndpoint);
     }
 
-    
     return (
         <main className="flex min-h-screen flex-col items-center">
             <div className='report'>

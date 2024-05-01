@@ -7,10 +7,14 @@ import { NextRequest } from 'next/server';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const GET = async (request:  NextRequest) => {
+    //important setup
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
     const extraInfo:string = ' ftest';
+    const session = await getSession();
+
+    if(session.isLoggedIn==false || pdf=='') return {error: 'issue with request'} ; // get defensive
 
     //process string
     let pdl = pdf.split('zNL')  
@@ -19,8 +23,7 @@ export const GET = async (request:  NextRequest) => {
         pds+=item+' \n '
     })
     
-    const session = await getSession();
-    console.log(session.userEmail)
+    
     try {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev',

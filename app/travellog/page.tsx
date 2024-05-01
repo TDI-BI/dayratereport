@@ -19,7 +19,7 @@ export default function home(){ // we might want to find a way to protect this i
   function save(){ // rewrite this at some point lol
     period.forEach((day)=>{
       let cday=day;
-      let cship=document.getElementById(cday+'_ship').value; // literally fraudulent error, maybe something wrong with my editors config
+      let cship=document.getElementById(cday+'_ship').value.substring(0, 15);; // trim to prevent overflow
       if(cship=='') cship = document.getElementById(cday+'_ship').getAttribute('placeholder');
       if(cship=='' && document.getElementById(cday+'_worked').checked) cship='unspecified';
 
