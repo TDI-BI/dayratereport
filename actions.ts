@@ -12,12 +12,12 @@ let email='dayratereportdonotrespond@gmail.com'
 const bcrypt = require('bcrypt')
 
 
-export function hashPass(unHashPass:string){
+function hashPass(unHashPass:string){
     return bcrypt.hash(unHashPass, 10).then(function(hash:string){
         return hash;
     });
 }
-export function isSamePass(unHashPass:string, hashPass:string){
+function isSamePass(unHashPass:string, hashPass:string){
     return bcrypt.compare(unHashPass, hashPass).then(function(result:boolean){
         return(result)
     })
@@ -52,7 +52,7 @@ export const login = async(
         //console.log(formPassword + " " + password);
         return {error: 'wrong creds'}
     }
-    console.log();
+    console.log();  
     
     session.userId= dbAcc.uid
     session.username= dbAcc.username
