@@ -4,6 +4,7 @@ import {getIronSession} from 'iron-session'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import {revalidatePath} from 'next/cache'
+import { GET } from "./app/api/getperiodinf/route";
 
 let username='chris'//'eygwa'
 let password='1234'
@@ -28,18 +29,28 @@ export const login = async(
     const session = await getSession()
     const formUsername = formData.get('username') as string
     const formPassword = formData.get('password') as string
-    //CHECK USER IN DB
-    if(formUsername!==username || formPassword!=password){
+    
+    //get user in db
+    const link = 'http://localhost:3000/api/login?&password='+formPassword+'&username='+formUsername;
+    console.log(link);
+    const response = await fetch(link);
+    const res = await response.json();
+    const dbAcc= res.resp[0];  
+
+
+    if(dbAcc.password!==formPassword){
         //console.log(formPassword + " " + password);
         return {error: 'wrong creds'}
     }
-    session.userId= '1'
-    session.username= formUsername
-    session.userEmail= email
+    console.log();
+    
+    session.userId= dbAcc.uid
+    session.username= dbAcc.username
+    session.userEmail= dbAcc.email
     session.isLoggedIn= true
     await session.save();
-    redirect("/")
     
+    redirect("/")
 }
 export const logout = async()=>{
     const session = await getSession()
@@ -47,6 +58,7 @@ export const logout = async()=>{
     redirect("/")
 }
 
+//todo fix this later
 export const changeUsername = async (formData:FormData)=>{
     const session = await getSession();
     const newUsername = formData.get('username') as string;
