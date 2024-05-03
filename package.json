@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "html2canvas": "^1.4.1",
     "iron-session": "^8.0.1",
     "jspdf": "^2.5.1",

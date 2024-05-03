@@ -50,6 +50,7 @@ export default function Page() {
         var img = new Image()
         img.src = '@/assets/TDI-Brooks-World-Logo-dark-large.png'
         doc.addImage(img, 'png', 10, 78, 12, 15)
+        
         */ //may want to hook this up at some poin
 
         //make pdf
