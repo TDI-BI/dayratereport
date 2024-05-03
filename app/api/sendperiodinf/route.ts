@@ -11,7 +11,7 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
-    const extraInfo:string = ' ftest';
+    const extraInfo:string = '';
     const session = await getSession();
 
     if(session.isLoggedIn==false || pdf=='') return {error: 'issue with request'} ; // get defensive
@@ -22,7 +22,6 @@ export const GET = async (request:  NextRequest) => {
     pdl.forEach((item)=>{ // THIS WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!
         pds+=item+' \n '
     })
-    
     
     try {
         const data = await resend.emails.send({

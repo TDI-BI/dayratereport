@@ -46,6 +46,12 @@ export default function Page() {
             data.push([day, w, dinf])
         })
 
+        /*
+        var img = new Image()
+        img.src = '@/assets/TDI-Brooks-World-Logo-dark-large.png'
+        doc.addImage(img, 'png', 10, 78, 12, 15)
+        */ //may want to hook this up at some poin
+
         //make pdf
         autoTable(doc, { 
             head: [["date","worked?","ship"]], 
@@ -69,17 +75,18 @@ export default function Page() {
         
         //download and send
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
+        /*
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint);
+        */
     }
 
     return (
         <main className="flex min-h-screen flex-col items-center">
             <div className='report'>
                 <p><strong>COMFIRM REPORT</strong></p>
-                <div className='reportForPrint'>
                 <p> PERIOD REPORT FOR: {name}</p>
-                <div className='div2print'>{
+                <div className='table'>{
                         period.map((day) => 
                         <div>
                             <div className="reportLine" key={day}> 
@@ -88,7 +95,6 @@ export default function Page() {
                         </div>) // for now we are jtus gonna try to pull 1 line    
                     }</div>
                     <p> TOTAL DAYS: {daysworked}</p>
-                </div>
             </div>
             <div className='tblFoot'>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
