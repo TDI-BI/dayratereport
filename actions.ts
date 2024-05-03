@@ -9,9 +9,19 @@ import { GET } from "./app/api/getperiodinf/route";
 let username='chris'//'eygwa'
 let password='1234'
 let email='dayratereportdonotrespond@gmail.com'
+const bcrypt = require('bcrypt')
 
 
-
+export function hashPass(unHashPass:string){
+    return bcrypt.hash(unHashPass, 10).then(function(hash:string){
+        return hash;
+    });
+}
+export function isSamePass(unHashPass:string, hashPass:string){
+    return bcrypt.compare(unHashPass, hashPass).then(function(result:boolean){
+        return(result)
+    })
+}
 
 export const getSession = async()=>{
     const session = await getIronSession<sessionData>(cookies(), sessionOptions)
@@ -37,7 +47,7 @@ export const login = async(
     const res = await response.json();
     const dbAcc= res.resp[0];  
 
-
+    console.log(hashPass(formPassword))
     if(dbAcc.password!==formPassword){
         //console.log(formPassword + " " + password);
         return {error: 'wrong creds'}
