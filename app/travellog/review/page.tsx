@@ -76,10 +76,9 @@ export default function Page() {
         
         //download and send
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
-        /*
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint);
-        */
+        /*this is so i can easily comment out the download and send aspects of this function*/
     }
 
     return (

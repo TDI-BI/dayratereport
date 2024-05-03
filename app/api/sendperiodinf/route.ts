@@ -30,7 +30,6 @@ export const GET = async (request:  NextRequest) => {
             subject: 'travel report for ' + session.username + ' from period starting ' + day + extraInfo,
             text: 'the following attached file is a travel report for '+session.username +'for pay period starting on' + day + 
             'nextsteps',
-
             attachments:[
                 {
                   filename:"report_for_"+session.username+"_"+day+".pdf",

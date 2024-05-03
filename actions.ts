@@ -4,24 +4,13 @@ import {getIronSession} from 'iron-session'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import {revalidatePath} from 'next/cache'
-import { GET } from "./app/api/getperiodinf/route";
+import { GET } from "./app/api/getperiodinf/route"; 
+const bcrypt = require('bcrypt')    
 
 let username='chris'//'eygwa'
 let password='1234'
 let email='dayratereportdonotrespond@gmail.com'
-const bcrypt = require('bcrypt')
 
-
-function hashPass(unHashPass:string){
-    return bcrypt.hash(unHashPass, 10).then(function(hash:string){
-        return hash;
-    });
-}
-function isSamePass(unHashPass:string, hashPass:string){
-    return bcrypt.compare(unHashPass, hashPass).then(function(result:boolean){
-        return(result)
-    })
-}
 
 export const getSession = async()=>{
     const session = await getIronSession<sessionData>(cookies(), sessionOptions)
@@ -41,18 +30,24 @@ export const login = async(
     const formPassword = formData.get('password') as string
     
     //get user in db
-    const link = 'http://localhost:3000/api/login?&password='+formPassword+'&username='+formUsername;
-    console.log(link);
+    const link = 'http://localhost:3000/api/login?&username='+formUsername;
+    //console.log(link);
     const response = await fetch(link);
     const res = await response.json();
     const dbAcc= res.resp[0];  
-
-    console.log(hashPass(formPassword))
-    if(dbAcc.password!==formPassword){
-        //console.log(formPassword + " " + password);
-        return {error: 'wrong creds'}
+    //const hashed = await bcrypt.hash(formPassword, 10) -> manually hashing password rn
+    //console.log(hashed)   
+    
+    try{
+        const auth= await bcrypt.compare(formPassword, dbAcc.password)
+        if(!auth){
+            //console.log(formPassword + " " + password);
+            return {error: 'wrong password for account'}
+        }
     }
-    console.log();  
+    catch(error){ 
+        return { error: 'no account for that username'}
+    }
     
     session.userId= dbAcc.uid
     session.username= dbAcc.username
