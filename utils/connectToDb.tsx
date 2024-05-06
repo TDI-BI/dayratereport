@@ -8,7 +8,6 @@ export const connectToDb = async () => {
       password: 'eygwa',
       database: 'dayratereport',
     });
-
     return con;
   } catch (error) {
     //console.error('Error creating MySQL connection:', error);

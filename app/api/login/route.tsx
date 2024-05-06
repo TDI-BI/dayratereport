@@ -1,7 +1,6 @@
 
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
-import mysql from 'mysql2/promise';
 import { connectToDb } from '@/utils/connectToDb'
 
 export const GET = async (request: NextRequest) => {

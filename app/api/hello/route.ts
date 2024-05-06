@@ -1,4 +1,3 @@
-import mysql from 'mysql2/promise';
 import { NextRequest } from 'next/server';
 import { connectToDb } from '@/utils/connectToDb'
 

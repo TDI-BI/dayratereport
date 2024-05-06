@@ -1,4 +1,3 @@
-import mysql from 'mysql2/promise';
 import { connectToDb } from '@/utils/connectToDb'
 
 export const GET = async (request: Request) => {

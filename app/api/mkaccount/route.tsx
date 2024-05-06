@@ -2,7 +2,6 @@
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
 import { connectToDb } from '@/utils/connectToDb'
-import mysql from 'mysql2/promise';
 const bcrypt = require('bcrypt')    
 
 export const GET = async (request: NextRequest) => {
