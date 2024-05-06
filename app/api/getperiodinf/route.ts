@@ -30,7 +30,8 @@ export const GET = async (request: NextRequest) => {
   try {
     if(!session.isLoggedIn) return {error: "not logged in"}
     const values: string[] = [];
-    const query = "SELECT * FROM days WHERE uid='"+uid+"' AND "+dparam; //q shuold generate
+    const query = "SELECT * FROM days WHERE username='"+uid+"' AND "+dparam; //q shuold generate
+    //console.log(query)
     
     const [results] = await connection.execute(query, values);
     connection.end();

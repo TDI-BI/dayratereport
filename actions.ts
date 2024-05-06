@@ -34,9 +34,7 @@ export const login = async(
     //console.log(link);
     const response = await fetch(link);
     const res = await response.json();
-    const dbAcc= res.resp[0];  
-    //const hashed = await bcrypt.hash(formPassword, 10) -> manually hashing password rn
-    //console.log(hashed)   
+    const dbAcc= res.resp[0];     
     
     try{
         const auth= await bcrypt.compare(formPassword, dbAcc.password)
@@ -61,6 +59,38 @@ export const logout = async()=>{
     const session = await getSession()
     session.destroy()
     redirect("/")
+}
+
+export const mkAccount = async(
+    prevState:{error:undefined | string}, 
+    formData:FormData
+)=>{
+    const formFirstname = formData.get('firstname') as string
+    const formLastname = formData.get('lastname') as string
+    const formUsername = formData.get('nusername') as string
+    const formEmail = formData.get('email') as string
+    const formPassword = formData.get('password1') as string
+    const formPasswordRepeat = formData.get('password2') as string
+    if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
+    if(
+        formFirstname=='' || 
+        formLastname=='' || 
+        formEmail=='' || 
+        formUsername=='' || 
+        formPassword==''
+    ){
+        return { error: 'empty fields' }
+    }
+    const fullname=formFirstname+'/'+formLastname;
+    const link = 'http://localhost:3000/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
+    const response = await fetch(link);
+    const res = await response.json();
+    try{
+        if(res.error) return res // catch error in account creation
+    }
+    catch(error){
+    }
+    redirect("../../")// -> uncomment this out when im done toying with the form
 }
 
 //todo fix this later

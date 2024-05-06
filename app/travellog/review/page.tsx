@@ -29,14 +29,14 @@ export default function Page() {
         name=item.uid;
         if(item.ship) daysworked+=1;
         dict[item.day]=item.ship
-    }) 
-
-
-
+    }) ;
+    let names:string[]=name.split('/')
 
     function submit(){ // im sure this function is due for a re-write at some point
          // not working for some reason/
         const doc = new jsPDF();
+
+
         let data:string[][] = []
         let dinf=''
         let w = ''
@@ -50,7 +50,6 @@ export default function Page() {
         var img = new Image()
         img.src = '@/assets/TDI-Brooks-World-Logo-dark-large.png'
         doc.addImage(img, 'png', 10, 78, 12, 15)
-        
         */ //may want to hook this up at some poin
 
         //make pdf
@@ -60,8 +59,9 @@ export default function Page() {
         })
         doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
         doc.setFontSize(12)
+        //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
         doc.text(
-            'I, '+name+' acknowledge and certify that the information \non this document is true and accurate', 
+            'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
             100,    
             170, 
             {align: 'center'}
@@ -85,7 +85,7 @@ export default function Page() {
         <main className="flex min-h-screen flex-col items-center">
             <div className='report'>
                 <p><strong>COMFIRM REPORT</strong></p>
-                <p> PERIOD REPORT FOR: {name}</p>
+                <p> PERIOD REPORT FOR: {names[0] + ' ' + names[1]}</p>
                 <div className='table'>{
                         period.map((day) => 
                         <div>

@@ -13,6 +13,7 @@ export const GET = async (request:  NextRequest) => {
     const pdf = searchParams.get('pdf') || '';
     const extraInfo:string = '';
     const session = await getSession();
+    let names:string[] = session.userId.split('/')
 
     if(session.isLoggedIn==false || pdf=='') return {error: 'issue with request'} ; // get defensive
 
@@ -27,9 +28,11 @@ export const GET = async (request:  NextRequest) => {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
             to: 'dayratereportdonotrespond@gmail.com', // hard set this
-            subject: 'travel report for ' + session.username + ' from period starting ' + day + extraInfo,
-            text: 'the following attached file is a travel report for '+session.username +'for pay period starting on' + day + 
-            'nextsteps',
+            subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
+            text: 
+                'the following attached file is a travel report for '+ names[0] + ' ' + 
+                names[1] + ' @ ' + session.userEmail +' for pay period starting on' + day + 
+                extraInfo,
             attachments:[
                 {
                   filename:"report_for_"+session.username+"_"+day+".pdf",
@@ -37,10 +40,10 @@ export const GET = async (request:  NextRequest) => {
                 }
               ]
         });
-        console.log('no error, sent')
+        //console.log('no error, sent')
         return Response.json(data);
     } catch (error) {
-        console.log('some error occured')
+        //console.log('some error occured')
         return Response.json({ error });
     }
 }
