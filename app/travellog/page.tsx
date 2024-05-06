@@ -48,6 +48,17 @@ export default function home(){ // we might want to find a way to protect this i
         setdataResponse(res.resp);  
       }
       getPeriodInf();
+
+      //copied in from stackoverflow, needs to be in useeffector everything breaks
+      document.addEventListener('keydown', e => { // catch ctrls
+        if (e.ctrlKey && e.key === 's') {
+          // Prevent the Save dialog to open
+          e.preventDefault();
+          save();
+        }
+      });
+
+
     }, []);
     //now lets make our dict that is day -> ship
 
@@ -56,6 +67,7 @@ export default function home(){ // we might want to find a way to protect this i
     dict[item.day]=item.ship
     if(item.ship) document.getElementById(item.day+'_worked').checked = true;
   }) 
+
 
   //end travellog
   return (
