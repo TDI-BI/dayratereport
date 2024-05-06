@@ -91,11 +91,11 @@ export default function Page() {
             <div className='report'>
                 <p><strong>COMFIRM REPORT</strong></p>
                 <p> PERIOD REPORT FOR: {names[0] + ' ' + names[1]}</p>
-                <div className='table'>{
+                 <div className='table'>{
                         period.map((day) => 
-                        <div>
+                        <div key={day+'rdiv'}>
                             <div className="reportLine" key={day}> 
-                                <p className='reportTxt'>{day}</p> : <p className='reportTxt'>{dict[day] ? dict[day] : ''}</p> 
+                              <p className='reportTxt' key={day+'date'}>{day}</p> : <p className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</p>
                             </div>
                         </div>) // for now we are jtus gonna try to pull 1 line    
                     }</div>
