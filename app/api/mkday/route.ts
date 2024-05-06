@@ -1,6 +1,7 @@
 import mysql from 'mysql2/promise';
 import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
+import { connectToDb } from '@/utils/connectToDb'
 
 export const GET = async (request:  NextRequest) => {
   const session = await getSession();
@@ -13,7 +14,6 @@ export const GET = async (request:  NextRequest) => {
 
   //i need to find a way to wrap this in a utility function and call it
   const connection = await connectToDb();
-
   try{ // esentially just making a homemade UPSERT here
 
     if(!session.isLoggedIn) return{error: "user not logged in "}

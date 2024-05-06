@@ -2,6 +2,7 @@ import mysql from 'mysql2/promise';
 import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { getPeriod } from '@/utils/payperiod';
+import { connectToDb } from '@/utils/connectToDb'
 //this works on pulling individual days!
 
 export const GET = async (request: NextRequest) => {
@@ -21,7 +22,6 @@ export const GET = async (request: NextRequest) => {
   //const day = searchParams.get('day') || 'day_broken';
   const uid = session.username; // replace this with UID at some point
   const connection = await connectToDb();
-
 
   try {
     if(!session.isLoggedIn) return {error: "not logged in"}

@@ -1,6 +1,7 @@
 
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
+import { connectToDb } from '@/utils/connectToDb'
 import mysql from 'mysql2/promise';
 const bcrypt = require('bcrypt')    
 
@@ -18,7 +19,6 @@ export const GET = async (request: NextRequest) => {
 
   //i need to find a way to wrap this in a function and call it
   const connection = await connectToDb();
-
 
   try {
     //ok for some reason trying to nest api calls inside eachother was just breaking everything so instead im gonna do this

@@ -1,9 +1,9 @@
 import mysql from 'mysql2/promise';
+import { connectToDb } from '@/utils/connectToDb'
 
 export const GET = async (request: Request) => {
   //i need to find a way to wrap this in a function and call it
   const connection = await connectToDb();
-
 
   try {
     const query = "INSERT INTO msgs (msg) VALUES (?)";
