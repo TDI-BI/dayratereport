@@ -13,12 +13,8 @@ export const GET = async (request: NextRequest) => {
 
 
   //i need to find a way to wrap this in a function and call it
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'eygwa',
-    database: 'dayratereport',
-  });
+  const connection = await connectToDb();
+
 
   try {
     const query = "select * from users where username='"+username+"'";

@@ -6,12 +6,8 @@ export const GET = async (request: NextRequest) => {
   //i need to find a way to wrap this in a function and call it
   const { searchParams } = request.nextUrl;
   const msg = searchParams.get('msg') || 'hello world';
-  /*const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'eygwa',
-    database: 'dayratereport',
-  });*/
+  /*const connection = await connectToDb();
+*/
   const connection = await connectToDb();
 
   try {

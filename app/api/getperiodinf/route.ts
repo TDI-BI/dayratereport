@@ -20,12 +20,8 @@ export const GET = async (request: NextRequest) => {
   //const { searchParams } = request.nextUrl; -> was originally passing the day but ive decided against it
   //const day = searchParams.get('day') || 'day_broken';
   const uid = session.username; // replace this with UID at some point
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'eygwa',
-    database: 'dayratereport',
-  });
+  const connection = await connectToDb();
+
 
   try {
     if(!session.isLoggedIn) return {error: "not logged in"}

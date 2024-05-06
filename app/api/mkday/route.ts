@@ -12,12 +12,8 @@ export const GET = async (request:  NextRequest) => {
   const username = session.username;
 
   //i need to find a way to wrap this in a utility function and call it
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'eygwa',
-    database: 'dayratereport',
-  });
+  const connection = await connectToDb();
+
   try{ // esentially just making a homemade UPSERT here
 
     if(!session.isLoggedIn) return{error: "user not logged in "}

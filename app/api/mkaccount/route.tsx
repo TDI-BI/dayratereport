@@ -17,12 +17,8 @@ export const GET = async (request: NextRequest) => {
   const email = searchParams.get('email') || '';
 
   //i need to find a way to wrap this in a function and call it
-  const connection = await mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'eygwa',
-    database: 'dayratereport',
-  });
+  const connection = await connectToDb();
+
 
   try {
     //ok for some reason trying to nest api calls inside eachother was just breaking everything so instead im gonna do this
