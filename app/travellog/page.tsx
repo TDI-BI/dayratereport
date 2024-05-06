@@ -29,22 +29,23 @@ export default function home(){ // we might want to find a way to protect this i
     //const res = await response.json(); //-> at some point our return will be a success message with a popup
     //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
   }
-  function save(){ // rewrite this at some point lol
+  function save(){ 
+    // idk if theres a painless way to make the errors here go away. 
+    //doesnt interfere with run or run time so i think i just ignore
     period.forEach((day)=>{
       let cday=day;
-      let cship=document.getElementById(cday+'_ship').value.substring(0, 15);; // trim to prevent overflow
-      if(cship=='') cship = document.getElementById(cday+'_ship').getAttribute('placeholder');
-      if(cship=='' && document.getElementById(cday+'_worked').checked) cship='unspecified';
-
-      if(document.getElementById(cday+'_ship').getAttribute('placeholder') && !document.getElementById(cday+'_worked').checked){
+      let cship=document.getElementById(cday+'_ship')!.value.substring(0, 15);; // trim to prevent overflow
+      if(cship=='') cship = document.getElementById(cday+'_ship')!.getAttribute('placeholder');
+      if(cship=='' && document.getElementById(cday+'_worked')!.checked) cship='unspecified';
+      if(document.getElementById(cday+'_ship')!.getAttribute('placeholder') && !document.getElementById(cday+'_worked')!.checked){
         cship=''
       }
       if(cship=='none')cship='';
 
       //update our table
-      document.getElementById(cday+'_ship').value='';
-      document.getElementById(cday+'_ship')?.setAttribute('placeholder', cship);
-      cship ? document.getElementById(cday+'_worked').checked = true : document.getElementById(cday+'_worked').checked = false;
+      document.getElementById(cday+'_ship')!.value='';
+      document.getElementById(cday+'_ship')!.setAttribute('placeholder', cship);
+      cship ? document.getElementById(cday+'_worked')!.checked = true : document.getElementById(cday+'_worked')!.checked = false;
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })

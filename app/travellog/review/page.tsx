@@ -4,10 +4,14 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
+import { useRouter } from 'next/navigation'
 
 //THERE IS SOME KEY ISSUE IN THIS FUNCTION. IT DOES NOT SEEM TO INHIBIT FUNCTIONALITY BUT ITS STILL ANNOYING I GUESS
 
 export default function Page() {
+
+    //lets me do client redirects
+    const router = useRouter()
 
     let period = getPeriod();
     const [dataResponse, setdataResponse] = useState([]);
@@ -79,6 +83,7 @@ export default function Page() {
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint);
         /*this is so i can easily comment out the download and send aspects of this function*/
+        router.push('../')
     }
 
     return (
