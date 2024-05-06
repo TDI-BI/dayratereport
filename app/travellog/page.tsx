@@ -6,6 +6,19 @@ import { getPeriod } from '@/utils/payperiod';
 //need to make this async and password protect it at some point
 export default function home(){ // we might want to find a way to protect this ig
 
+  //we are just gonna hard set this for right now but eventually maybe we should query to autofill it
+  //should just be a list of our facilities or whatever
+  const slist:string[] = [
+    'brooks',
+    'emma',
+    'marcelle',
+    'proteus',
+    'gyre',
+    'nautilus',
+    'barnacle',
+    'unspecified',
+  ]
+
   let period= getPeriod();
 
   //this and save are a package deal. these update our database with the currently filled in values!
@@ -49,7 +62,7 @@ export default function home(){ // we might want to find a way to protect this i
       }
       getPeriodInf();
 
-      //copied in from stackoverflow, needs to be in useeffector everything breaks
+      //not a part of the query, but just needs to be wrapped in a useeffect
       document.addEventListener('keydown', e => { // catch ctrls
         if (e.ctrlKey && e.key === 's') {
           // Prevent the Save dialog to open
@@ -57,8 +70,6 @@ export default function home(){ // we might want to find a way to protect this i
           save();
         }
       });
-
-
     }, []);
     //now lets make our dict that is day -> ship
 
@@ -72,6 +83,13 @@ export default function home(){ // we might want to find a way to protect this i
   //end travellog
   return (
     <main className="flex min-h-screen flex-col items-center">  
+
+
+    <datalist id='suggestion'>
+      {slist.map((item) => <option key={item} value={item}>{item}</option>)}
+    </datalist>
+
+
       <div className='headWrap'>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
         <div className='tblHead'>
           <div className='tblHeadItm'>
@@ -101,7 +119,7 @@ export default function home(){ // we might want to find a way to protect this i
               <input type='checkbox' id={day+'_worked'} />
             </div>
             <div className='tblBodyItm'>
-              <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''}/>
+              <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
             </div>
           </div>  
         )
