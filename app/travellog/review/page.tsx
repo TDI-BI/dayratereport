@@ -6,12 +6,12 @@ import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { useRouter } from 'next/navigation'
 
+//lets me do client redirects
+const router = useRouter()
+
 //THERE IS SOME KEY ISSUE IN THIS FUNCTION. IT DOES NOT SEEM TO INHIBIT FUNCTIONALITY BUT ITS STILL ANNOYING I GUESS
 
 export default function Page() {
-
-    //lets me do client redirects
-    const router = useRouter()
 
     let period = getPeriod();
     const [dataResponse, setdataResponse] = useState([]);
@@ -39,8 +39,6 @@ export default function Page() {
     function submit(){ // im sure this function is due for a re-write at some point
          // not working for some reason/
         const doc = new jsPDF();
-
-
         let data:string[][] = []
         let dinf=''
         let w = ''
@@ -49,12 +47,6 @@ export default function Page() {
             dict[day] ? w = '[C]' : w ='[  ]'
             data.push([day, w, dinf])
         })
-
-        /*
-        var img = new Image()
-        img.src = '@/assets/TDI-Brooks-World-Logo-dark-large.png'
-        doc.addImage(img, 'png', 10, 78, 12, 15)
-        */ //may want to hook this up at some poin
 
         //make pdf
         autoTable(doc, { 
@@ -95,11 +87,12 @@ export default function Page() {
                         period.map((day) => 
                         <div key={day+'rdiv'}>
                             <div className="reportLine" key={day}> 
-                              <p className='reportTxt' key={day+'date'}>{day}</p> : <p className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</p>
+                              <p className='reportTxt' key={day+'date'}>{day}</p> : 
+                              <p className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</p>
                             </div>
                         </div>) // for now we are jtus gonna try to pull 1 line    
                     }</div>
-                    <p> TOTAL DAYS: {daysworked}</p>
+                <p> TOTAL DAYS: {daysworked}</p>
             </div>
             <div className='tblFoot'>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
