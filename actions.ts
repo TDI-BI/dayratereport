@@ -34,7 +34,7 @@ export const login = async(
     //console.log(link);
     const response = await fetch(link);
     const res = await response.json();
-    const dbAcc= res.resp[0];     
+    const dbAcc= res.resp[0];
     
     try{
         const auth= await bcrypt.compare(formPassword, dbAcc.password)
