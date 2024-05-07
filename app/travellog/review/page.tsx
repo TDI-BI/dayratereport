@@ -37,7 +37,20 @@ export default function Page() {
     let names:string[]=name.split('/')
 
     function submit(){ // im sure this function is due for a re-write at some point
-         // not working for some reason/
+        if(!(document.getElementById('affirm') as HTMLInputElement).checked){
+
+            (document.getElementById('target') as HTMLElement).style.transition = '100ms';
+            (document.getElementById('target') as HTMLElement).style.background = 'rgb(255, 255, 255, 1)';
+            setTimeout(() => {
+                (document.getElementById('target') as HTMLElement).style.transition = '1s';
+                (document.getElementById('target') as HTMLElement).style.background = 'rgb(255, 255, 255, 0)';
+                //console.log('change colors')
+            }, 100)
+            return
+        }
+
+
+
         const doc = new jsPDF();
         let data:string[][] = []
         let dinf=''
@@ -69,13 +82,13 @@ export default function Page() {
         pdf.forEach((line) => { // convert from array to string
             pdfStr+=line + 'zNL' // this is our linebreak character
         })
-        console.log('here')
+        //console.log('here')
         //download and send
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint);
         /*this is so i can easily comment out the download and send aspects of this function*/
-        router.push('../')
+        router.push('review/thanks')
     }
 
     return (
@@ -93,6 +106,13 @@ export default function Page() {
                         </div>) // for now we are jtus gonna try to pull 1 line    
                     }</div>
                 <p> TOTAL DAYS: {daysworked}</p>
+            </div>
+            <div className='affirmation' id='target'>
+                <div className='affirmRow'>
+                    <input type='checkbox' id='affirm'/>
+                    <p>: I AFFIRM THAT ALL THE INFORMATION </p>
+                </div>
+                <p>IN THE ABOVE REPORT IS TRUE AND REAL</p>
             </div>
             <div className='tblFoot'>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>

@@ -141,3 +141,11 @@ body {
 .report{
   text-align: center;
 }
+.affirmation{
+  padding:10px;
+  transition: 300ms;
+  background-color:rgb(255, 255, 255, 0);
+}
+.affirmRow{
+  display:inline-flex; flex-direction:row;
+}
