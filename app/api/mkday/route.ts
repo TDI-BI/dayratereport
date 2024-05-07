@@ -15,7 +15,7 @@ export const GET = async (request:  NextRequest) => {
   const connection = await connectToDb();
   try{ // esentially just making a homemade UPSERT here
 
-    if(!session.isLoggedIn) return{error: "user not logged in "}
+    if(!session.isLoggedIn) return new Response(JSON.stringify({error: "user not logged in "}), {status: 200});
     
     //we are gonna take our input here
     const values:string[] = []; // we probably want some overlap occuring here,
@@ -30,6 +30,8 @@ export const GET = async (request:  NextRequest) => {
     return new Response(JSON.stringify({ resp: results2 }), {status: 200});
 
   }catch (error) { // try this ig, see if we spit an error
-    return new Response(JSON.stringify({ error: error.message }), { status: 500});
+    if(error instanceof Error){
+      return new Response(JSON.stringify({ error: error.message }), { status: 500});
+    }
   }
 };

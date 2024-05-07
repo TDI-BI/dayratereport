@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { getPeriod } from '@/utils/payperiod';
 
 //need to make this async and password protect it at some point
-export default function home(){ // we might want to find a way to protect this ig
+export default function Home(){ // we might want to find a way to protect this ig
 
   //we are just gonna hard set this for right now but eventually maybe we should query to autofill it
   //should just be a list of our facilities or whatever
@@ -35,7 +35,7 @@ export default function home(){ // we might want to find a way to protect this i
     period.forEach((day)=>{
       let cday=day;
       let cship= (document.getElementById(cday+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
-      if(cship=='') cship = document.getElementById(cday+'_ship')!.getAttribute('placeholder');
+      if(cship=='') cship = (document.getElementById(cday+'_ship')!.getAttribute('placeholder') as string);
       if(
         cship=='' && 
         (document.getElementById(cday+'_worked') as HTMLInputElement).checked

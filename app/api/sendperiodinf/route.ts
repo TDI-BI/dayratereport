@@ -13,9 +13,9 @@ export const GET = async (request:  NextRequest) => {
     const pdf = searchParams.get('pdf') || '';
     const extraInfo:string = '';
     const session = await getSession();
-    let names:string[] = session.userId.split('/')
+    let names:string[] = session.userId!.split('/')
 
-    if(session.isLoggedIn==false || pdf=='') return {error: 'issue with request'} ; // get defensive
+    if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
 
     //process string
     let pdl = pdf.split('zNL')  
@@ -44,6 +44,8 @@ export const GET = async (request:  NextRequest) => {
         return Response.json(data);
     } catch (error) {
         //console.log('some error occured')
-        return Response.json({ error });
+        if(error instanceof Error){
+            return  new Response(JSON.stringify({ error: error.message }), {status: 200});
+        }
     }
 }

@@ -23,7 +23,7 @@ export const GET = async (request: NextRequest) => {
   const connection = await connectToDb();
 
   try {
-    if(!session.isLoggedIn) return {error: "not logged in"}
+    if(!session.isLoggedIn) return new Response(JSON.stringify({ error: "not logged in"}), {status: 200});
     const values: string[] = [];
     const query = "SELECT * FROM days WHERE username='"+uid+"' AND "+dparam; //q shuold generate
     //console.log(query)
@@ -40,12 +40,14 @@ export const GET = async (request: NextRequest) => {
       
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
-      // idk why this throws an eror, doesnt stop the program from running though so ill ignore it :)
-      status: 500,
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    if(error instanceof Error){
+      return new Response(JSON.stringify({ error: error.message }), { 
+        // idk why this throws an eror, doesnt stop the program from running though so ill ignore it :)
+        status: 500,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+    }
   }
 }

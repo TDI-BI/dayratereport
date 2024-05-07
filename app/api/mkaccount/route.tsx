@@ -8,7 +8,7 @@ export const GET = async (request: NextRequest) => {
 
   //return new Response(JSON.stringify({ error: 'test' }), { status: 500});
   const session = await getSession();
-  if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
+  //if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
 
   const { searchParams } = request.nextUrl;
   const username = searchParams.get('username') || '';
@@ -24,10 +24,8 @@ export const GET = async (request: NextRequest) => {
     const query = "select * from users where username='"+username+"' or email='"+email+"' or uid='"+fullname+"'";
     //console.log(query);
     const [results] = await connection.execute(query);
-    //console.log(results)
-    //if the password exists, return an error
-    try {if(results[0].password) return new Response(JSON.stringify({error: 'account exists'}), { status: 500});}
-    catch(error){/*continue*/} // if the password doesnt exist, we catch an error and continue
+    if(String(results)) return new Response(JSON.stringify({error: 'account exists'}), { status: 500});
+    //clever solution to check if there are any results and return an error if our account exists
 
     const hashword = await bcrypt.hash(password, 10)
 
@@ -38,6 +36,8 @@ export const GET = async (request: NextRequest) => {
     connection.end();
     return new Response(JSON.stringify({ resp: results2 }), {status: 200});
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { status: 500});
+    if(error instanceof Error){
+      return new Response(JSON.stringify({ error: error.message }), { status: 500});
+    }
   }
 };
