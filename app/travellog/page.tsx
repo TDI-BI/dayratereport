@@ -34,18 +34,23 @@ export default function home(){ // we might want to find a way to protect this i
     //doesnt interfere with run or run time so i think i just ignore
     period.forEach((day)=>{
       let cday=day;
-      let cship=document.getElementById(cday+'_ship')!.value.substring(0, 15);; // trim to prevent overflow
+      let cship= (document.getElementById(cday+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
       if(cship=='') cship = document.getElementById(cday+'_ship')!.getAttribute('placeholder');
-      if(cship=='' && document.getElementById(cday+'_worked')!.checked) cship='unspecified';
-      if(document.getElementById(cday+'_ship')!.getAttribute('placeholder') && !document.getElementById(cday+'_worked')!.checked){
-        cship=''
-      }
+      if(
+        cship=='' && 
+        (document.getElementById(cday+'_worked') as HTMLInputElement).checked
+      ) cship='unspecified';
+      if(
+        document.getElementById(cday+'_ship')!.getAttribute('placeholder') && 
+        !(document.getElementById(cday+'_worked')! as HTMLInputElement).checked
+      ) cship=''
+      
       if(cship=='none')cship='';
 
       //update our table
-      document.getElementById(cday+'_ship')!.value='';
+      (document.getElementById(cday+'_ship') as HTMLInputElement).value='';
       document.getElementById(cday+'_ship')!.setAttribute('placeholder', cship);
-      cship ? document.getElementById(cday+'_worked')!.checked = true : document.getElementById(cday+'_worked')!.checked = false;
+      cship ? (document.getElementById(cday+'_worked') as HTMLInputElement).checked = true : (document.getElementById(cday+'_worked') as HTMLInputElement).checked = false;
       //build our query!
       saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
     })
@@ -76,8 +81,8 @@ export default function home(){ // we might want to find a way to protect this i
 
   var dict: {[id: string] : string} = {};
   dataResponse.forEach((item) => { // should build our dictionary mybe
-    dict[item.day]=item.ship
-    if(item.ship) document.getElementById(item.day+'_worked').checked = true;
+    dict[item['day']]=item['ship']
+    if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
   }) 
 
 

@@ -7,12 +7,12 @@ import { getPeriod } from '@/utils/payperiod';
 import { useRouter } from 'next/navigation'
 
 //lets me do client redirects
-const router = useRouter()
+
 
 //THERE IS SOME KEY ISSUE IN THIS FUNCTION. IT DOES NOT SEEM TO INHIBIT FUNCTIONALITY BUT ITS STILL ANNOYING I GUESS
 
 export default function Page() {
-
+    const router = useRouter()
     let period = getPeriod();
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
@@ -30,9 +30,9 @@ export default function Page() {
     let daysworked=0
     var dict: {[id: string] : string} = {};
     dataResponse.forEach((item) => { // should build our dictionary mybe
-        name=item.uid;
-        if(item.ship) daysworked+=1;
-        dict[item.day]=item.ship
+        name=item['uid'];
+        if(item['ship']) daysworked+=1;
+        dict[item['day']]=item['ship']
     }) ;
     let names:string[]=name.split('/')
 
@@ -69,7 +69,7 @@ export default function Page() {
         pdf.forEach((line) => { // convert from array to string
             pdfStr+=line + 'zNL' // this is our linebreak character
         })
-        
+        console.log('here')
         //download and send
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
         const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;

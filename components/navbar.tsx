@@ -15,8 +15,8 @@ const Navbar = async () => {
         <div className='headBtn'>travel log</div>
         </Link>
 
-        <Link href={session.isLoggedIn? '/profile' : '/login'}>
-        <div className='headBtn'>profile</div>
+        <Link href={session.isLoggedIn? '/info' : '/login'}>
+        <div className='headBtn'>info</div>
         </Link>
     </nav>
     )
