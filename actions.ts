@@ -5,11 +5,13 @@ import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
 import {revalidatePath} from 'next/cache'
 import { GET } from "./app/api/getperiodinf/route"; 
+import { getPort } from '@/utils/getPort';
 const bcrypt = require('bcrypt')    
 
 let username='chris'//'eygwa'
 let password='1234'
 let email='dayratereportdonotrespond@gmail.com'
+let por = getPort()
 
 
 export const getSession = async()=>{
@@ -30,7 +32,7 @@ export const login = async(
     const formPassword = formData.get('password') as string
     
     //get user in db
-    const link = 'http://localhost:3000/api/login?&username='+formUsername;
+    const link = 'http://localhost:'+por+'/api/login?&username='+formUsername;
     //console.log(link);
     const response = await fetch(link);
     const res = await response.json();
@@ -82,7 +84,7 @@ export const mkAccount = async(
         return { error: 'empty fields' }
     }
     const fullname=formFirstname+'/'+formLastname;
-    const link = 'http://localhost:3000/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
+    const link = 'http://localhost:'+por+'/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
     const response = await fetch(link);
     const res = await response.json();
     try{

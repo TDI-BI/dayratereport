@@ -5,6 +5,8 @@ import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { useRouter } from 'next/navigation'
+import { getPort } from '@/utils/getPort';
+let por=getPort();
 
 //lets me do client redirects
 
@@ -17,7 +19,7 @@ export default function Page() {
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = 'http://localhost:3000/api/getperiodinf';
+        const apiUrlEndpoint = 'http://localhost:'+por+'/api/getperiodinf';
         const response = await fetch(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
@@ -85,7 +87,7 @@ export default function Page() {
         //console.log('here')
         //download and send
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
-        const apiUrlEndpoint = 'http://localhost:3000/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
+        const apiUrlEndpoint = 'http://localhost:'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
         const response = fetch(apiUrlEndpoint);
         /*this is so i can easily comment out the download and send aspects of this function*/
         router.push('review/thanks')
