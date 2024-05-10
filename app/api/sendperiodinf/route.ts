@@ -19,11 +19,9 @@ export const GET = async (request:  NextRequest) => {
     let names:string[] = session.userId!.split('/')
 
     if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
-    console.log(pdf)
 
     //assemble our dictionary from a string
     let list = pdf.split(';');
-    console.log(list);
     var dict: {[id: string] : string} = {};
     var daysworked=0;
     list.map((item)=>{
@@ -31,7 +29,6 @@ export const GET = async (request:  NextRequest) => {
         dict[line[0]]=line[1]
         if(line[1]!='') daysworked+=1;
     })
-    console.log(dict)
 
     const period = getPeriod();
 
@@ -40,9 +37,6 @@ export const GET = async (request:  NextRequest) => {
     let data:string[][] = []
     let dinf=''
     let w = ''
-
-    console.log(dict);
-
     let strdict=''
 
     period.map((day) => {   
@@ -51,7 +45,6 @@ export const GET = async (request:  NextRequest) => {
         dict[day] ? w = '[C]' : w ='[  ]'
         data.push([day, w, dinf])
     })
-    console.log(strdict)
 
     //make pdf
     autoTable(doc, { 

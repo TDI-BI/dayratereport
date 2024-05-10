@@ -56,9 +56,6 @@ export default function Page() {
         let data:string[][] = []
         let dinf=''
         let w = ''
-
-        console.log(dict);
-
         let strdict=''
 
         period.map((day) => {   
@@ -67,7 +64,6 @@ export default function Page() {
             dict[day] ? w = '[C]' : w ='[  ]'
             data.push([day, w, dinf])
         })
-        console.log(strdict)
 
         //make pdf
         autoTable(doc, { 
@@ -90,7 +86,6 @@ export default function Page() {
 
         //send
         const apiUrlEndpoint = 'http://'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
-        console.log(apiUrlEndpoint)
         const response = fetch(apiUrlEndpoint);
         router.push('review/thanks')
     }
