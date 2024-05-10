@@ -19,7 +19,7 @@ export default function Page() {
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = 'http://localhost:'+por+'/api/getperiodinf';
+        const apiUrlEndpoint = 'http://'+por+'/api/getperiodinf';
         const response = await fetch(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
@@ -39,6 +39,7 @@ export default function Page() {
     let names:string[]=name.split('/')
 
     function submit(){ // im sure this function is due for a re-write at some point
+
         if(!(document.getElementById('affirm') as HTMLInputElement).checked){
 
             (document.getElementById('target') as HTMLElement).style.transition = '100ms';
@@ -51,17 +52,22 @@ export default function Page() {
             return
         }
 
-
-
         const doc = new jsPDF();
         let data:string[][] = []
         let dinf=''
         let w = ''
+
+        console.log(dict);
+
+        let strdict=''
+
         period.map((day) => {   
+            strdict+=day+':'+dict[day]+';';
             dict[day] ? dinf = dict[day] : dinf = '';
             dict[day] ? w = '[C]' : w ='[  ]'
             data.push([day, w, dinf])
         })
+        console.log(strdict)
 
         //make pdf
         autoTable(doc, { 
@@ -78,18 +84,14 @@ export default function Page() {
             {align: 'center'}
         )
 
-        //process pdf
-        let pdf = doc.output().split('\n'); // gives us an array by line
-        let pdfStr='';
-        pdf.forEach((line) => { // convert from array to string
-            pdfStr+=line + 'zNL' // this is our linebreak character
-        })
-        //console.log('here')
-        //download and send
+        //download
+        //uncomment this later
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
-        const apiUrlEndpoint = 'http://localhost:'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+pdfStr;
+
+        //send
+        const apiUrlEndpoint = 'http://'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
+        console.log(apiUrlEndpoint)
         const response = fetch(apiUrlEndpoint);
-        /*this is so i can easily comment out the download and send aspects of this function*/
         router.push('review/thanks')
     }
 

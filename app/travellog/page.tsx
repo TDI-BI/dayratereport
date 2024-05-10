@@ -26,7 +26,7 @@ export default function Home(){ // we might want to find a way to protect this i
   //this and save are a package deal. these update our database with the currently filled in values!
   useState([]); // we dont really care for a response here so were just running it blind
   const saveDay = async (info:string) =>{ // got this from a tutorial, not really fully sure how this works
-    const apiUrlEndpoint ='http://localhost:'+por+'/api/mkday'+info;
+    const apiUrlEndpoint ='http://'+por+'/api/mkday'+info;
     const response = await fetch(apiUrlEndpoint);
     //const res = await response.json(); //-> at some point our return will be a success message with a popup
     //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
@@ -63,10 +63,11 @@ export default function Home(){ // we might want to find a way to protect this i
   const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = 'http://localhost:'+por+'/api/getperiodinf';
+        const apiUrlEndpoint = 'http://'+por+'/api/getperiodinf';
+        console.log(apiUrlEndpoint)
         const response = await fetch(apiUrlEndpoint);
         const res = await response.json();
-        setdataResponse(res.resp);  
+        setdataResponse(res.resp); 
       }
       getPeriodInf();
 

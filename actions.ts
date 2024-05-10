@@ -32,7 +32,7 @@ export const login = async(
     const formPassword = formData.get('password') as string
     
     //get user in db
-    const link = 'http://localhost:'+por+'/api/login?&username='+formUsername;
+    const link = 'http://'+por+'/api/login?&username='+formUsername;
     //console.log(link);
     const response = await fetch(link);
     const res = await response.json();
@@ -84,7 +84,7 @@ export const mkAccount = async(
         return { error: 'empty fields' }
     }
     const fullname=formFirstname+'/'+formLastname;
-    const link = 'http://localhost:'+por+'/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
+    const link = 'http://'+por+'/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
     const response = await fetch(link);
     const res = await response.json();
     try{
