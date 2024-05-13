@@ -2,6 +2,9 @@
 import { Resend } from 'resend';
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
+import { getPeriod } from '@/utils/payperiod';
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable' // this is so gas actually
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -16,14 +19,66 @@ export const GET = async (request:  NextRequest) => {
     let names:string[] = session.userId!.split('/')
 
     if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
+    console.log(pdf)
+
+    //assemble our dictionary from a string
+    let list = pdf.split(';');
+    console.log(list);
+    var dict: {[id: string] : string} = {};
+    var daysworked=0;
+    list.map((item)=>{
+        let line = item.split(':')
+        dict[line[0]]=line[1]
+        if(line[1]!='') daysworked+=1;
+    })
+    console.log(dict)
+
+    const period = getPeriod();
+
+    //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
+    const doc = new jsPDF();
+    let data:string[][] = []
+    let dinf=''
+    let w = ''
+
+    console.log(dict);
+
+    let strdict=''
+
+    period.map((day) => {   
+        strdict+=day+':'+dict[day]+';';
+        dict[day] ? dinf = dict[day] : dinf = '';
+        dict[day] ? w = '[C]' : w ='[  ]'
+        data.push([day, w, dinf])
+    })
+    console.log(strdict)
+
+    //make pdf
+    autoTable(doc, { 
+        head: [["date","worked?","ship"]], 
+        body: data,
+    })
+    doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
+    doc.setFontSize(12)
+    //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
+    doc.text(
+        'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
+        100,    
+        170, 
+        {align: 'center'}
+    )
+    let pds = doc.output()
+    //ABOVE THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION
 
     //process string
+    /*legacy from old solution
     let pdl = pdf.split('zNL')  
     let pds=''
     pdl.forEach((item)=>{ // THIS WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!
         pds+=item+' \n '
     })
-    
+    */
+   
     try {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably

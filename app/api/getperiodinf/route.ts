@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { getPeriod } from '@/utils/payperiod';
-
 import { connectToDb } from '@/utils/connectToDb'
 //this works on pulling individual days!
 
