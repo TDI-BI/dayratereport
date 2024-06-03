@@ -3,6 +3,14 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { getPort } from '@/utils/getPort';
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell
+} from "@nextui-org/react"
 let por=getPort();
 
 //need to make this async and password protect it at some point
@@ -93,49 +101,43 @@ export default function Home(){ // we might want to find a way to protect this i
   return (
     <main className="flex min-h-screen flex-col items-center">  
 
+        <datalist id='suggestion'>
+            {slist.map((item) => <option key={item} value={item}>{item}</option>)}
+        </datalist>
 
-    <datalist id='suggestion'>
-      {slist.map((item) => <option key={item} value={item}>{item}</option>)}
-    </datalist>
+        <Table>
+            <TableHeader>
+                <TableColumn className='tblHeadItm'>
+                    DATE
+                </TableColumn >
+                <TableColumn className='tblHeadItm'>
+                    WORKED?
+                </TableColumn>
+                <TableColumn className='tblHeadItm'>
+                    VESSEL
+                </TableColumn>
+            </TableHeader>
+            <TableBody>
+                {
+                period.map((day:string)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
+                    <TableRow key={day}id={day+' item'}>
+                        <TableCell className="tblBodyItm">
+                            {day}
+                        </TableCell>
+                        <TableCell className="tblBodyItm">
+                            <input type='checkbox' id={day+'_worked'} />
+                        </TableCell>
+                        <TableCell className="tblBodyItm">
+                            <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
+                        </TableCell>
+                    </TableRow>  
+                )}
+            </TableBody>
+        </Table>
 
-
-      <div className='headWrap'>{/*for some reason i need to wrap this or the whole page is inline-flex row*/}
-        <div className='tblHead'>
-          <div className='tblHeadItm'>
-            <strong>Date</strong>
-          </div>
-          {/* DELETE THIS AS SOON AS I GET PERMISSION TO DO SO */}
-          <div className='tblHeadItm'>
-            <strong>worked?</strong>
-          </div>
-          <div className='tblHeadItm'>
-            <strong>Vessels</strong>  
-          </div>
-        </div>
-      </div>
-
-      { //this generates our payperiod table 
-        period.map((day:string)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
-          <div key={day}className='tblBody' id={day+' item'}>
-            <div className='tblBodyItm'>
-              {
-                //day.toString()
-                day
-              }
-            </div>
-            {/* DELETE THIS AS SOON AS I GET PE RMISSION TO DO SO */}
-            <div className='tblBodyItm'>
-              <input type='checkbox' id={day+'_worked'} />
-            </div>
-            <div className='tblBodyItm'>
-              <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
-            </div>
-          </div>  
-        )
-      }
         <div className='tblFoot'>
-          <button className='tblFootBtn' onClick={save}>save</button> {/*lets do a little pop-up that says saved when we click this */}
-          <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
+            <button className='tblFootBtn' onClick={save}>save</button> {/*lets do a little pop-up that says saved when we click this */}
+            <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
         </div>
     </main>
   );

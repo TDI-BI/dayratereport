@@ -3,149 +3,159 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+    --foreground-rgb: 0, 0, 0;
+    --background-start-rgb: 214, 219, 220;
+    --background-end-rgb: 255, 255, 255;
+
+    /*this is for fading in and out of stuff*/
+    --forground-rgba: 0, 0, 0, 1;
+    --forground-rgba-fade: 0, 0, 0, 0;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+    :root {
+        --foreground-rgb: 255, 255, 255;
+        --background-start-rgb: 0, 0, 0;
+        --background-end-rgb: 0, 0, 0;
+
+        /*this is for fading in and out of stuff*/
+        --forground-rgba: 255, 255, 255, 1;
+        --forground-rgba-fade: 255, 255, 255, 0;
+    }
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-    overflow-y:hidden; /* bad solution but i m doing this for the scrollbar which shouldnt pop up on desktop*/
+    color: rgb(var(--foreground-rgb));
+    background: linear-gradient(
+        to bottom,
+        transparent,
+        rgb(var(--background-end-rgb))
+        )
+        rgb(var(--background-start-rgb));
+        overflow-y:hidden; /* bad solution but i m doing this for the scrollbar which shouldnt pop up on desktop*/
 }
 .head{
-  width:100%;
-  display:inline-flex; flex-direction:row;
-  line-height:50px;
-  height:50px;
+    width:100%;
+    display:inline-flex; flex-direction:row;
+    line-height:50px;
+    height:50px;
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }
 
 .headBtn{
-  text-align: center;
-  height:100%;
-  width:calc(100vw / 3); /* kind of silly, ill figure it out later */
-  background-color:rgb(129, 133, 137, 0);
-  transition:300ms;
+    text-align: center;
+    height:100%;
+    width:calc(100vw / 3); /* kind of silly, ill figure it out later */
+    background-color:rgb(129, 133, 137, 0);
+    transition:300ms;
 }
 .tblHead{
-  display:inline-flex; 
-  flex-direction:row;
+    display:inline-flex; 
+    flex-direction:row;
 }
 .tblHeadItm{
-  width: 200px;
-  text-align: center;
-  outline-color:white;
-  outline-width:2px;
-  outline-style: inset;
+    width: 200px;
+    text-align: center;
+    outline-color:white;
+    outline-width:2px;
+    outline-style: inset;
 }
 .tblBody{
-  background-color:rgb(129, 133, 137, 0);
-  display:inline-flex; flex-direction:row;
-  transition:300ms;
+    background-color:rgb(129, 133, 137, 0);
+    display:inline-flex; flex-direction:row;
+    transition:300ms;
 }
 .tblBodyItm{
-  line-height:30px;
-  height:50px;
-  padding:10px;
-  width: 200px;
-  outline-color:white;
-  outline-width:2px;
-  outline-style: inset;
+    line-height:30px;
+    height:50px;
+    padding:10px;
+    width: 200px;
+    outline-color:white;
+    outline-width:2px;
+    outline-style: inset;
 }
 .stuff{
-  display:block;
-  flex-direction:column;  
+    display:block;
+    flex-direction:column;  
 }
 .shipInput{
-  padding-left:7px;
-  padding-right:7px;
-  height:30px;
-  width:180px;
-  background: transparent;
-  border: none;
-  transition:300ms;
-  border-bottom:1px solid;
-  border-color:rgb(255, 255, 255, 0);
+    padding-left:7px;
+    padding-right:7px;
+    height:30px;
+    width:180px;
+    background: transparent;
+    border: none;
+    transition:300ms;
+    border-bottom:1px solid;
+    border-color:rgb(var(--forground-rgba-fade));
 }
 .shipInput:hover{
-  border-color:rgb(255, 255, 255, 1);
+    border-color:rgb(var(--forground-rgba));
 }
 .shipInput:focus{
-  outline:none;
-  border-color:rgb(255, 255, 255, 1);
+    outline:none;
+    border-color:rgb(var(--forground-rgba));
 }
 .tblFoot{
-  display:inline-flex; flex-direction:row;
+    display:inline-flex; flex-direction:row;
 }
 .tblFootBtn{
-  background-color:rgb(129, 133, 137, 0);
-  outline-color:white;
-  width:200px;
-  padding:10px;
-  text-align:center;
-  transition:300ms;
+    background-color:rgb(129, 133, 137, 0);
+    outline-color:white;
+    width:200px;
+    padding:10px;
+    text-align:center;
+    transition:300ms;
 }
 
 .tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .loginBtn:hover{
-  background-color:rgb(129, 133, 137, .5);
+    background-color:rgb(129, 133, 137, .5);
 }
 
 .loginfeild{
-  height:50px;
-  line-height:50px;
+    height:50px;
+    line-height:50px;
 }
 
+.reporthead{
+    display:none;
+}
 .reportLine{
-  display:inline-flex; flex-direction:row;
-  height:30px;
-  line-height: 30px;
-  transition:300ms;
-  border-bottom:1px solid;
-  border-color:rgb(255, 255, 255, 0);
+    height:30px;
+    line-height: 30px;
+    transition:300ms;
+    border-bottom:1px solid;
+    border-color:rgb(var(--forground-rgba-fade));
 }
 
 .reportLine:hover{
-  border-color:rgb(255, 255, 255, 1);
+    border-color:rgb(var(--forground-rgba));
 }
 
 .reportTxt{
-  width:200px;
-  text-align: center;
+    width:200px;
+    text-align: center;
 }
 .loginBtn{
-  background-color:rgb(129, 133, 137, 0);
-  width:280px;
-  padding:10px;
-  text-align:center;
-  transition:300ms;
+    background-color:rgb(129, 133, 137, 0);
+    width:280px;
+    padding:10px;
+    text-align:center;
+    transition:300ms;
 }
 .report{
-  text-align: center;
+    text-align: center;
 }
 .affirmation{
-  padding:10px;
-  transition: 300ms;
-  background-color:rgb(255, 255, 255, 0);
+    padding:10px;
+    transition: 300ms;
+    background-color:rgb(255, 255, 255, 0);
 }
 .affirmRow{
-  display:inline-flex; flex-direction:row;
+    display:inline-flex; flex-direction:row;
 }

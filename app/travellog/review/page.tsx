@@ -6,6 +6,14 @@ import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { useRouter } from 'next/navigation'
 import { getPort } from '@/utils/getPort';
+import {
+    Table,
+    TableHeader,
+    TableColumn,
+    TableBody,
+    TableRow,
+    TableCell
+} from "@nextui-org/react"
 let por=getPort();
 
 //lets me do client redirects
@@ -95,15 +103,25 @@ export default function Page() {
             <div className='report'>
                 <p><strong>COMFIRM REPORT</strong></p>
                 <p> PERIOD REPORT FOR: {names[0] + ' ' + names[1]}</p>
-                 <div className='table'>{
-                        period.map((day) => 
-                        <div key={day+'rdiv'}>
-                            <div className="reportLine" key={day}> 
-                              <p className='reportTxt' key={day+'date'}>{day}</p> : 
-                              <p className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</p>
-                            </div>
-                        </div>) // for now we are jtus gonna try to pull 1 line    
-                    }</div>
+                
+                <Table>
+                    <TableHeader>
+                        <TableColumn>
+                            day
+                        </TableColumn>
+                        <TableColumn>
+                            boat
+                        </TableColumn>
+                    </TableHeader>
+                    <TableBody>{
+                    period.map((day) => 
+                        <TableRow key={day} className='reportLine'> 
+                            <TableCell className='reportTxt' key={day+'date'}>{day}</TableCell> 
+                            <TableCell className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</TableCell>
+                        </TableRow>) // for now we are jtus gonna try to pull 1 line    
+                    }</TableBody>
+                </Table>
+            
                 <p> TOTAL DAYS: {daysworked}</p>
             </div>
             <div className='affirmation' id='target'>
