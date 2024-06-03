@@ -99,7 +99,7 @@ export default function Home(){ // we might want to find a way to protect this i
 
   //end travellog
   return (
-    <main className="flex min-h-screen flex-col items-center">  
+    <main className="flex min-h-screen flex-col items-center px-10">  
 
         <datalist id='suggestion'>
             {slist.map((item) => <option key={item} value={item}>{item}</option>)}
