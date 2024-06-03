@@ -30,9 +30,10 @@ body {
         to bottom,
         transparent,
         rgb(var(--background-end-rgb))
-        )
-        rgb(var(--background-start-rgb));
-        overflow-y:hidden; /* bad solution but i m doing this for the scrollbar which shouldnt pop up on desktop*/
+    )
+    rgb(var(--background-start-rgb));
+    overflow-y:hidden; /* bad solution but i m doing this for the scrollbar which shouldnt pop up on desktop*/
+    overflow-x:hidden;
 }
 .head{
     width:100%;
