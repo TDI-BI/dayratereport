@@ -46,7 +46,7 @@ export default function Page() {
     }) ;
     let names:string[]=name.split('/')
 
-    function submit(){ // im sure this function is due for a re-write at some point
+    async function submit(){ // im sure this function is due for a re-write at some point
 
         if(!(document.getElementById('affirm') as HTMLInputElement).checked){
 
@@ -60,7 +60,6 @@ export default function Page() {
             return
         }
 
-        const doc = new jsPDF();
         let data:string[][] = []
         let dinf=''
         let w = ''
@@ -73,6 +72,9 @@ export default function Page() {
             data.push([day, w, dinf])
         })
 
+        const apiUrlEndpoint = 'http://'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
+        fetch(apiUrlEndpoint);
+        const doc = new jsPDF();
         //make pdf
         autoTable(doc, { 
             head: [["date","worked?","ship"]], 
@@ -87,14 +89,14 @@ export default function Page() {
             170, 
             {align: 'center'}
         )
-
+        
         //download
         //uncomment this later
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
 
         //send
-        const apiUrlEndpoint = 'http://'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
-        const response = fetch(apiUrlEndpoint);
+        
+        
         router.push('review/thanks')
     }
 
