@@ -27,10 +27,8 @@ export const GET = async (request: NextRequest) => {
     if(String(results)) return new Response(JSON.stringify({error: 'account exists'}), { status: 500});
     //clever solution to check if there are any results and return an error if our account exists
 
-    const hashword = await bcrypt.hash(password, 10)
-
     //create our account
-    const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+hashword+"','"+username+"','"+email+"')"
+    const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+password+"','"+username+"','"+email+"')"
     //console.log(query2)
     const [results2] = await connection.execute(query2);
     connection.end();
