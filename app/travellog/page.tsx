@@ -107,11 +107,11 @@ export default function Home(){ // we might want to find a way to protect this i
 
         <Table>
             <TableHeader>
+                <TableColumn className='tblHeadItmCheck'>
+                    <input type='checkbox' id={'all'} />
+                </TableColumn>
                 <TableColumn className='tblHeadItm'>
                     DATE
-                </TableColumn >
-                <TableColumn className='tblHeadItm'>
-                    WORKED?
                 </TableColumn>
                 <TableColumn className='tblHeadItm'>
                     VESSEL
@@ -120,12 +120,12 @@ export default function Home(){ // we might want to find a way to protect this i
             <TableBody>
                 {
                 period.map((day:string)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
-                    <TableRow key={day}id={day+' item'}>
-                        <TableCell className="tblBodyItm">
-                            {day}
+                    <TableRow key={day} id={day+' item'}>
+                        <TableCell className="tblBodyItmCheck">
+                            <input type='checkbox' id={day+'_worked'}/>
                         </TableCell>
                         <TableCell className="tblBodyItm">
-                            <input type='checkbox' id={day+'_worked'} />
+                            {day}
                         </TableCell>
                         <TableCell className="tblBodyItm">
                             <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>

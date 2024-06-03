@@ -58,19 +58,22 @@ body {
     display:inline-flex; 
     flex-direction:row;
 }
-.tblHeadItm{
+.tblHeadItm, .tblHeadItmCheck{
     width: 200px;
     text-align: center;
     outline-color:white;
     outline-width:2px;
     outline-style: inset;
 }
+.tblHeadItmCheck{
+    width:50px !important;
+}
 .tblBody{
     background-color:rgb(129, 133, 137, 0);
     display:inline-flex; flex-direction:row;
     transition:300ms;
 }
-.tblBodyItm{
+.tblBodyItm, .tblBodyItmCheck{
     line-height:30px;
     height:50px;
     padding:10px;
@@ -78,6 +81,10 @@ body {
     outline-color:white;
     outline-width:2px;
     outline-style: inset;
+}
+.tblBodyItmCheck{
+    vertical-align: middle;
+    width:50px !important;
 }
 .stuff{
     display:block;

@@ -74,6 +74,8 @@ export const mkAccount = async(
     const formPassword = formData.get('password1') as string
     const formPasswordRepeat = formData.get('password2') as string
     if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
+
+    const hashword = await bcrypt.hash(formPassword, 10)
     if(
         formFirstname=='' || 
         formLastname=='' || 
@@ -84,7 +86,7 @@ export const mkAccount = async(
         return { error: 'empty fields' }
     }
     const fullname=formFirstname+'/'+formLastname;
-    const link = 'http://'+por+'/api/mkaccount?username='+formUsername+'&password='+formPassword+'&email='+formEmail+'&fullname='+fullname;
+    const link = 'http://'+por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname;
     const response = await fetch(link);
     const res = await response.json();
     try{
