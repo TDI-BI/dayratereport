@@ -97,13 +97,36 @@ export const mkAccount = async(
     redirect("../../")// -> uncomment this out when im done toying with the form
 }
 
-//todo fix this later
-export const changeUsername = async (formData:FormData)=>{
-    const session = await getSession();
-    const newUsername = formData.get('username') as string;
-    username=newUsername; // change this with a db query at some point
-    
-    session.username = username;
-    await session.save();
-    revalidatePath('/profile')
+export const recover = async (
+    prevState:{error:undefined | string}, 
+    formData:FormData
+)=>{
+    //send account recovery email
+    const formEmail = formData.get('email') as string;
+    //send email
+}
+
+export const resetPassword = async(
+    prevState:{error:undefined | string}, 
+    formData:FormData
+)=>{
+    const oldhash = formData.get('acc') as string
+    const formPassword = formData.get('password1') as string
+    const formPasswordRepeat = formData.get('password2') as string
+
+    if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
+
+    const hashword = await bcrypt.hash(formPassword, 10)
+    console.log(hashword, oldhash);
+
+
+    const link = 'http://'+por+'/api/resetpassword?password='+hashword+'&oldhash='+oldhash;
+    const response = await fetch(link);
+    const res = await response.json();
+    try{
+        if(res.error) return res // catch error in account creation
+    }
+    catch(error){
+    }
+    //redirect("../../")// -> uncomment this out when im done toying with the form
 }

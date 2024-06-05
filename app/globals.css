@@ -166,3 +166,12 @@ body {
 .affirmRow{
     display:inline-flex; flex-direction:row;
 }
+
+.infoText{
+    width:400px;
+    text-align: center;
+}
+
+.hidethis{
+    display:none;
+}
