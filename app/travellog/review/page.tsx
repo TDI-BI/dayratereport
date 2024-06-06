@@ -27,7 +27,7 @@ export default function Page() {
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = 'http://'+por+'/api/getperiodinf';
+        const apiUrlEndpoint = por+'/api/getperiodinf';
         const response = await fetch(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
@@ -72,7 +72,7 @@ export default function Page() {
             data.push([day, w, dinf])
         })
 
-        const apiUrlEndpoint = 'http://'+por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
+        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
         fetch(apiUrlEndpoint);
         const doc = new jsPDF();
         //make pdf
