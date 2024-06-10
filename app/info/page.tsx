@@ -18,14 +18,7 @@ const profile = async () => {
                 </div>
                 <p className='infoText'> 
                     <br></br>
-                    There is currently no recovery system - do not lose your password.
-                    <br></br>
-                    <br></br>
-                    Also try not to spam the submit feature. 
-                    <br></br>
-                    <br></br>
-                    if you downloaded a pdf or were redirected to a thanks page 
-                    your report was successfully submitted 
+                    try not to spam the submit feature please. 
                     <br></br>
                     <br></br>
                     with urgent issues email dayratereportdonotrespond@gmail.com with the subject URGENT: 

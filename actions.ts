@@ -6,6 +6,7 @@ import {redirect} from 'next/navigation'
 import {revalidatePath} from 'next/cache'
 import { GET } from "./app/api/getperiodinf/route"; 
 import { getPort } from '@/utils/getPort';
+import { fetchBoth } from "./utils/fetchBoth";
 const bcrypt = require('bcrypt')    
 
 let username='chris'//'eygwa'
@@ -34,7 +35,7 @@ export const login = async(
     //get user in db
     const link = por+'/api/login?&username='+formUsername;
     //console.log(link);
-    const response = await fetch(link);
+    const response = await fetchBoth(link);
     const res = await response.json();
     const dbAcc= res.resp[0];
     
@@ -87,7 +88,7 @@ export const mkAccount = async(
     }
     const fullname=formFirstname+'/'+formLastname;
     const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname;
-    const response = await fetch(link);
+    const response = await fetchBoth(link);
     const res = await response.json();
     try{
         if(res.error) return res // catch error in account creation
@@ -103,7 +104,18 @@ export const recover = async (
 )=>{
     //send account recovery email
     const formEmail = formData.get('email') as string;
-    //send email
+    if(!formEmail) return {error: 'no email'}
+
+    const link = por+'/api/recover?&email='+formEmail;
+    //console.log(link);
+    const response = await fetchBoth(link);
+    const res = await response.json();
+    const dbAcc= res.resp[0];
+    if(!dbAcc) return {error: 'no account'}
+
+    //doesnt look like i need to fetchBoth on this
+    fetch('http://geodatapub.com/shiptracker/freeloademail.php?to='+formEmail+'&acc='+dbAcc.password);
+    redirect("../../")
 }
 
 export const resetPassword = async(
@@ -121,12 +133,12 @@ export const resetPassword = async(
 
 
     const link = por+'/api/resetpassword?password='+hashword+'&oldhash='+oldhash;
-    const response = await fetch(link);
+    const response = await fetchBoth(link);
     const res = await response.json();
     try{
         if(res.error) return res // catch error in account creation
     }
     catch(error){
     }
-    //redirect("../../")// -> uncomment this out when im done toying with the form
+    redirect("../../")// -> uncomment this out when im done toying with the form
 }

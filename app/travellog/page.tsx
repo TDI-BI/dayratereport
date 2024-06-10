@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState, useEffect } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { getPort } from '@/utils/getPort';
+import { fetchBoth } from '@/utils/fetchBoth';
 import {
     Table,
     TableHeader,
@@ -35,7 +36,7 @@ export default function Home(){ // we might want to find a way to protect this i
   useState([]); // we dont really care for a response here so were just running it blind
   const saveDay = async (info:string) =>{ // got this from a tutorial, not really fully sure how this works
     const apiUrlEndpoint = por+'/api/mkday'+info;
-    const response = await fetch(apiUrlEndpoint);
+    const response = await fetchBoth(apiUrlEndpoint);
     //const res = await response.json(); //-> at some point our return will be a success message with a popup
     //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
   }
@@ -72,8 +73,9 @@ export default function Home(){ // we might want to find a way to protect this i
     useEffect(() => {
       async function getPeriodInf(){
         const apiUrlEndpoint = por+'/api/getperiodinf';
-        console.log(apiUrlEndpoint)
-        const response = await fetch(apiUrlEndpoint);
+        //console.log(apiUrlEndpoint)
+        //maybe i wrap this in a function called getboth
+        const response = await fetchBoth(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp); 
       }

@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { useRouter } from 'next/navigation'
 import { getPort } from '@/utils/getPort';
+import { fetchBoth } from "@/utils/fetchBoth";
 import {
     Table,
     TableHeader,
@@ -28,7 +29,7 @@ export default function Page() {
     useEffect(() => {
       async function getPeriodInf(){
         const apiUrlEndpoint = por+'/api/getperiodinf';
-        const response = await fetch(apiUrlEndpoint);
+        const response = await fetchBoth(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
       }
@@ -73,7 +74,7 @@ export default function Page() {
         })
 
         const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
-        fetch(apiUrlEndpoint);
+        fetchBoth(apiUrlEndpoint);
         const doc = new jsPDF();
         //make pdf
         autoTable(doc, { 

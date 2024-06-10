@@ -8,6 +8,7 @@ import autoTable from 'jspdf-autotable' // this is so gas actually
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+console.log(process.env.RESEND_API_KEY);
 
 export const GET = async (request:  NextRequest) => {
     //important setup
@@ -88,6 +89,8 @@ export const GET = async (request:  NextRequest) => {
                 }
               ]
         });
+
+				console.log(data)
         //console.log('no error, sent')
         return Response.json(data);
     } catch (error) {
