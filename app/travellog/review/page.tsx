@@ -18,10 +18,11 @@ import {
 
 //page globals
 const por=getPort();
-const router = useRouter()
 const period = getPeriod();
 
 export default function Page() {
+    //needs to be called from within a function (ugh)
+    const router = useRouter();
 
     const submit = async () =>{ // im sure this function is due for a re-write at some point
         //makes logic cleaner
