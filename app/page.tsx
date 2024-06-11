@@ -1,6 +1,6 @@
 import {getSession }from '@/actions'
 import { redirect } from 'next/navigation'
-//THIS PAGE JUST EXISTS TO REDIRECT US TO A DIFFERENT PAGE!
+//THIS PAGE JUST EXISTS TO REDIRECT US TO A DIFFERENT PAGE
 const home = async () =>{
     const session = await getSession();
     

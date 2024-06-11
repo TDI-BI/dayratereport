@@ -3,27 +3,25 @@ import {sessionOptions, sessionData, defaultSession} from "@/lib"
 import {getIronSession} from 'iron-session'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
-import {revalidatePath} from 'next/cache'
-import { GET } from "./app/api/getperiodinf/route"; 
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from "./utils/fetchBoth";
 const bcrypt = require('bcrypt')    
 
-let username='chris'//'eygwa'
-let password='1234'
-let email='dayratereportdonotrespond@gmail.com'
-let por = getPort()
+const por = getPort()
 
 
 export const getSession = async()=>{
     const session = await getIronSession<sessionData>(cookies(), sessionOptions)
     return session;
-
-    if(!session.isLoggedIn){
-        session.isLoggedIn=defaultSession.isLoggedIn; // defualts us to not being logged in
-    }
-
 }
+
+
+//client friendly, doesnt require the passing of illegal data types
+export const clientGetSession = async () => {
+    const session = await getIronSession<sessionData>(cookies(), sessionOptions)
+    return session.isLoggedIn ? true : false;
+}
+
 export const login = async(
     prevState:{error:undefined | string}, 
     formData:FormData

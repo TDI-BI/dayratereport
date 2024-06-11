@@ -4,7 +4,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
-import { useRouter } from 'next/navigation'
+import { redirect, useRouter } from 'next/navigation'
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from "@/utils/fetchBoth";
 import {
@@ -15,16 +15,66 @@ import {
     TableRow,
     TableCell
 } from "@nextui-org/react"
-let por=getPort();
 
-//lets me do client redirects
-
-
-//THERE IS SOME KEY ISSUE IN THIS FUNCTION. IT DOES NOT SEEM TO INHIBIT FUNCTIONALITY BUT ITS STILL ANNOYING I GUESS
+//page globals
+const por=getPort();
+const router = useRouter()
+const period = getPeriod();
 
 export default function Page() {
-    const router = useRouter()
-    let period = getPeriod();
+
+    const submit = async () =>{ // im sure this function is due for a re-write at some point
+        //makes logic cleaner
+        const affirm = document.getElementById('affirm') as HTMLInputElement
+        const target = document.getElementById('target') as HTMLElement
+
+        //flashes our confirm if its not clicked
+        if(!affirm.checked){
+            target.style.transition = '100ms';
+            target.style.background = 'rgb(255, 255, 255, 1)';
+            setTimeout(() => {
+                target.style.transition = '1s';
+                target.style.background = 'rgb(255, 255, 255, 0)';
+            }, 100)
+            return
+        }
+
+        let data:string[][] = [] // for pdf
+        let dinf=''
+        let w = ''
+        let strdict='' // for query
+        //build data
+        period.map((day) => {   
+            strdict+=day+':'+dict[day]+';';
+            dict[day] ? dinf = dict[day] : dinf = '';
+            dict[day] ? w = '[C]' : w ='[  ]'
+            data.push([day, w, dinf])
+        })
+
+        //send email
+        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
+        fetchBoth(apiUrlEndpoint);
+
+        //generate pdf
+        const doc = new jsPDF();
+        autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
+            head: [["date","worked?","ship"]], 
+            body: data,
+        })
+        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
+        doc.setFontSize(12)
+        doc.text(
+            'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
+            100,    
+            170, 
+            {align: 'center'}
+        )
+
+        //download pdf
+        doc.save("report_for_" + name + "_" + period[0] +".pdf");
+        router.push('review/thanks')
+    }
+    
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
@@ -36,70 +86,21 @@ export default function Page() {
       getPeriodInf();
     }, []);
    
-    // really gotta think of a better way to do this tbh
+    // this is all just for building our page
     let name=''
     let daysworked=0
     var dict: {[id: string] : string} = {};
-    dataResponse.forEach((item) => { // should build our dictionary mybe
-        name=item['uid'];
-        if(item['ship']) daysworked+=1;
-        dict[item['day']]=item['ship']
-    }) ;
-    let names:string[]=name.split('/')
-
-    async function submit(){ // im sure this function is due for a re-write at some point
-
-        if(!(document.getElementById('affirm') as HTMLInputElement).checked){
-
-            (document.getElementById('target') as HTMLElement).style.transition = '100ms';
-            (document.getElementById('target') as HTMLElement).style.background = 'rgb(255, 255, 255, 1)';
-            setTimeout(() => {
-                (document.getElementById('target') as HTMLElement).style.transition = '1s';
-                (document.getElementById('target') as HTMLElement).style.background = 'rgb(255, 255, 255, 0)';
-                //console.log('change colors')
-            }, 100)
-            return
-        }
-
-        let data:string[][] = []
-        let dinf=''
-        let w = ''
-        let strdict=''
-
-        period.map((day) => {   
-            strdict+=day+':'+dict[day]+';';
-            dict[day] ? dinf = dict[day] : dinf = '';
-            dict[day] ? w = '[C]' : w ='[  ]'
-            data.push([day, w, dinf])
-        })
-
-        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
-        fetchBoth(apiUrlEndpoint);
-        const doc = new jsPDF();
-        //make pdf
-        autoTable(doc, { 
-            head: [["date","worked?","ship"]], 
-            body: data,
-        })
-        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
-        doc.setFontSize(12)
-        //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
-        doc.text(
-            'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
-            100,    
-            170, 
-            {align: 'center'}
-        )
-        
-        //download
-        //uncomment this later
-        doc.save("report_for_" + name + "_" + period[0] +".pdf");
-
-        //send
-        
-        
-        router.push('review/thanks')
+    try{
+        dataResponse.forEach((item) => {
+            name=item['uid'];
+            if(item['ship']) daysworked+=1;
+            dict[item['day']]=item['ship']
+        }) ;
     }
+    catch{ // dataresponse will be null in the case of our user not being logged in
+        redirect('../../')
+    }
+    let names:string[]=name.split('/')
 
     return (
         <main className="flex min-h-screen flex-col items-center">

@@ -12,14 +12,13 @@ import {
     TableRow,
     TableCell
 } from "@nextui-org/react"
-let por=getPort();
+import { redirect } from "next/navigation";
 
-//need to make this async and password protect it at some point
-export default function Home(){ // we might want to find a way to protect this ig
-
-  //we are just gonna hard set this for right now but eventually maybe we should query to autofill it
-  //should just be a list of our facilities or whatever
-  const slist:string[] = [
+//page globals
+const por=getPort();
+const period= getPeriod();
+let runcount=1;
+const slist:string[] = [
     'brooks',
     'emma',
     'marcelle',
@@ -28,119 +27,122 @@ export default function Home(){ // we might want to find a way to protect this i
     'nautilus',
     'barnacle',
     'unspecified',
-  ]
-
-  let period= getPeriod();
-
-  //this and save are a package deal. these update our database with the currently filled in values!
-  useState([]); // we dont really care for a response here so were just running it blind
-  const saveDay = async (info:string) =>{ // got this from a tutorial, not really fully sure how this works
-    const apiUrlEndpoint = por+'/api/mkday'+info;
-    const response = await fetchBoth(apiUrlEndpoint);
-    //const res = await response.json(); //-> at some point our return will be a success message with a popup
-    //setdataResponse(res.resp); // but for now we arent returning anything but an error so we just ignore our output
-  }
-  function save(){ 
-    // idk if theres a painless way to make the errors here go away. 
-    //doesnt interfere with run or run time so i think i just ignore
-    period.forEach((day)=>{
-      let cday=day;
-      let cship= (document.getElementById(cday+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
-      if(cship=='') cship = (document.getElementById(cday+'_ship')!.getAttribute('placeholder') as string);
-      if(
-        cship=='' && 
-        (document.getElementById(cday+'_worked') as HTMLInputElement).checked
-      ) cship='unspecified';
-      if(
-        document.getElementById(cday+'_ship')!.getAttribute('placeholder') && 
-        !(document.getElementById(cday+'_worked')! as HTMLInputElement).checked
-      ) cship=''
-      
-      if(cship=='none')cship='';
-
-      //update our table
-      (document.getElementById(cday+'_ship') as HTMLInputElement).value='';
-      document.getElementById(cday+'_ship')!.setAttribute('placeholder', cship);
-      cship ? (document.getElementById(cday+'_worked') as HTMLInputElement).checked = true : (document.getElementById(cday+'_worked') as HTMLInputElement).checked = false;
-      //build our query!
-      saveDay('?uid='+'none'+'&day='+cday+'&ship='+cship);
-    })
-  }
-  //end package deal
-
-  //construct travellog
-  const [dataResponse, setdataResponse] = useState([]);
-    useEffect(() => {
-      async function getPeriodInf(){
-        const apiUrlEndpoint = por+'/api/getperiodinf';
-        //console.log(apiUrlEndpoint)
-        //maybe i wrap this in a function called getboth
-        const response = await fetchBoth(apiUrlEndpoint);
-        const res = await response.json();
-        setdataResponse(res.resp); 
-      }
-      getPeriodInf();
-
-      //not a part of the query, but just needs to be wrapped in a useeffect
-      document.addEventListener('keydown', e => { // catch ctrls
-        if (e.ctrlKey && e.key === 's') {
-          // Prevent the Save dialog to open
-          e.preventDefault();
-          save();
-        }
-      });
-    }, []);
-    //now lets make our dict that is day -> ship
-
-  var dict: {[id: string] : string} = {};
-  dataResponse.forEach((item) => { // should build our dictionary mybe
-    dict[item['day']]=item['ship']
-    if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
-  }) 
+] // may change this to query a database at some point, for now its just hard set
 
 
-  //end travellog
-  return (
-    <main className="flex min-h-screen flex-col items-center px-1">  
+export default function Home(){
+    //function for saving our ship
+    const save = async () =>{ 
+        let strdict=''
+        period.map((day) => { 
+            //setting up constants makes the logic look way cleaner
+            const inp= (document.getElementById(day+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
+            const plc= (document.getElementById(day+'_ship')!.getAttribute('placeholder') as string)
+            const box= (document.getElementById(day+'_worked') as HTMLInputElement).checked
+           
+            //read our displayed table
+            let cship='';
+            if(inp!='') cship=inp;
+            else if (plc!='' && box) cship=plc;
+            else if (box) cship='unspecified'
+            
+            //prepare our output
+            strdict+=day+':'+cship+';';
 
-        <datalist id='suggestion'>
-            {slist.map((item) => <option key={item} value={item}>{item}</option>)}
-        </datalist>
+            //update our displayed table
+            (document.getElementById(day+'_ship') as HTMLInputElement).value='';
+            document.getElementById(day+'_ship')!.setAttribute('placeholder', cship);
+            cship ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
+            
+        })
+        const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
+        await fetchBoth(apiUrlEndpoint);
+    }
 
-        <Table>
-            <TableHeader>
-                <TableColumn className='tblHeadItmCheck'>
-                    <input type='checkbox' id={'all'} />
-                </TableColumn>
-                <TableColumn className='tblHeadItm'>
-                    DATE
-                </TableColumn>
-                <TableColumn className='tblHeadItm'>
-                    VESSEL
-                </TableColumn>
-            </TableHeader>
-            <TableBody>
-                {
-                period.map((day:string)=> // we get an error here because this list lacks keys but i dont think it really matters tbg lol
-                    <TableRow key={day} id={day+' item'}>
-                        <TableCell className="tblBodyItmCheck">
-                            <input type='checkbox' id={day+'_worked'}/>
-                        </TableCell>
-                        <TableCell className="tblBodyItm">
-                            {day}
-                        </TableCell>
-                        <TableCell className="tblBodyItm">
-                            <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
-                        </TableCell>
-                    </TableRow>  
-                )}
-            </TableBody>
-        </Table>
+    const [dataResponse, setdataResponse] = useState([]);
+        useEffect(() => {
 
-        <div className='tblFoot'>
-            <button className='tblFootBtn' onClick={save}>save</button> {/*lets do a little pop-up that says saved when we click this */}
-            <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
-        </div>
-    </main>
-  );
+            //query database
+            async function getPeriodInf(){
+                const apiUrlEndpoint = por+'/api/getperiodinf';
+                const response = await fetchBoth(apiUrlEndpoint);
+                const res = await response.json();
+                setdataResponse(res.resp); 
+            }
+            getPeriodInf();
+
+            
+            //event listeners are async and thus must be wrapped in some kind of useeffect
+            document.addEventListener('keydown', e => { // catch ctrls
+                if (e.ctrlKey && e.key === 's') {
+                    e.preventDefault();
+                    if(e.repeat) return; // stops hold from looping this function
+                    if((runcount%2)==1){ // ignore every other since this always triggers at least twice
+                        save();
+                        console.log('saving ' + runcount)
+                    } 
+                    runcount+=1;
+                    return; // idk how important this is to be honest
+                }
+            });
+        }, []
+    );
+
+    //build a dictionary mapping ships to days
+    var dict: {[id: string] : string} = {};
+    try{
+        dataResponse.forEach((item) => {
+            dict[item['day']]=item['ship']
+            if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
+        }) 
+    }
+    catch{ // if we arent logged in dataresponse will be null, throwing an error
+        redirect('../')
+    }
+
+
+    //generate html
+    return (
+        <main className="flex min-h-screen flex-col items-center px-1">  
+
+            <datalist id='suggestion'>
+                {slist.map((item) => <option key={item} value={item}>{item}</option>)}
+            </datalist>
+
+            <Table>
+                <TableHeader>
+                    <TableColumn className='tblHeadItmCheck'>
+                        <input type='checkbox' id={'all'} />
+                    </TableColumn>
+                    <TableColumn className='tblHeadItm'>
+                        DATE
+                    </TableColumn>
+                    <TableColumn className='tblHeadItm'>
+                        VESSEL
+                    </TableColumn>
+                </TableHeader>
+                <TableBody>
+                    {
+                    period.map((day:string)=>
+                        <TableRow key={day} id={day+' item'}>
+                            <TableCell className="tblBodyItmCheck">
+                                <input type='checkbox' id={day+'_worked'}/>
+                            </TableCell>
+                            <TableCell className="tblBodyItm">
+                                {day}
+                            </TableCell>
+                            <TableCell className="tblBodyItm">
+                                <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
+                            </TableCell>
+                        </TableRow>  
+                    )}
+                </TableBody>
+            </Table>
+
+            <div className='tblFoot'>
+                <button className='tblFootBtn' onClick={save}>save</button>
+                <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
+            </div>
+        </main>
+    );
 }
