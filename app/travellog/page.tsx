@@ -109,35 +109,35 @@ export default function Home(){
                 {slist.map((item) => <option key={item} value={item}>{item}</option>)}
             </datalist>
 
-            <Table>
-                <TableHeader>
-                    <TableColumn className='tblHeadItmCheck'>
+            <div className='tblWrapper'>
+                <div className='tblHead'>
+                    <div className='tblHeadCheck'>
                         <input type='checkbox' id={'all'} />
-                    </TableColumn>
-                    <TableColumn className='tblHeadItm'>
-                        DATE
-                    </TableColumn>
-                    <TableColumn className='tblHeadItm'>
-                        VESSEL
-                    </TableColumn>
-                </TableHeader>
-                <TableBody>
+                    </div>
+                    <div className='tblHeadDate'>
+                        <strong>DATE</strong>
+                    </div>
+                    <div className='tblHeadShip'>
+                        <strong>VESSEL</strong>
+                    </div>
+                </div>
+                <div>
                     {
                     period.map((day:string)=>
-                        <TableRow key={day} id={day+' item'}>
-                            <TableCell className="tblBodyItmCheck">
+                        <div key={day} id={day+' item'} className='tblRow'>
+                            <div className="tblBodyCheck">
                                 <input type='checkbox' id={day+'_worked'}/>
-                            </TableCell>
-                            <TableCell className="tblBodyItm">
+                            </div>
+                            <div className="tblBodyDate">
                                 {day}
-                            </TableCell>
-                            <TableCell className="tblBodyItm">
+                            </div>
+                            <div className="tblBodyShip">
                                 <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
-                            </TableCell>
-                        </TableRow>  
+                            </div>
+                        </div>  
                     )}
-                </TableBody>
-            </Table>
+                </div>
+            </div>
 
             <div className='tblFoot'>
                 <button className='tblFootBtn' onClick={save}>save</button>
