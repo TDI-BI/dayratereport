@@ -113,7 +113,8 @@ body {
     width:180px;
 }
 .tblBodyCheck{
-    vertical-align: middle;
+    display:inline-table;
+    padding-top:10px;
     width:50px !important;
 }
 .tblBodyDate{
