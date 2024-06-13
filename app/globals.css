@@ -81,7 +81,7 @@ body {
 .tblHeadCheck, .tblHeadDate, .tblHeadShip{
     text-align: left;
     padding:10px;
-    width:200px;
+    width:180px;
 }
 .tblHeadCheck{
     text-align: left;
@@ -108,15 +108,16 @@ body {
     display:inline-flex;
     line-height:30px;
     height:50px !important;
-    padding:10px;
-    width:200px;
+    padding-left:10px;
+    padding-right:10px;
+    width:180px;
 }
 .tblBodyCheck{
-    padding-top:5px;
     vertical-align: middle;
     width:50px !important;
 }
 .tblBodyDate{
+    overflow:hidden;
     width:115px;
     /*
     border-width: 1px;
@@ -138,7 +139,7 @@ body {
     padding-left:7px;
     padding-right:7px;
     height:30px;
-    width:180px;
+    width:160px;
     background: transparent;
     border: none;
     transition:300ms;

@@ -41,3 +41,5 @@ http://nginx.org/en/docs/windows.html
 pm2 start deploy.json
 (pm2 is not set up in the repository, mke sure to download it on whatever deploy machine you are working with)
 (same with nginx)
+
+honestly i dont know how to get rid of the vercel stuff... its just sitting there. the website an database are self hosted so just ignore all the like "failed to push" messages lol
