@@ -18,15 +18,30 @@ const ResetForm = () => {
     })
 
     return (
-        <form action={formAction}>
-            <input className='hidethis' name='acc' type='password' value={oldHash}/>
-            <h1 className='loginfeild'>NEW PASSWORD: <input className='shipInput' name='password1' type='password'/> </h1>
-            <h1 className='loginfeild'>REPEAT PASSWORD: <input className='shipInput' name='password2' type='password'/> </h1>
-            <button> <p className='loginBtn'>reset password</p> </button>
-            <div className='errMessage' id='error'> {
-                state?.error && <p>{state.error}</p>
-            } </div>
-        </form>
+        <div className='tblWrapper'>
+            <form action={formAction}>
+                <input className='hidethis' name='acc' type='password' value={oldHash}/>
+
+                <h1 className='formLine'>
+                    <p className='formicon'>icon</p>
+                    <input className='formInput' name='password1' type='password' placeholder='new password'/>
+                </h1>
+                <h1 className='formLine'>
+                    <p className='formicon'>icon</p>
+                    <input className='formInput' name='password2' type='password' placeholder='repeat password'/>
+                </h1>
+
+                <h1 className='formLine'>
+                    <button> <p className='formBtn'>reset password</p> </button>
+                </h1>
+                
+                <h1 className='formLine'>
+                    <div className='errMessage' id='error'> {
+                        state?.error && <p>{state.error}</p>
+                    } </div>
+                </h1>
+            </form>
+        </div>
     )
 }
 

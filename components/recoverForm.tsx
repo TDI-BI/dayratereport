@@ -16,14 +16,25 @@ const RecoverForm = () => {
 
 
     return (
-        <form action={formAction}>
-            <h1 className='loginfeild'>EMAIL: <input className='shipInput' name='email' type='text'/> </h1>
-            <button> <p className='loginBtn'>recover</p> </button>
-            <Link href='../login'> <p className='loginBtn'> back </p> </Link>
-            <div className='errMessage' id='error'> {
-                state?.error && <p>{state.error}</p>
-            } </div>
-        </form>
+        <div className='tblWrapper'>
+            <form action={formAction}>
+
+                <h1 className='formLine'>
+                    <p className='formicon'>icon</p>
+                    <input className='formInput' name='email' type='text' placeholder='email'/>
+                </h1>
+
+                <h1 className='formLine'>
+                    <button> <p className='formBtn'>recover</p> </button>
+                    <Link href='../login'> <p className='formBtn'> back </p> </Link>
+                </h1>
+                <h1 className='formLine'>
+                    <div className='errMessage' id='error'> {
+                        state?.error && <p>{state.error}</p>
+                    } </div>
+                </h1>
+            </form>
+        </div>
     )
 }
 

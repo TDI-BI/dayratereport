@@ -136,7 +136,7 @@ body {
 }
 
 
-.shipInput{
+.shipInput, .formInput{
     padding-left:7px;
     padding-right:7px;
     height:30px;
@@ -147,14 +147,21 @@ body {
     border-bottom:1px solid;
     border-color:rgb(var(--forground-rgba-fade));
 }
+.formIcon{
+
+}
+.formInput{
+    margin:auto;
+    width:240px !important;
+}
 .errMessage{
     text-align:center;
-    height:30px;
+    width:280px
 }
-.shipInput:hover{
+.shipInput:hover, .formInput:hover{
     border-color:rgb(var(--forground-rgba));
 }
-.shipInput:focus{
+.shipInput:focus, .formInput:focus{
     outline:none;
     border-color:rgb(var(--forground-rgba));
 }
@@ -171,13 +178,19 @@ body {
     transition:300ms;
 }
 
-.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .loginBtn:hover{
+.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .formBtn:hover{
     background-color:rgb(var(--background-item-rgba-fade));
 }
 
-.loginfeild{
+.formLine{
+    margin:auto;
+    display:flex;
+    flex-direction: row;
     height:50px;
     line-height:50px;
+    width:280px;
+    align-items: center;
+    justify-content: center;
 }
 
 .reporthead{
@@ -199,10 +212,9 @@ body {
     width:200px;
     text-align: center;
 }
-.loginBtn{
+.formBtn{
     background-color:rgb(129, 133, 137, 0);
-    width:280px;
-    padding:10px;
+    width:140px;
     text-align:center;
     transition:300ms;
 }
