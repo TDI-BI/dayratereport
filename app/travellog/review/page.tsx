@@ -33,6 +33,7 @@ export default function Page() {
         //flashes our confirm if its not clicked
         if(!affirm.checked){
             flashDiv(target)
+            return
         }
 
         let data:string[][] = [] // for pdf

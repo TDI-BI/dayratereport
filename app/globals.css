@@ -147,6 +147,10 @@ body {
     border-bottom:1px solid;
     border-color:rgb(var(--forground-rgba-fade));
 }
+.errMessage{
+    text-align:center;
+    height:30px;
+}
 .shipInput:hover{
     border-color:rgb(var(--forground-rgba));
 }

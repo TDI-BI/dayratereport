@@ -1,4 +1,4 @@
-export const flashDiv = (target: HTMLElement) => {
+export const flashDiv = async (target: HTMLElement) => {
     target.style.transition = '100ms';
     target.style.background = 'rgb(255, 255, 255, 1)';
     setTimeout(() => {
