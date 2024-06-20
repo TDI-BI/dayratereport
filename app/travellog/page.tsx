@@ -79,7 +79,7 @@ export default function Home(){
                     if(e.repeat) return; // stops hold from looping this function
                     if((runcount%2)==1){ // ignore every other since this always triggers at least twice
                         save();
-                        console.log('saving ' + runcount)
+                        //console.log('saving ' + runcount)
                     } 
                     runcount+=1;
                     return; // idk how important this is to be honest

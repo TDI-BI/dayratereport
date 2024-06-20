@@ -12,7 +12,7 @@ const LoginForm = () => {
             <button> <p className='loginBtn'>login</p> </button>
             <Link href='login/mkaccount'> <p className='loginBtn'> make account </p> </Link>
             <Link href='login/rcvaccount'> <p className='loginBtn'> recover account </p> </Link>
-            {state?.error && <p>{state.error}</p>}
+            <div className='error'> {state?.error && <p>{state.error}</p>} </div>
         </form>
     )
 }

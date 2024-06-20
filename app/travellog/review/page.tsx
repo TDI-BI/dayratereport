@@ -15,6 +15,7 @@ import {
     TableRow,
     TableCell
 } from "@nextui-org/react"
+import {flashDiv} from '@/utils/flashDiv'
 
 //page globals
 const por=getPort();
@@ -31,13 +32,7 @@ export default function Page() {
 
         //flashes our confirm if its not clicked
         if(!affirm.checked){
-            target.style.transition = '100ms';
-            target.style.background = 'rgb(255, 255, 255, 1)';
-            setTimeout(() => {
-                target.style.transition = '1s';
-                target.style.background = 'rgb(255, 255, 255, 0)';
-            }, 100)
-            return
+            flashDiv(target)
         }
 
         let data:string[][] = [] // for pdf
@@ -58,6 +53,7 @@ export default function Page() {
 
         //generate pdf
         const doc = new jsPDF();
+        doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
         autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
             head: [["date","worked?","ship"]], 
             body: data,
@@ -93,7 +89,7 @@ export default function Page() {
     var dict: {[id: string] : string} = {};
     try{
         dataResponse.forEach((item) => {
-            name=item['uid'];
+            if(!name) name=item['uid'];
             if(item['ship']) daysworked+=1;
             dict[item['day']]=item['ship']
         }) ;

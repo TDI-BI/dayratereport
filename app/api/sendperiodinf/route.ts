@@ -8,7 +8,7 @@ import autoTable from 'jspdf-autotable' // this is so gas actually
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-console.log(process.env.RESEND_API_KEY);
+//console.log(process.env.RESEND_API_KEY);
 
 export const GET = async (request:  NextRequest) => {
     //important setup
@@ -27,9 +27,14 @@ export const GET = async (request:  NextRequest) => {
     var daysworked=0;
     list.map((item)=>{
         let line = item.split(':')
+        //console.log(line);
         dict[line[0]]=line[1]
-        if(line[1]!='') daysworked+=1;
+        if(!line[1]){
+            daysworked+=1;
+        }
     })
+
+    //console.log(daysworked);
 
     const period = getPeriod();
 
@@ -46,7 +51,7 @@ export const GET = async (request:  NextRequest) => {
         dict[day] ? w = '[C]' : w ='[  ]'
         data.push([day, w, dinf])
     })
-
+    doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
     //make pdf
     autoTable(doc, { 
         head: [["date","worked?","ship"]], 
@@ -62,16 +67,6 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
-    //ABOVE THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION
-
-    //process string
-    /*legacy from old solution
-    let pdl = pdf.split('zNL')  
-    let pds=''
-    pdl.forEach((item)=>{ // THIS WORKS !!!!!!!!!!!!!!!!!!!!!!!!!!
-        pds+=item+' \n '
-    })
-    */
    
     try {
         const data = await resend.emails.send({
@@ -90,7 +85,7 @@ export const GET = async (request:  NextRequest) => {
               ]
         });
 
-				console.log(data)
+		//console.log(data)
         //console.log('no error, sent')
         return Response.json(data);
     } catch (error) {

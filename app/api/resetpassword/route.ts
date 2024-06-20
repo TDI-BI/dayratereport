@@ -20,10 +20,10 @@ export const GET = async (request: NextRequest) => {
     try {
         //update our password
         const query2= "update users set password='"+password+"' where password='"+oldhash+"';"
-        console.log(query2)
+        //(query2)
         const [results2] = await connection.execute(query2);
         connection.end();
-        console.log(results2)
+        //console.log(results2)
         return new Response(JSON.stringify({ resp: results2 }), {status: 200});
     } catch (error) {
         if(error instanceof Error){
