@@ -8,6 +8,8 @@ export const GET = async (request:  NextRequest) => {
     //get our passed parameters
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';
+    const domestic = searchParams.get('dom') || '0';
+    //if(domestic) console.log('domestic')
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
         const period = getPeriod();
@@ -32,7 +34,8 @@ export const GET = async (request:  NextRequest) => {
             query1+='(day="'+day+'") or '
             query2+='("'+uid+'","'+day+'","'+dict[day]+'","'+username+'"),';
         })
-        query2+='("","-1","","'+username+'");'
+        //update this to track domestic
+        query2+='("","-1","'+domestic+'","'+username+'");'
         query1+='(day="-1"));';
         await connection.execute(query1);
         const [results] = await connection.execute(query2);

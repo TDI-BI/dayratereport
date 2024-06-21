@@ -15,6 +15,7 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
+    const type = searchParams.get('type') || '';
     const extraInfo:string = '';
     const session = await getSession();
     let names:string[] = session.userId!.split('/')
@@ -58,6 +59,7 @@ export const GET = async (request:  NextRequest) => {
         body: data,
     })
     doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
+    doc.text('worker type: '+type, 100, 120, {align: 'center'})
     doc.setFontSize(12)
     //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
     doc.text(

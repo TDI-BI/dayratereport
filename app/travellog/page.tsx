@@ -1,6 +1,6 @@
 "use client"; // needed for interactivity
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, HTMLInputTypeAttribute } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from '@/utils/fetchBoth';
@@ -55,8 +55,14 @@ export default function Home(){
             cship ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
             
         })
+
+        const domestic = ((document.getElementById('american') as HTMLInputElement).checked)
+        domestic ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
+
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
+        
         await fetchBoth(apiUrlEndpoint);
+        
     }
 
     const [dataResponse, setdataResponse] = useState([]);
@@ -92,6 +98,10 @@ export default function Home(){
     var dict: {[id: string] : string} = {};
     try{
         dataResponse.forEach((item) => {
+            if(item['day']=='-1'){
+                if(item['ship']==1) (document.getElementById('american') as HTMLInputElement).checked = true;
+                return
+            }
             dict[item['day']]=item['ship']
             if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
         }) 
@@ -131,6 +141,7 @@ export default function Home(){
                             <div className="tblBodyDate">
                                 {day}
                             </div>
+                            {/*this may be worth wrapping in a box, just to indicate better you can fill it out*/}
                             <div className="tblBodyShip">
                                 <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
                             </div>
@@ -138,7 +149,12 @@ export default function Home(){
                     )}
                 </div>
             </div>
-
+            <div className='domestic'>
+                <p>
+                    I am an american citizen : 
+                    <input type='checkbox' id='american'/>
+                </p>
+            </div>
             <div className='tblFoot'>
                 <button className='tblFootBtn' onClick={save}>save</button>
                 <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>

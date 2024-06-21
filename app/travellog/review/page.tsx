@@ -49,7 +49,7 @@ export default function Page() {
         })
 
         //send email
-        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict;
+        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type;
         fetchBoth(apiUrlEndpoint);
 
         //generate pdf
@@ -60,6 +60,7 @@ export default function Page() {
             body: data,
         })
         doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
+        doc.text('worker type: '+type, 100, 120, {align: 'center'})
         doc.setFontSize(12)
         doc.text(
             'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
@@ -88,11 +89,17 @@ export default function Page() {
     let name=''
     let daysworked=0
     var dict: {[id: string] : string} = {};
+    let type=''
     try{
         dataResponse.forEach((item) => {
+            if(item['day']==-1){
+                item['ship']=='1' ? type = 'domestic' : type = 'international';
+                return
+            } 
             if(!name) name=item['uid'];
             if(item['ship']) daysworked+=1;
             dict[item['day']]=item['ship']
+           
         }) ;
     }
     catch{ // dataresponse will be null in the case of our user not being logged in
@@ -123,15 +130,16 @@ export default function Page() {
                         </TableRow>) // for now we are jtus gonna try to pull 1 line    
                     }</TableBody>
                 </Table>
-            
+                <p> worker type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
             </div>
             <div className='affirmation' id='target'>
                 <div className='affirmRow'>
-                    <input type='checkbox' id='affirm'/>
-                    <p>: I AFFIRM THAT ALL THE INFORMATION </p>
+                    <p>
+                        <input type='checkbox' id='affirm'/>
+                        : By checking this box I acknowledge and certify that the information on this document is true and accurate
+                    </p>
                 </div>
-                <p>IN THE ABOVE REPORT IS TRUE AND REAL</p>
             </div>
             <div className='tblFoot'>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>

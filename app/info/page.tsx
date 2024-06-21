@@ -18,9 +18,6 @@ const profile = async () => {
                 </div>
                 <p className='infoText'> 
                     <br></br>
-                    try not to spam the submit feature please. 
-                    <br></br>
-                    <br></br>
                     with urgent issues email dayratereportdonotrespond@gmail.com with the subject URGENT: 
                 </p>
  
