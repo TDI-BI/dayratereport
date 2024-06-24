@@ -19,7 +19,7 @@ import {flashDiv} from '@/utils/flashDiv'
 
 //page globals
 const por=getPort();
-const period = getPeriod();
+const period = await getPeriod();
 
 export default function Page() {
     //needs to be called from within a function (ugh)

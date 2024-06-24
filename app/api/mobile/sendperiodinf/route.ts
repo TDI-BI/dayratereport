@@ -31,7 +31,7 @@ export const GET = async (request:  NextRequest) => {
         if(line[1]!='') daysworked+=1;
     })
 
-    const period = getPeriod();
+    const period = await getPeriod();
 
     //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
     const doc = new jsPDF();
