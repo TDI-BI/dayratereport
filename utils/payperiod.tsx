@@ -7,8 +7,10 @@ export const getPeriod = () =>{ // found this online
     //solution for last monday: https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
     let target = 1 // Monday, scale 0-7
     let date = new Date()
-    date.setDate(date.getDate() - ( date.getDay() == target ? 7 : (date.getDay() + (7 - target)) % 7 ))
+    let cguy=0; // -7, 0, 7 for back reg forward
+    date.setDate(date.getDate() - ( date.getDay() == target ? 7 : (date.getDay() + (7 - target)) % 7 ) + cguy)
     //console.log(date)
+    
   
     for (let i = 0; i <= 6  ; i++) { // this pulls us the rest of the payperiod
       const nextDay = new Date(date);
