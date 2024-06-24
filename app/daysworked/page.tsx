@@ -12,6 +12,7 @@ const por=getPort();
 const period= getPeriod();
 let runcount=1;
 const slist:string[] = [
+    '',
     'BMCC',
     'EMMA',
     'PROT',
@@ -19,6 +20,7 @@ const slist:string[] = [
     'NAUT',
     '3RD',
     '????',
+    
 ] // may change this to query a database at some point, for now its just hard set
 
 
@@ -34,22 +36,16 @@ export default function Home(){
         period.map((day) => { 
             //setting up constants makes the logic look way cleaner
             const inp= (document.getElementById(day+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
-            const plc= (document.getElementById(day+'_ship')!.getAttribute('placeholder') as string)
-            const box= (document.getElementById(day+'_worked') as HTMLInputElement).checked
+            //const box= (document.getElementById(day+'_worked') as HTMLInputElement).checked
            
-            //read our displayed table
-            let cship='';
-            if(inp!='') cship=inp;
-            else if (plc!='' && box) cship=plc;
-            else if (box) cship='????'
+            //read our displayed tabl
             
             //prepare our output
-            strdict+=day+':'+cship+';';
+            strdict+=day+':'+inp+';';
 
             //update our displayed table
-            (document.getElementById(day+'_ship') as HTMLInputElement).value='';
-            document.getElementById(day+'_ship')!.setAttribute('placeholder', cship);
-            cship ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
+            //(document.getElementById(day+'_ship') as HTMLInputElement).value='';
+            //inp ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
             
         })
         if(selected==''){
@@ -110,21 +106,20 @@ export default function Home(){
                 return
             }
             dict[item['day']]=item['ship']
-            if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
+            //if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
         }) 
     }
     catch{ // if we arent logged in dataresponse will be null, throwing an error
         redirect('../')
     }
-
+    const re = (inp:string) => {
+        if(inp=='BMCC')console.log(inp=='BMCC')
+        return 'BMCC'
+    }
+    console.log('refresh')
     //generate html
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
-
-            <datalist id='suggestion'>
-                {slist.map((item) => <option key={item} value={item}>{item}</option>)}
-            </datalist>
-
             <div className='tblWrapper'>
                 <div className='tblHead'>
                     <div className='tblHeadCheck'>
@@ -149,7 +144,18 @@ export default function Home(){
                             </div>
                             {/*this may be worth wrapping in a box, just to indicate better you can fill it out*/}
                             <div className="tblBodyShip">
-                                <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
+                                <select className='shipInput' id={day+'_ship'} defaultValue={re(dict[day])}>
+                                    { 
+                                        slist.map((item)=>
+                                            <option 
+                                                key={day+item}
+                                                value={item} 
+                                                label={item} 
+                                                className='shipOption'
+                                            />
+                                        )
+                                    }
+                                </select>
                             </div>
                         </div>  
                     )}
