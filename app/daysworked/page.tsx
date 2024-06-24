@@ -55,7 +55,6 @@ export default function Home(){
         if(selected==''){
             const target= document.getElementById('target') as HTMLElement
             flashDiv(target)
-            console.log('issue')
             return false
         }
         selected=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
@@ -95,7 +94,6 @@ export default function Home(){
                     if(e.repeat) return; // stops hold from looping this function
                     if((runcount%2)==1){ // ignore every other since this always triggers at least twice
                         save();
-                        //console.log('saving ' + runcount)
                     } 
                     runcount+=1;
                     return; // idk how important this is to be honest
@@ -118,7 +116,6 @@ export default function Home(){
     catch{ // if we arent logged in dataresponse will be null, throwing an error
         redirect('../')
     }
-
 
     //generate html
     return (
