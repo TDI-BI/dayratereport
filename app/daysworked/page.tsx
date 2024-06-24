@@ -18,7 +18,7 @@ const slist:string[] = [
     'GYRE',
     'NAUT',
     '3RD',
-    'unspecified',
+    '????',
 ] // may change this to query a database at some point, for now its just hard set
 
 
@@ -41,7 +41,7 @@ export default function Home(){
             let cship='';
             if(inp!='') cship=inp;
             else if (plc!='' && box) cship=plc;
-            else if (box) cship='unspecified'
+            else if (box) cship='????'
             
             //prepare our output
             strdict+=day+':'+cship+';';
