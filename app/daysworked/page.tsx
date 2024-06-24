@@ -153,8 +153,9 @@ export default function Home(){
                             <div className="tblBodyShip">
                                 <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
                             </div>
+                            
                             <div className="tblBodyShip">
-                                <select className='shipInput' id={day+'_ship'} defaultValue={dict[day] ? dict[day] : ''}>
+                                <select className='shipInput' id={day+'_ship'} value={dict[day] ? dict[day] : ''}>
                                     <option value='' id='' key=''/>
                                     <option value='BMCC' label='BMCC' key='BMCC'/>
                                     <option value='EMMA' label='EMMA' key='EMMA'/>
