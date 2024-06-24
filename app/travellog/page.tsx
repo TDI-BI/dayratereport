@@ -13,6 +13,7 @@ import {
     TableCell
 } from "@nextui-org/react"
 import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 //page globals
 const por=getPort();
@@ -31,7 +32,13 @@ const slist:string[] = [
 
 
 export default function Home(){
+    const router = useRouter();
     //function for saving our ship
+    const review = async () => {
+        await save();
+        router.push('/travellog/review')
+    }
+
     const save = async () =>{ 
         let strdict=''
         period.map((day) => { 
@@ -156,8 +163,8 @@ export default function Home(){
                 </p>
             </div>
             <div className='tblFoot'>
-                <button className='tblFootBtn' onClick={save}>save</button>
-                <Link href='travellog/review'><div className='tblFootBtn'> review </div></Link>
+                <button className='tblFootBtn' onClick={save}> save </button>
+                <button className='tblFootBtn' onClick={review}> review </button>
             </div>
         </main>
     );

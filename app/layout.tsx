@@ -4,14 +4,12 @@ import Link from "next/link";
 import "./globals.css";
 import Navbar from '@/components/navbar'
 
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "TDI travel logs",
     description: "get hr to write me a tag line later",
 };
-
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -20,7 +18,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={inter.className}>
-                <Navbar/>
+                {<Navbar/>}
                 {children}
             </body>
         </html>

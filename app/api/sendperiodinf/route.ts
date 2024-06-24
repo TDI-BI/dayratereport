@@ -55,7 +55,7 @@ export const GET = async (request:  NextRequest) => {
     doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
     //make pdf
     autoTable(doc, { 
-        head: [["date","worked?","ship"]], 
+        head: [["date","worked?","vessel"]], 
         body: data,
     })
     doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})

@@ -18,12 +18,12 @@ const profile = async () => {
                 </div>
                 <p className='infoText'> 
                     <br></br>
-                    with urgent issues email dayratereportdonotrespond@gmail.com with the subject URGENT: 
+                    comments or complaints please email dayratereportdonotrespond@gmail.com or fill out our feedback form:
                 </p>
  
                 <Link href='https://forms.gle/EKyxpDDTSZknZYpe8'>
-                    <p className='loginBtn'>
-                        feedback form
+                    <p className='tblFootBtn'>
+                        feedback
                     </p>
                     
                 </Link>

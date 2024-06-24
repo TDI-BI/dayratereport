@@ -56,7 +56,7 @@ export default function Page() {
         const doc = new jsPDF();
         doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
         autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
-            head: [["date","worked?","ship"]], 
+            head: [["date","worked?","vessel"]], 
             body: data,
         })
         doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
@@ -119,7 +119,7 @@ export default function Page() {
                             day
                         </TableColumn>
                         <TableColumn>
-                            boat
+                            vessel
                         </TableColumn>
                     </TableHeader>
                     <TableBody>{
@@ -137,7 +137,7 @@ export default function Page() {
                 <div className='affirmRow'>
                     <p>
                         <input type='checkbox' id='affirm'/>
-                        : By checking this box I acknowledge and certify that the information on this document is true and accurate
+                        : I acknowledge and certify that the information on this document is true and accurate
                     </p>
                 </div>
             </div>

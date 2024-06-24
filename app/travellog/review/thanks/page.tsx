@@ -1,5 +1,6 @@
 import { getSession} from '@/actions'
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
 const profile = async () => {
     const session = await getSession();
@@ -11,9 +12,11 @@ const profile = async () => {
         <main className="flex min-h-screen flex-col items-center"> 
                 <p> <strong> THANK YOU {name[0] + ' ' + name[1]}</strong> </p>
                 <p> your time sheet has been submitted! </p>
-                <p> we are preparing your pdf, please do not close the website </p>
-                <p> until that has been downloaded </p>
-                <p> please do not submit a travel log again until next pay period </p>
+                <p> please do not close the website until your travellog</p>
+                <p> until that has been downloaded. this will happen automatically. </p>
+                <p> you are only required to submit one travellog per pay period </p>
+                <p> you may resubmit if you find any issues within your report </p>
+                <Link href='../../../'><div className='tblFootBtn'>home</div></Link>
         </main>
     ) 
 }

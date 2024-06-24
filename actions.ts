@@ -121,7 +121,8 @@ export const recover = async (
 
     //doesnt look like i need to fetchBoth on this
     fetch('http://geodatapub.com/shiptracker/freeloademail.php?to='+formEmail+'&acc='+dbAcc.password);
-    redirect("../../")
+    return {error: 'recovery instructions sent'}
+    //redirect("../../")
 }
 
 export const resetPassword = async(
