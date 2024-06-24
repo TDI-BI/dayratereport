@@ -9,6 +9,7 @@ import { flashDiv } from "@/utils/flashDiv";
 
 //page globals
 const por=getPort();
+const period= getPeriod();
 let runcount=1;
 const slist:string[] = [
     'BMCC',
@@ -62,8 +63,6 @@ export default function Home(){
         await fetchBoth(apiUrlEndpoint);
         return true;
     }
-
-    const [period, setPeriod] = useState([])
     const [selected, setSelected] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
         useEffect(() => {
@@ -84,15 +83,9 @@ export default function Home(){
                 }
                 catch{}
                 setdataResponse(res.resp); 
-
-
-                const bweh = await getPeriod();
-                console.log('we are here')
-                console.log(bweh)
                 
             }
             getPeriodInf();
-            
 
             
             //event listeners are async and thus must be wrapped in some kind of useeffect

@@ -7,7 +7,7 @@ import { connectToDb } from '@/utils/connectToDb'
 export const GET = async (request: NextRequest) => {
     
     //query building
-    const period = await getPeriod();
+    const period = getPeriod();
     let dparam:string = "(day='-1' ";
     period.forEach((item)=>{
         dparam+="or day='"+item+"'";

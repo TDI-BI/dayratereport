@@ -37,7 +37,7 @@ export const GET = async (request:  NextRequest) => {
 
     //console.log(daysworked);
 
-    const period = await getPeriod();
+    const period = getPeriod();
 
     //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
     const doc = new jsPDF();

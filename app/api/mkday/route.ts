@@ -12,7 +12,7 @@ export const GET = async (request:  NextRequest) => {
     //if(domestic) console.log('domestic')
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
-        const period = await getPeriod();
+        const period = getPeriod();
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
     try{ // esentially just making a homemade UPSERT here

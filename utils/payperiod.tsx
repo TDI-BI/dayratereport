@@ -1,4 +1,4 @@
-export const getPeriod = () =>{ // found this online
+export const getPeriod = async () =>{ // found this online
     //for now it just gets the last week and next. at some point
     //i will have to fix this fraud function and make it work better so it can actually load stuff
     const today=new Date();
