@@ -12,6 +12,7 @@ const por=getPort();
 const period= getPeriod();
 let runcount=1;
 const slist:string[] = [
+    '',
     'BMCC',
     'EMMA',
     'PROT',
@@ -118,6 +119,7 @@ export default function Home(){
     }
 
     //generate html
+    console.log('refresh')
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
 
@@ -150,6 +152,18 @@ export default function Home(){
                             {/*this may be worth wrapping in a box, just to indicate better you can fill it out*/}
                             <div className="tblBodyShip">
                                 <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
+                            </div>
+                            <div className="tblBodyShip">
+                                <select className='shipInput' id={day+'_ship'} defaultValue={dict[day] ? dict[day] : ''}>
+                                    <option value='' id='' key=''/>
+                                    <option value='BMCC' label='BMCC' key='BMCC'/>
+                                    <option value='EMMA' label='EMMA' key='EMMA'/>
+                                    <option value='PROT' label='PROT' key='PROT'/>
+                                    <option value='GYRE' label='GYRE' key='GYRE'/>
+                                    <option value='NAUT' label='NAUT' key='NAUT'/>
+                                    <option value='3RD' label='3RD' key='3RD'/>
+                                    <option value='????' label='????' key='????'/>
+                                </select>
                             </div>
                         </div>  
                     )}
