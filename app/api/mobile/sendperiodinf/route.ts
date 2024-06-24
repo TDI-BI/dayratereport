@@ -43,7 +43,7 @@ export const GET = async (request:  NextRequest) => {
     period.map((day) => {   
         strdict+=day+':'+dict[day]+';';
         dict[day] ? dinf = dict[day] : dinf = '';
-        dict[day] ? w = '[C]' : w ='[  ]'
+        dict[day] ? w = '[X]' : w ='[  ]'
         data.push([day, w, dinf])
     })
 

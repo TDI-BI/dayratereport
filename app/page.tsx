@@ -6,7 +6,7 @@ const home = async () =>{
     
     return(
         <main className="flex min-h-screen flex-col items-center"> 
-            {session.isLoggedIn ? redirect('/travellog'):redirect('/login')}
+            {session.isLoggedIn ? redirect('/daysworked'):redirect('/login')}
         </main>
     ) 
 }

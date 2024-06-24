@@ -15,6 +15,7 @@
 
     --background-item-rgba: 170, 170, 170, 0;
     --background-item-rgba-fade: 170, 170, 170, 1;
+    --background-item-rgba-select: 170, 170, 170, .7;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,6 +30,7 @@
 
         --background-item-rgba: 48, 48, 48, 0;
         --background-item-rgba-fade: 48, 48, 48, 1;
+        --background-item-rgba-select: 48, 48, 48, .7;
     }
 }
 
@@ -142,10 +144,7 @@ body {
     top:0px;
     right:-1px;
 }
-.domestic{
-    line-height:60px;
-    height:60px;
-}
+
 
 
 .stuff{
@@ -191,15 +190,34 @@ body {
 .tblFootBtn{
     background-color:rgb(var(--background-item-rgba));
     outline-color:white;
-    width:200px;
+    width:182.5px;
     padding:10px;
     text-align:center;
     transition:300ms;
 }
 
-.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .formBtn:hover{
+.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
     background-color:rgb(var(--background-item-rgba-fade));
 }
+
+.crewtype{/*work on this later*/
+    text-align:center;
+    line-height:25px;
+    height:60px;
+    width:345px;
+}
+.selectedCrew, .unselectedCrew{
+    width:115px;
+    padding:10px;
+    transition:300ms;
+}
+.selectedCrew{
+    background-color:rgb(var(--background-item-rgba-select))
+}
+.unselectedCrew{
+    background-color:rgb(var(--background-item-rgba));
+}
+
 
 .formLine{
     margin:auto;

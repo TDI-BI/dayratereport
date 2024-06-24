@@ -7,7 +7,7 @@ import Navbar from '@/components/navbar'
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-    title: "TDI travel logs",
+    title: "TDI Field Days Worked",
     description: "get hr to write me a tag line later",
 };
 export default function RootLayout({

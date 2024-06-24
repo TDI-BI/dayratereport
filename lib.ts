@@ -5,6 +5,7 @@ export interface sessionData{
     username?:string;
     userEmail?:string;
     isLoggedIn?:boolean;
+    whatPeriod?:number;
 }
 
 export const sessionOptions: SessionOptions ={

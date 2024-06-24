@@ -44,7 +44,7 @@ export default function Page() {
         period.map((day) => {   
             strdict+=day+':'+dict[day]+';';
             dict[day] ? dinf = dict[day] : dinf = '';
-            dict[day] ? w = '[C]' : w ='[  ]'
+            dict[day] ? w = '[X]' : w ='[  ]'
             data.push([day, w, dinf])
         })
 
@@ -60,7 +60,7 @@ export default function Page() {
             body: data,
         })
         doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
-        doc.text('worker type: '+type, 100, 120, {align: 'center'})
+        doc.text('crew type: '+type, 100, 120, {align: 'center'})
         doc.setFontSize(12)
         doc.text(
             'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
@@ -93,7 +93,7 @@ export default function Page() {
     try{
         dataResponse.forEach((item) => {
             if(item['day']==-1){
-                item['ship']=='1' ? type = 'domestic' : type = 'international';
+                item['ship']=='1' ? type = 'domestic' : type = 'foreign';
                 return
             } 
             if(!name) name=item['uid'];
@@ -130,7 +130,7 @@ export default function Page() {
                         </TableRow>) // for now we are jtus gonna try to pull 1 line    
                     }</TableBody>
                 </Table>
-                <p> worker type: {type}</p>
+                <p> crew type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
             </div>
             <div className='affirmation' id='target'>

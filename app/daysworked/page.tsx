@@ -1,32 +1,23 @@
 "use client"; // needed for interactivity
-import Link from "next/link";
 import { useState, useEffect, HTMLInputTypeAttribute } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from '@/utils/fetchBoth';
-import {
-    Table,
-    TableHeader,
-    TableColumn,
-    TableBody,
-    TableRow,
-    TableCell
-} from "@nextui-org/react"
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { flashDiv } from "@/utils/flashDiv";
 
 //page globals
 const por=getPort();
 const period= getPeriod();
 let runcount=1;
 const slist:string[] = [
-    'brooks',
-    'emma',
-    'marcelle',
-    'proteus',
-    'gyre',
-    'nautilus',
-    'barnacle',
+    'BMCC',
+    'EMMA',
+    'PROT',
+    'GYRE',
+    'NAUT',
+    '3RD',
     'unspecified',
 ] // may change this to query a database at some point, for now its just hard set
 
@@ -35,8 +26,7 @@ export default function Home(){
     const router = useRouter();
     //function for saving our ship
     const review = async () => {
-        await save();
-        router.push('/travellog/review')
+        if(await save()) router.push('/daysworked/review')
     }
 
     const save = async () =>{ 
@@ -62,16 +52,18 @@ export default function Home(){
             cship ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
             
         })
-
-        const domestic = ((document.getElementById('american') as HTMLInputElement).checked)
-        domestic ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
-
+        if(selected==''){
+            const target= document.getElementById('target') as HTMLElement
+            flashDiv(target)
+            console.log('issue')
+            return false
+        }
+        selected=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
-        
         await fetchBoth(apiUrlEndpoint);
-        
+        return true;
     }
-
+    const [selected, setSelected] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
         useEffect(() => {
 
@@ -80,7 +72,18 @@ export default function Home(){
                 const apiUrlEndpoint = por+'/api/getperiodinf';
                 const response = await fetchBoth(apiUrlEndpoint);
                 const res = await response.json();
+                
+                try{
+                    (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
+                        if(item['day']=='-1'){
+                            item['ship']=='1' ? setSelected('domestic') : setSelected('foreign')
+                            return
+                        }
+                    })
+                }
+                catch{}
                 setdataResponse(res.resp); 
+                
             }
             getPeriodInf();
 
@@ -106,7 +109,6 @@ export default function Home(){
     try{
         dataResponse.forEach((item) => {
             if(item['day']=='-1'){
-                if(item['ship']==1) (document.getElementById('american') as HTMLInputElement).checked = true;
                 return
             }
             dict[item['day']]=item['ship']
@@ -155,13 +157,18 @@ export default function Home(){
                         </div>  
                     )}
                 </div>
+
+                <div className='crewtype' id='target'>
+                    CREW:
+                        <button onClick={()=>setSelected('domestic')} className={selected=='domestic'? 'selectedCrew': 'unselectedCrew'}>domestic</button>
+                        <button onClick={()=>setSelected('foreign')} className={selected=='foreign'? 'selectedCrew': 'unselectedCrew'}>foreign</button>
+                </div>
             </div>
-            <div className='domestic'>
-                <p>
-                    I am an american citizen : 
-                    <input type='checkbox' id='american'/>
-                </p>
-            </div>
+
+
+
+
+
             <div className='tblFoot'>
                 <button className='tblFootBtn' onClick={save}> save </button>
                 <button className='tblFootBtn' onClick={review}> review </button>
