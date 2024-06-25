@@ -24,7 +24,8 @@ export default function Home(){
         period.map((day) => { 
            
             //read our displayed table
-            let cship = dict[day as keyof {}];
+            var cship='';
+            if(dict[day as keyof {}]) cship = dict[day as keyof {}]
             
             //prepare our output
             strdict+=day+':'+cship+';';
