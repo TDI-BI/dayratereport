@@ -11,17 +11,6 @@ import { flashDiv } from "@/utils/flashDiv";
 const por=getPort();
 const period= getPeriod();
 let runcount=1;
-const slist:string[] = [
-    '',
-    'BMCC',
-    'EMMA',
-    'PROT',
-    'GYRE',
-    'NAUT',
-    '3RD',
-    '????',
-] // may change this to query a database at some point, for now its just hard set
-
 
 export default function Home(){
     const router = useRouter();
@@ -33,24 +22,12 @@ export default function Home(){
     const save = async () =>{ 
         let strdict=''
         period.map((day) => { 
-            //setting up constants makes the logic look way cleaner
-            const inp= (document.getElementById(day+'_ship') as HTMLInputElement).value.substring(0, 15) || ''; // trim to prevent overflow
-            const plc= (document.getElementById(day+'_ship')!.getAttribute('placeholder') as string)
-            const box= (document.getElementById(day+'_worked') as HTMLInputElement).checked
            
             //read our displayed table
-            let cship='';
-            if(inp!='') cship=inp;
-            else if (plc!='' && box) cship=plc;
-            else if (box) cship='????'
+            let cship = dict[day as keyof {}];
             
             //prepare our output
             strdict+=day+':'+cship+';';
-
-            //update our displayed table
-            (document.getElementById(day+'_ship') as HTMLInputElement).value='';
-            document.getElementById(day+'_ship')!.setAttribute('placeholder', cship);
-            cship ? (document.getElementById(day+'_worked') as HTMLInputElement).checked = true : (document.getElementById(day+'_worked') as HTMLInputElement).checked = false;
             
         })
         if(selected==''){
@@ -63,6 +40,7 @@ export default function Home(){
         await fetchBoth(apiUrlEndpoint);
         return true;
     }
+    const [dict, setdict]=useState({})
     const [selected, setSelected] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
         useEffect(() => {
@@ -73,15 +51,20 @@ export default function Home(){
                 const response = await fetchBoth(apiUrlEndpoint);
                 const res = await response.json();
                 
+                let dict:{[id: string] : string} = {}
                 try{
                     (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
                         if(item['day']=='-1'){
                             item['ship']=='1' ? setSelected('domestic') : setSelected('foreign')
                             return
                         }
+                        dict[item['day']]=item['ship']
                     })
                 }
-                catch{}
+                catch{
+                    
+                }
+                setdict(dict);
                 setdataResponse(res.resp); 
                 
             }
@@ -102,31 +85,16 @@ export default function Home(){
             });
         }, []
     );
-
-    //build a dictionary mapping ships to days
-    var dict: {[id: string] : string} = {};
     try{
-        dataResponse.forEach((item) => {
-            if(item['day']=='-1'){
-                return
-            }
-            dict[item['day']]=item['ship']
-            if(item['ship']) (document.getElementById(item['day']+'_worked') as HTMLInputElement).checked = true;
-        }) 
+        dataResponse.forEach((item) => {}); // this is literally jsut an error catcher, if this doesnt work it means we are logged out   
     }
-    catch{ // if we arent logged in dataresponse will be null, throwing an error
-        redirect('../')
+    catch{ // dataresponse will be null in the case of our user not being logged in
+        redirect('../../')
     }
-
     //generate html
     console.log('refresh')
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
-
-            <datalist id='suggestion'>
-                {slist.map((item) => <option key={item} value={item}>{item}</option>)}
-            </datalist>
-
             <div className='tblWrapper'>
                 <div className='tblHead'>
                     <div className='tblHeadCheck'>
@@ -149,21 +117,22 @@ export default function Home(){
                             <div className="tblBodyDate">
                                 {day}
                             </div>
-                            {/*this may be worth wrapping in a box, just to indicate better you can fill it out*/}
+
                             <div className="tblBodyShip">
-                                <input type='text' className='shipInput' id={day+'_ship'} placeholder={dict[day] ? dict[day] : ''} list='suggestion'/>
-                            </div>
-                            
-                            <div className="tblBodyShip">
-                                <select className='shipInput' id={day+'_ship'} value={dict[day] ? dict[day] : ''}>
-                                    <option value='' id='' key=''/>
-                                    <option value='BMCC' label='BMCC' key='BMCC'/>
-                                    <option value='EMMA' label='EMMA' key='EMMA'/>
-                                    <option value='PROT' label='PROT' key='PROT'/>
-                                    <option value='GYRE' label='GYRE' key='GYRE'/>
-                                    <option value='NAUT' label='NAUT' key='NAUT'/>
-                                    <option value='3RD' label='3RD' key='3RD'/>
-                                    <option value='????' label='????' key='????'/>
+                                <select className='shipInput' id={day+'_ship'} value={dict[day as keyof {}]} onChange={(e)=>{
+                                    //this is extremely ugly but it works, so thats whats important-est imo
+                                    let ndict:{[id: string] : string}=structuredClone(dict)
+                                    ndict[day]=e.target.value
+                                    setdict(ndict)
+                                }}>
+                                    <option value='' id='' key='' className='shipValue'/>
+                                    <option value='BMCC' label='BMCC' key='BMCC' className='shipValue'/>
+                                    <option value='EMMA' label='EMMA' key='EMMA' className='shipValue'/>
+                                    <option value='PROT' label='PROT' key='PROT' className='shipValue'/>
+                                    <option value='GYRE' label='GYRE' key='GYRE' className='shipValue'/>
+                                    <option value='NAUT' label='NAUT' key='NAUT' className='shipValue'/>
+                                    <option value='3RD' label='3RD' key='3RD' className='shipValue'/>
+                                    <option value='????' label='????' key='????' className='shipValue'/>
                                 </select>
                             </div>
                         </div>  
@@ -176,10 +145,6 @@ export default function Home(){
                         <button onClick={()=>setSelected('foreign')} className={selected=='foreign'? 'selectedCrew': 'unselectedCrew'}>foreign</button>
                 </div>
             </div>
-
-
-
-
 
             <div className='tblFoot'>
                 <button className='tblFootBtn' onClick={save}> save </button>

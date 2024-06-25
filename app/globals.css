@@ -140,7 +140,6 @@ body {
 }
 .tblBodyShip::before{
     position:absolute;
-    content:"\2193";
     top:0px;
     right:-1px;
 }
@@ -163,6 +162,9 @@ body {
     transition:300ms;
     border-bottom:1px solid;
     border-color:rgb(var(--forground-rgba-fade));
+}
+.shipValue{
+    color:black;
 }
 
 .formIcon{
