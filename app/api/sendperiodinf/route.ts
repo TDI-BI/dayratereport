@@ -31,6 +31,7 @@ export const GET = async (request:  NextRequest) => {
         let line = item.split(':')
         //console.log(line);
         dict[line[0]]=line[1]
+        dict[line[0]]=line[2]
         if(!line[1]){
             daysworked+=1;
         }
@@ -48,17 +49,17 @@ export const GET = async (request:  NextRequest) => {
     let w = ''
     let strdict=''
 
-    period.map((day) => {   
+    period.map((day) => {    // we can do this better, and should pop this out into a util probably
         strdict+=day+':'+dict[day]+';';
         dict[day] ? dinf = dict[day] : dinf = '';
         jdict[day] ? jinf = jdict[day] : jinf = '';
         dict[day] ? w = '[X]' : w ='[  ]'
-        data.push([day, w, dinf])
+        data.push([day, w, dinf, jinf])
     })
     doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
     //make pdf
     autoTable(doc, { 
-        head: [["date","worked?","vessel"]], 
+        head: [["date","worked?","vessel", "job"]], 
         body: data,
     })
     doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
