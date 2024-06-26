@@ -84,19 +84,11 @@ body {
     display:inline-flex;
     outline-width: 0px;
 }
-.tblHeadCheck, .tblHeadDate, .tblHeadShip{
+.tblHeadDate, .tblHeadShip{
     text-align: left;
     padding:10px;
-    width:180px;
+    width:115px;
 }
-.tblHeadCheck{
-    text-align: left;
-    width:50px !important;
-}
-.tblHeadDate{
-    width:115px !important;
-}
-
 .tblRowWrap{
     padding-top:10px;
 }
@@ -116,7 +108,7 @@ body {
     height:50px !important;
     padding-left:10px;
     padding-right:10px; 
-    width:180px;
+    width:115px;
 }
 .tblBodyCheck{
     display:inline-table;
@@ -165,6 +157,9 @@ body {
 }
 .shipValue{
     color:black;
+}
+.shipInput{
+    width:95px !important;
 }
 
 .formIcon{

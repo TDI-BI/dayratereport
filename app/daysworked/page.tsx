@@ -21,28 +21,45 @@ export default function Home(){
 
     const save = async () =>{ 
         let strdict=''
+        let derrors:HTMLElement[] = [] // gonna treat this as a stack for which days i need to flash
         period.map((day) => { 
-           
+
+            if( // one or not hte other
+                !vessels[day as keyof {}] && jobs[day as keyof {}] || 
+                vessels[day as keyof {}] && !jobs[day as keyof {}]
+            ){
+                derrors.push(document.getElementById(day+'flash') as HTMLElement)
+                return; //skip the rest of this since it errors anyway
+            }
+               
             //read our displayed table
-            var cship='';
-            if(dict[day as keyof {}]) cship = dict[day as keyof {}]
+            var cship = vessels[day as keyof {}]
+            var cjob = jobs[day as keyof {}]
             
             //prepare our output
-            strdict+=day+':'+cship+';';
+            strdict+=day+':'+cship+':'+cjob+';';
             
         })
-        if(selected==''){
+        if(derrors.length!=0){
+            derrors.forEach((itm)=>{
+                flashDiv(itm)
+            })
+            return false;
+        }
+        if(crew==''){
             const target= document.getElementById('target') as HTMLElement
             flashDiv(target)
             return false
         }
-        selected=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
+        
+        crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
         await fetchBoth(apiUrlEndpoint);
         return true;
     }
-    const [dict, setdict]=useState({})
-    const [selected, setSelected] = useState('')
+    const [vessels, setVessels]=useState({})
+    const [jobs, setJobs]=useState({})
+    const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
         useEffect(() => {
 
@@ -52,20 +69,23 @@ export default function Home(){
                 const response = await fetchBoth(apiUrlEndpoint);
                 const res = await response.json();
                 
-                let dict:{[id: string] : string} = {}
+                let ves:{[id: string] : string} = {}
+                let job:{[id: string] : string} = {}
                 try{
                     (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
                         if(item['day']=='-1'){
-                            item['ship']=='1' ? setSelected('domestic') : setSelected('foreign')
+                            item['ship']=='1' ? setCrew('domestic') : setCrew('foreign')
                             return
                         }
-                        dict[item['day']]=item['ship']
+                        ves[item['day']]=item['ship']
+                        job[item['day']]=item['type']
                     })
                 }
                 catch{
                     
                 }
-                setdict(dict);
+                setVessels(ves);
+                setJobs(job);
                 setdataResponse(res.resp); 
                 
             }
@@ -98,52 +118,65 @@ export default function Home(){
         <main className="flex min-h-screen flex-col items-center px-1">  
             <div className='tblWrapper'>
                 <div className='tblHead'>
-                    <div className='tblHeadCheck'>
-                        <input type='checkbox' id={'all'} />
-                    </div>
                     <div className='tblHeadDate'>
                         <strong>DATE</strong>
                     </div>
                     <div className='tblHeadShip'>
                         <strong>VESSEL</strong>
                     </div>
+                    <div className='tblHeadShip'>
+                        <strong>JOB</strong>
+                    </div>
                 </div>
                 <div>
                     {
                     period.map((day:string)=>
-                        <div key={day} id={day+' item'} className='tblRow'>
-                            <div className="tblBodyCheck">
-                                <input type='checkbox' id={day+'_worked'}/>
-                            </div>
-                            <div className="tblBodyDate">
-                                {day}
-                            </div>
+                        <div key={day} id={day+'flash'}>
+                            <div key={day} id={day+'_item'} className='tblRow'>{/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
+                                <div className="tblBodyDate">
+                                    {day}
+                                </div>
 
-                            <div className="tblBodyShip">
-                                <select className='shipInput' id={day+'_ship'} value={dict[day as keyof {}]} onChange={(e)=>{
-                                    //this is extremely ugly but it works, so thats whats important-est imo
-                                    let ndict:{[id: string] : string}=structuredClone(dict)
-                                    ndict[day]=e.target.value
-                                    setdict(ndict)
-                                }}>
-                                    <option value='' id='' key='' className='shipValue'/>
-                                    <option value='BMCC' label='BMCC' key='BMCC' className='shipValue'/>
-                                    <option value='EMMA' label='EMMA' key='EMMA' className='shipValue'/>
-                                    <option value='PROT' label='PROT' key='PROT' className='shipValue'/>
-                                    <option value='GYRE' label='GYRE' key='GYRE' className='shipValue'/>
-                                    <option value='NAUT' label='NAUT' key='NAUT' className='shipValue'/>
-                                    <option value='3RD' label='3RD' key='3RD' className='shipValue'/>
-                                    <option value='????' label='????' key='????' className='shipValue'/>
-                                </select>
-                            </div>
-                        </div>  
+                                <div className="tblBodyShip">
+                                    <select className='shipInput' id={day+'_ship'} value={vessels[day as keyof {}]} onChange={(e)=>{
+                                        //this is extremely ugly but it works, so thats whats important-est imo
+                                        let ndict:{[id: string] : string}=structuredClone(vessels)
+                                        ndict[day]=e.target.value
+                                        setVessels(ndict)
+                                    }}>
+                                        <option value='' id='' key='' className='shipValue'/>
+                                        <option value='BMCC' label='BMCC' key='BMCC' className='shipValue'/>
+                                        <option value='EMMA' label='EMMA' key='EMMA' className='shipValue'/>
+                                        <option value='PROT' label='PROT' key='PROT' className='shipValue'/>
+                                        <option value='GYRE' label='GYRE' key='GYRE' className='shipValue'/>
+                                        <option value='NAUT' label='NAUT' key='NAUT' className='shipValue'/>
+                                        <option value='3RD' label='3RD' key='3RD' className='shipValue'/>
+                                        <option value='????' label='????' key='????' className='shipValue'/>
+                                    </select>
+                                </div>
+
+                                <div className="tblBodyShip">
+                                    <select className='shipInput' id={day+'_job'} value={jobs[day as keyof {}]} onChange={(e)=>{
+                                        //this is extremely ugly but it works, so thats whats important-est imo
+                                        let ndict:{[id: string] : string}=structuredClone(jobs)
+                                        ndict[day]=e.target.value
+                                        setJobs(ndict)
+                                    }}>
+                                        <option value='' id='' key='' className='shipValue'/>
+                                        <option value='TECH' label='TECH' key='TECH' className='shipValue'/>
+                                        <option value='MARINE' label='MARINE' key='MARINE' className='shipValue'/>
+                                    </select>
+                                </div>
+                            </div>  
+                        </div>
+                        
                     )}
                 </div>
 
                 <div className='crewtype' id='target'>
                     CREW:
-                        <button onClick={()=>setSelected('domestic')} className={selected=='domestic'? 'selectedCrew': 'unselectedCrew'}>domestic</button>
-                        <button onClick={()=>setSelected('foreign')} className={selected=='foreign'? 'selectedCrew': 'unselectedCrew'}>foreign</button>
+                        <button onClick={()=>setCrew('domestic')} className={crew=='domestic'? 'selectedCrew': 'unselectedCrew'}>domestic</button>
+                        <button onClick={()=>setCrew('foreign')} className={crew=='foreign'? 'selectedCrew': 'unselectedCrew'}>foreign</button>
                 </div>
             </div>
 

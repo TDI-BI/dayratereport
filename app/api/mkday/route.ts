@@ -4,6 +4,7 @@ import { connectToDb } from '@/utils/connectToDb'
 import { getPeriod } from '@/utils/payperiod';
 
 export const GET = async (request:  NextRequest) => {
+    
     const session = await getSession();
     //get our passed parameters
     const { searchParams } = request.nextUrl;
@@ -19,24 +20,25 @@ export const GET = async (request:  NextRequest) => {
 
         if(!session.isLoggedIn) return new Response(JSON.stringify({error: "user not logged in "}), {status: 200});
         let list = days.split(';');
-        var dict: {[id: string] : string} = {};
+        var dict: {[id: string] : string[]} = {};
         var daysworked=0;
         list.map((item)=>{
             let line = item.split(':')
-            dict[line[0]]=line[1]
+            dict[line[0]]=[line[1], line[2]]
             if(line[1]!='') daysworked+=1;
         })
 
         //build queries, 1 for clearing db and 2 for inserting into db
         var query1 = 'delete from days where (username="'+username+'") and (';
-        var query2= 'insert into days (uid, day, ship, username) VALUES '
+        var query2= 'insert into days (uid, day, ship, username, type) VALUES '
         period.map((day)=>{
             query1+='(day="'+day+'") or '
-            query2+='("'+uid+'","'+day+'","'+dict[day]+'","'+username+'"),';
+            query2+='("'+uid+'","'+day+'","'+dict[day][0]+'","'+username+'","'+dict[day][1]+'"),';
         })
         //update this to track domestic
-        query2+='("","-1","'+domestic+'","'+username+'");'
+        query2+='("","-1","'+domestic+'","'+username+'", "");'
         query1+='(day="-1"));';
+        console.log(query2)
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
 
