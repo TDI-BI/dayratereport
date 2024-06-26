@@ -38,14 +38,16 @@ export default function Page() {
 
         let data:string[][] = [] // for pdf
         let dinf=''
+        let jinf=''
         let w = ''
         let strdict='' // for query
         //build data
         period.map((day) => {   
-            strdict+=day+':'+dict[day]+';';
+            strdict+=day+':'+dict[day]+':'+jdict[day]+';';
             dict[day] ? dinf = dict[day] : dinf = '';
+            jdict[day] ? jinf = jdict[day] : jinf = '';
             dict[day] ? w = '[X]' : w ='[  ]'
-            data.push([day, w, dinf])
+            data.push([day, w, dinf, jinf])
         })
 
         //send email
@@ -56,7 +58,7 @@ export default function Page() {
         const doc = new jsPDF();
         doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
         autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
-            head: [["date","worked?","vessel"]], 
+            head: [["date","worked?","vessel", "job"]], 
             body: data,
         })
         doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
@@ -89,6 +91,7 @@ export default function Page() {
     let name=''
     let daysworked=0
     var dict: {[id: string] : string} = {};
+    var jdict: {[id: string] : string} = {};
     let type=''
     try{
         dataResponse.forEach((item) => {
@@ -99,6 +102,7 @@ export default function Page() {
             if(!name) name=item['uid'];
             if(item['ship']) daysworked+=1;
             dict[item['day']]=item['ship']
+            jdict[item['day']]=item['type']
            
         }) ;
     }
@@ -121,12 +125,16 @@ export default function Page() {
                         <TableColumn>
                             vessel
                         </TableColumn>
+                        <TableColumn>
+                            job
+                        </TableColumn>
                     </TableHeader>
                     <TableBody>{
                     period.map((day) => 
                         <TableRow key={day} className='reportLine'> 
                             <TableCell className='reportTxt' key={day+'date'}>{day}</TableCell> 
                             <TableCell className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</TableCell>
+                            <TableCell className='reportTxt'key={day+'job'}>{jdict[day] ? jdict[day] : ''}</TableCell>
                         </TableRow>) // for now we are jtus gonna try to pull 1 line    
                     }</TableBody>
                 </Table>

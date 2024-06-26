@@ -25,6 +25,7 @@ export const GET = async (request:  NextRequest) => {
     //assemble our dictionary from a string
     let list = pdf.split(';');
     var dict: {[id: string] : string} = {};
+    var jdict: {[id: string] : string} = {};
     var daysworked=0;
     list.map((item)=>{
         let line = item.split(':')
@@ -43,12 +44,14 @@ export const GET = async (request:  NextRequest) => {
     const doc = new jsPDF();
     let data:string[][] = []
     let dinf=''
+    let jinf=''
     let w = ''
     let strdict=''
 
     period.map((day) => {   
         strdict+=day+':'+dict[day]+';';
         dict[day] ? dinf = dict[day] : dinf = '';
+        jdict[day] ? jinf = jdict[day] : jinf = '';
         dict[day] ? w = '[X]' : w ='[  ]'
         data.push([day, w, dinf])
     })
