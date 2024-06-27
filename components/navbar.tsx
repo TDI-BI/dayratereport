@@ -6,7 +6,7 @@ const Navbar = async () => {
     const session = await getSession()
 
     //console.log(session)  
-    console.log(session.isLoggedIn)
+    //console.log(session.isLoggedIn)
     if(!session.isLoggedIn) return(
         <div className='padding'/>
     );

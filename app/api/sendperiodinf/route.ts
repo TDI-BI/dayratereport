@@ -29,10 +29,10 @@ export const GET = async (request:  NextRequest) => {
     var daysworked=0;
     list.map((item)=>{
         let line = item.split(':')
-        //console.log(line);
+        
         dict[line[0]]=line[1]
-        dict[line[0]]=line[2]
-        if(!line[1]){
+        jdict[line[0]]=line[2]
+        if(line[1]){
             daysworked+=1;
         }
     })
@@ -56,6 +56,7 @@ export const GET = async (request:  NextRequest) => {
         dict[day] ? w = '[X]' : w ='[  ]'
         data.push([day, w, dinf, jinf])
     })
+
     doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
     //make pdf
     autoTable(doc, { 
@@ -73,11 +74,12 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
-   
+    //return {error: 'block here'} //to stop us from gettin email
     try {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
-            to: 'dayratereportdonotrespond@gmail.com', // hard set this
+            to: 'dayrate@tdi-bi.com',
+				//'dayratereportdonotrespond@gmail.com', ', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
@@ -94,7 +96,7 @@ export const GET = async (request:  NextRequest) => {
 		//console.log(data)
         //console.log('no error, sent')
         return Response.json(data);
-    } catch (error) {
+    } catch (error:any) {
         //console.log('some error occured')
         if(error instanceof Error){
             return  new Response(JSON.stringify({ error: error.message }), {status: 200});

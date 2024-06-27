@@ -35,7 +35,7 @@ export default function Home(){
             //read our displayed tabl
             var cship='';
             var cjob='';
-            console.log('vessels: '+vessels[day as keyof {}])
+            //console.log('vessels: '+vessels[day as keyof {}])
             vessels[day as keyof {}] ? cship=vessels[day as keyof {}] : ''
             jobs[day as keyof {}] ? cjob = jobs[day as keyof {}] : ''
             
@@ -116,7 +116,7 @@ export default function Home(){
         redirect('../../')
     }
     //generate html
-    console.log('refresh')
+    //console.log('refresh')
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
             <div className='tblWrapper'>
