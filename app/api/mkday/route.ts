@@ -38,7 +38,6 @@ export const GET = async (request:  NextRequest) => {
         //update this to track domestic
         query2+='("","-1","'+domestic+'","'+username+'", "");'
         query1+='(day="-1"));';
-        console.log(query2)
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
 

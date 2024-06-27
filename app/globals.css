@@ -16,6 +16,10 @@
     --background-item-rgba: 170, 170, 170, 0;
     --background-item-rgba-fade: 170, 170, 170, 1;
     --background-item-rgba-select: 170, 170, 170, .7;
+
+    /*comment here not next, just make sure this matches background color.
+    transparent background causes us to not have select arrows on mobile...*/
+    --select: 255, 255, 255, .01
 }
 
 @media (prefers-color-scheme: dark) {
@@ -31,6 +35,8 @@
         --background-item-rgba: 48, 48, 48, 0;
         --background-item-rgba-fade: 48, 48, 48, 1;
         --background-item-rgba-select: 48, 48, 48, .7;
+
+        --select: 0, 0, 0, .01
     }
 }
 
@@ -60,7 +66,6 @@ body {
         text-wrap: balance;
     }
 }
-
 .headBtn{
     text-align: center;
     height:100%;
@@ -160,6 +165,7 @@ body {
 }
 .shipInput{
     width:95px !important;
+    background-color: rgb(var(--select));
 }
 
 .formIcon{

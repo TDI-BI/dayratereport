@@ -32,9 +32,12 @@ export default function Home(){
                 return; //skip the rest of this since it errors anyway
             }
                
-            //read our displayed table
-            var cship = vessels[day as keyof {}]
-            var cjob = jobs[day as keyof {}]
+            //read our displayed tabl
+            var cship='';
+            var cjob='';
+            console.log('vessels: '+vessels[day as keyof {}])
+            vessels[day as keyof {}] ? cship=vessels[day as keyof {}] : ''
+            jobs[day as keyof {}] ? cjob = jobs[day as keyof {}] : ''
             
             //prepare our output
             strdict+=day+':'+cship+':'+cjob+';';
@@ -138,7 +141,7 @@ export default function Home(){
                                 </div>
 
                                 <div className="tblBodyShip">
-                                    <select className='shipInput' id={day+'_ship'} value={vessels[day as keyof {}]} onChange={(e)=>{
+                                    <select className='shipInput' id={day+'_ship'} value={vessels[day as keyof {}] ? vessels[day as keyof {}] : ''} onChange={(e)=>{
                                         //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict:{[id: string] : string}=structuredClone(vessels)
                                         ndict[day]=e.target.value
@@ -156,7 +159,7 @@ export default function Home(){
                                 </div>
 
                                 <div className="tblBodyShip">
-                                    <select className='shipInput' id={day+'_job'} value={jobs[day as keyof {}]} onChange={(e)=>{
+                                    <select className='shipInput' id={day+'_job'} value={jobs[day as keyof {}] ? jobs[day as keyof {}] : ''} onChange={(e)=>{
                                         //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict:{[id: string] : string}=structuredClone(jobs)
                                         ndict[day]=e.target.value
