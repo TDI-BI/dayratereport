@@ -13,6 +13,7 @@
     "@nextui-org/react": "^2.4.1",
     "bcrypt": "^5.1.1",
     "html2canvas": "^1.4.1",
+    "ionicons": "^7.4.0",
     "iron-session": "^8.0.1",
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.8.2",
@@ -24,6 +25,7 @@
     "sass": "^1.75.0"
   },
   "devDependencies": {
+    "@svgr/webpack": "^8.1.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",

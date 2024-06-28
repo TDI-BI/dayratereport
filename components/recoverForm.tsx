@@ -4,6 +4,11 @@ import { useFormState } from 'react-dom'
 import Link from 'next/link'
 import { useEffect } from 'react'
 import { flashDiv } from '@/utils/flashDiv'
+import Image from 'next/image';
+
+//icons
+import mail from '@/rsrsc/ionicons.designerpack/mail-open-outline.svg'
+
 
 const RecoverForm = () => {
     const [state,formAction] = useFormState<any, FormData>(recover, undefined);
@@ -20,7 +25,13 @@ const RecoverForm = () => {
             <form action={formAction}>
 
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={mail}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='email' type='text' placeholder='email'/>
                 </h1>
 

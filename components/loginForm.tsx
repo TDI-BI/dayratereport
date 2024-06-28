@@ -4,6 +4,12 @@ import { useFormState } from 'react-dom'
 import {useEffect} from 'react';
 import { flashDiv } from '@/utils/flashDiv';
 import Link from 'next/link'
+import Image from 'next/image';
+
+//icons
+import person from '@/rsrsc/ionicons.designerpack/person-circle-outline.svg'
+import lock from '@/rsrsc/ionicons.designerpack/lock-closed-outline.svg'
+
 
 const LoginForm = () => {
     const [state,formAction] = useFormState<any, FormData>(login, undefined);
@@ -17,11 +23,23 @@ const LoginForm = () => {
         <div className='tblWrapper'>
             <form action={formAction}>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={person}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='username' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={lock}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='password' type='password' placeholder='password'/>
                 </h1>
                 <h1 className='formLine'>

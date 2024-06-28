@@ -6,6 +6,11 @@ import { useEffect } from 'react'
 import { flashDiv } from '@/utils/flashDiv'
 import Link from 'next/link'
 
+import Image from 'next/image';
+
+//icons
+import lock from '@/rsrsc/ionicons.designerpack/lock-closed-outline.svg'
+
 const ResetForm = () => {
     const searchParams = useSearchParams();
     const oldHash = searchParams.get('acc') as string;
@@ -23,11 +28,23 @@ const ResetForm = () => {
                 <input className='hidethis' name='acc' type='password' value={oldHash}/>
 
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={lock}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='password1' type='password' placeholder='new password'/>
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={lock}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='password2' type='password' placeholder='repeat password'/>
                 </h1>
 

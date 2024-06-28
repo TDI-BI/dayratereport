@@ -3,6 +3,13 @@ import { mkAccount } from '@/actions'
 import { useFormState } from 'react-dom'
 import { useEffect } from 'react'
 import { flashDiv } from '@/utils/flashDiv'
+import Image from 'next/image';
+
+//icons
+import person from '@/rsrsc/ionicons.designerpack/person-circle-outline.svg'
+import lock from '@/rsrsc/ionicons.designerpack/lock-closed-outline.svg'
+import mail from '@/rsrsc/ionicons.designerpack/mail-open-outline.svg'
+import names from '@/rsrsc/ionicons.designerpack/body-outline.svg'
 
 const MkaccountForm = () => {
     const [state,formAction] = useFormState<any, FormData>(mkAccount, undefined);
@@ -18,27 +25,63 @@ const MkaccountForm = () => {
         <div className='tblWrapper'>
             <form action={formAction}>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={names}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='firstname' type='text' placeholder='first name'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={names}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='lastname' type='text' placeholder='last name'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={person}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='nusername' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={mail}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='email' type='text' placeholder='email'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={lock}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='password1' type='password' placeholder='password'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>icon</p>
+                    <p className='formicon'>
+                        <Image
+                            priority
+                            src={lock}
+                            alt='icon'
+                        />
+                    </p>
                     <input className='formInput' name='password2' type='password' placeholder='repeat password'/> 
                 </h1>
                 <h1 className='formLine'>
