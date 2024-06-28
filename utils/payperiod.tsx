@@ -1,4 +1,4 @@
-export const getPeriod = () =>{ // found this online
+export const getPeriod = (input=0) =>{ // found this online
     //for now it just gets the last week and next. at some point
     //i will have to fix this fraud function and make it work better so it can actually load stuff
     const today=new Date();
@@ -7,7 +7,7 @@ export const getPeriod = () =>{ // found this online
     //solution for last monday: https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
     let target = 1 // Monday, scale 0-7
     let date = new Date()
-    let cguy=0; // -7, 0, 7 for back reg forward
+    let cguy=input*-7; // -7, 0, 7 for back reg forward
     date.setDate(date.getDate() - ( date.getDay() == target ? 7 : (date.getDay() + (7 - target)) % 7 ) + cguy)
     //console.log(date)
     
