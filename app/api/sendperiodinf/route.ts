@@ -74,7 +74,6 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
-    //return {error: 'block here'} //to stop us from gettin email
     try {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably

@@ -16,12 +16,18 @@ import {
     TableCell
 } from "@nextui-org/react"
 import {flashDiv} from '@/utils/flashDiv'
+import { useSearchParams } from "next/navigation";
+
 
 //page globals
 const por=getPort();
-const period = getPeriod();
+
 
 export default function Page() {
+    const sprms = useSearchParams();
+    const prev= sprms.get('prev')=='1';
+    const period = prev? getPeriod(1) : getPeriod(0)
+    const ex = prev ? 'prev=1' : '';
     //needs to be called from within a function (ugh)
     const router = useRouter();
 
@@ -79,7 +85,7 @@ export default function Page() {
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = por+'/api/getperiodinf';
+        const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
         const response = await fetchBoth(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
@@ -140,6 +146,7 @@ export default function Page() {
                 </Table>
                 <p> crew type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
+                {prev? <p className='prev'> this is last weeks report </p> : ''}
             </div>
             <div className='affirmation' id='target'>
                 <div className='affirmRow'>
