@@ -1,15 +1,16 @@
 "use client"; // needed for interactivity
 import { useState, useEffect, HTMLInputTypeAttribute } from "react";
-import { getPeriod } from '@/utils/payperiod';
+import { getPeriod, getPeriodNow } from '@/utils/payperiod';
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from '@/utils/fetchBoth';
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
+import { getSession } from "@/actions";
+import {sessionOptions, sessionData, defaultSession} from "@/lib"
 
 //page globals
 const por=getPort();
-const period= getPeriod();
 let runcount=1;
 
 export default function Home(){
@@ -64,10 +65,15 @@ export default function Home(){
     const [jobs, setJobs]=useState({})
     const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
+    const [period, setPeriod] = useState(getPeriodNow())
         useEffect(() => {
 
             //query database
             async function getPeriodInf(){
+                const nperiod = await getPeriod();
+                setPeriod(nperiod);
+
+
                 const apiUrlEndpoint = por+'/api/getperiodinf';
                 const response = await fetchBoth(apiUrlEndpoint);
                 const res = await response.json();
@@ -87,6 +93,8 @@ export default function Home(){
                 catch{
                     
                 }
+
+
                 setVessels(ves);
                 setJobs(job);
                 setdataResponse(res.resp); 
@@ -187,6 +195,9 @@ export default function Home(){
                 <button className='tblFootBtn' onClick={save}> save </button>
                 <button className='tblFootBtn' onClick={review}> review </button>
             </div>
+            <button className='tblFootBtn' onClick={()=>{
+                console.log('clicked')
+            }}> switchPeriod </button>
         </main>
     );
 }

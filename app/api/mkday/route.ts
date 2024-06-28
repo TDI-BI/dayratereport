@@ -1,7 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { connectToDb } from '@/utils/connectToDb'
-import { getPeriod } from '@/utils/payperiod';
+import { getPeriod, getPeriodNow } from '@/utils/payperiod';
 
 export const GET = async (request:  NextRequest) => {
     
@@ -13,7 +13,7 @@ export const GET = async (request:  NextRequest) => {
     //if(domestic) console.log('domestic')
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
-        const period = getPeriod();
+        const period = await getPeriodNow();
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
     try{ // esentially just making a homemade UPSERT here

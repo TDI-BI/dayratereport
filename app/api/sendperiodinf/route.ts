@@ -2,7 +2,7 @@
 import { Resend } from 'resend';
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
-import { getPeriod } from '@/utils/payperiod';
+import { getPeriod, getPeriodNow } from '@/utils/payperiod';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
 
@@ -39,7 +39,7 @@ export const GET = async (request:  NextRequest) => {
 
     //console.log(daysworked);
 
-    const period = getPeriod();
+    const period = getPeriodNow();
 
     //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
     const doc = new jsPDF();

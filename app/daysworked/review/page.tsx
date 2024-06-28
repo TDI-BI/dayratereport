@@ -3,7 +3,7 @@ import Link from "next/link";
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
-import { getPeriod } from '@/utils/payperiod';
+import { getPeriod, getPeriodNow } from '@/utils/payperiod';
 import { redirect, useRouter } from 'next/navigation'
 import { getPort } from '@/utils/getPort';
 import { fetchBoth } from "@/utils/fetchBoth";
@@ -19,7 +19,7 @@ import {flashDiv} from '@/utils/flashDiv'
 
 //page globals
 const por=getPort();
-const period = getPeriod();
+const period = getPeriodNow();
 
 export default function Page() {
     //needs to be called from within a function (ugh)
