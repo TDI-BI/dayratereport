@@ -25,7 +25,7 @@ const MkaccountForm = () => {
         <div className='tblWrapper'>
             <form action={formAction}>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={names}
@@ -35,7 +35,7 @@ const MkaccountForm = () => {
                     <input className='formInput' name='firstname' type='text' placeholder='first name'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={names}
@@ -45,7 +45,7 @@ const MkaccountForm = () => {
                     <input className='formInput' name='lastname' type='text' placeholder='last name'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={person}
@@ -55,7 +55,7 @@ const MkaccountForm = () => {
                     <input className='formInput' name='nusername' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={mail}
@@ -65,7 +65,7 @@ const MkaccountForm = () => {
                     <input className='formInput' name='email' type='text' placeholder='email'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={lock}
@@ -75,7 +75,7 @@ const MkaccountForm = () => {
                     <input className='formInput' name='password1' type='password' placeholder='password'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={lock}

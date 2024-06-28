@@ -28,7 +28,7 @@ const ResetForm = () => {
                 <input className='hidethis' name='acc' type='password' value={oldHash}/>
 
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={lock}
@@ -38,7 +38,7 @@ const ResetForm = () => {
                     <input className='formInput' name='password1' type='password' placeholder='new password'/>
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={lock}

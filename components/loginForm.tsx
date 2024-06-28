@@ -23,7 +23,7 @@ const LoginForm = () => {
         <div className='tblWrapper'>
             <form action={formAction}>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={person}
@@ -33,7 +33,7 @@ const LoginForm = () => {
                     <input className='formInput' name='username' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={lock}

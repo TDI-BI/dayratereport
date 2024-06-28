@@ -42,3 +42,4 @@ the only other dependency you have to set up is our database, formatted as follo
 - -     msgs #this is just for debugging purposes
 - - -       msg varchar(255)
 
+icon masterlist @ https://ionic.io/ionicons

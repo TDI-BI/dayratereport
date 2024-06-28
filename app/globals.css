@@ -19,7 +19,8 @@
 
     /*comment here not next, just make sure this matches background color.
     transparent background causes us to not have select arrows on mobile...*/
-    --select: 255, 255, 255, .01
+    --select: 255, 255, 255, .01;
+    --icon: 0%;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,7 +37,8 @@
         --background-item-rgba-fade: 48, 48, 48, 1;
         --background-item-rgba-select: 48, 48, 48, .7;
 
-        --select: 0, 0, 0, .01
+        --select: 0, 0, 0, .01;
+        --icon: 100%;
     }
 }
 
@@ -141,8 +143,6 @@ body {
     right:-1px;
 }
 
-
-
 .stuff{
     display:block;
     flex-direction:column;  
@@ -167,9 +167,9 @@ body {
     width:95px !important;
     background-color: rgb(var(--select));
 }
-
 .formIcon{
-
+    filter:invert(var(--icon));
+    padding-right:10px; /* just gives us padding between this and the input div*/
 }
 .formInput{
     margin:auto;

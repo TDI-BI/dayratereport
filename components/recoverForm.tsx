@@ -25,7 +25,7 @@ const RecoverForm = () => {
             <form action={formAction}>
 
                 <h1 className='formLine'>
-                    <p className='formicon'>
+                    <p className='formIcon'>
                         <Image
                             priority
                             src={mail}
