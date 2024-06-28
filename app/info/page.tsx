@@ -14,7 +14,7 @@ const profile = async () => {
                 <div id="bweh">
                     <p> username: {session.username}</p>
                     <p> email: {session.userEmail} </p>
-                    <p> username: {name[0] + " " + name[1]} </p>
+                    <p> full name: {name[0] + " " + name[1]} </p>
                 </div>
                 <p className='infoText'> 
                     <br></br>
