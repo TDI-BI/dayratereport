@@ -96,11 +96,8 @@ body {
     padding:10px;
     width:115px;
 }
-.tblRowWrap{
-    padding-top:10px;
-}
 .tblRow{
-    padding-top:5px;
+    padding-top:15px;
     height:60px;
     background-color:rgb(var(--background-item-rgba));
     transition:300ms;

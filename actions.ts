@@ -138,7 +138,7 @@ export const resetPassword = async(
     if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
 
     const hashword = await bcrypt.hash(formPassword, 10)
-    console.log(hashword, oldhash);
+    //console.log(hashword, oldhash);
 
 
     const link = por+'/api/resetpassword?password='+hashword+'&oldhash='+oldhash;
