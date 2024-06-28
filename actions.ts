@@ -52,7 +52,7 @@ export const login = async(
     session.username= dbAcc.username
     session.userEmail= dbAcc.email
     session.isLoggedIn= true
-    session.whatPeriod= 0;
+    session.whatPeriod= 1;
     await session.save();
     
     redirect("/")
@@ -101,7 +101,7 @@ export const mkAccount = async(
     session.username= formUsername
     session.userEmail= formEmail
     session.isLoggedIn= true
-    session.whatPeriod= 0;
+    session.whatPeriod= 1;
     await session.save();
     redirect("../../")// -> uncomment this out when im done toying with the form
 }
@@ -151,4 +151,3 @@ export const resetPassword = async(
     }
     redirect("../../")// -> uncomment this out when im done toying with the form
 }
-
