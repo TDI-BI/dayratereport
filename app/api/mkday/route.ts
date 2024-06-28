@@ -10,14 +10,10 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';
     const domestic = searchParams.get('dom') || '0';
+    //if(domestic) console.log('domestic')
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
-    const prev = (searchParams.get('prev') || '0')=='1';
-
-
-    
-    
-    const period = prev ? getPeriod(1) : getPeriod();
+        const period = getPeriod();
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
     try{ // esentially just making a homemade UPSERT here

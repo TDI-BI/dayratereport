@@ -2,15 +2,12 @@ import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { getPeriod } from '@/utils/payperiod';
 import { connectToDb } from '@/utils/connectToDb'
-
 //this works on pulling individual days!
 
 export const GET = async (request: NextRequest) => {
-    const { searchParams } = request.nextUrl;
-    const prev = (searchParams.get('prev') || '0')=='1';
     
     //query building
-    const period = prev ? getPeriod(1) : getPeriod();
+    const period = getPeriod();
     let dparam:string = "(day='-1' ";
     period.forEach((item)=>{
         dparam+="or day='"+item+"'";

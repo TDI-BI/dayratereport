@@ -276,9 +276,3 @@ body {
 .hidethis{
     display:none;
 }
-.prev{
-    color:rgb(var(--background-end-rgb));
-    border-radius:10px;
-    border-style:solid;
-    background-color: rgb(var(--forground-rgba));
-}

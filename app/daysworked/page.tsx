@@ -6,27 +6,17 @@ import { fetchBoth } from '@/utils/fetchBoth';
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
-import { useSearchParams } from "next/navigation";
 
 //page globals
 const por=getPort();
-
+const period= getPeriod();
 let runcount=1;
-
 
 export default function Home(){
     const router = useRouter();
-
-    //flag for previous
-    const sprms = useSearchParams();
-    const prev= sprms.get('prev')=='1';
-    const period = prev? getPeriod(1) : getPeriod(0)
-    const ex = prev ? 'prev=1' : '';
-
     //function for saving our ship
     const review = async () => {
-        const rlink = prev? '/daysworked/review?prev=1' : '/daysworked/review'
-        if(await save()) router.push(rlink)
+        if(await save()) router.push('/daysworked/review')
     }
 
     const save = async () =>{ 
@@ -66,7 +56,7 @@ export default function Home(){
         }
         
         crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
-        const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
+        const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
         await fetchBoth(apiUrlEndpoint);
         return true;
     }
@@ -75,10 +65,10 @@ export default function Home(){
     const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
         useEffect(() => {
-            
+
             //query database
             async function getPeriodInf(){
-                const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
+                const apiUrlEndpoint = por+'/api/getperiodinf';
                 const response = await fetchBoth(apiUrlEndpoint);
                 const res = await response.json();
                 
@@ -129,12 +119,6 @@ export default function Home(){
     //console.log('refresh')
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
-            <div className='tblFoot'>
-                <button className='tblFootBtn' onClick={() =>{ 
-                    const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
-                    router.push(more)
-                }}> {prev ? 'show current period' : 'show previous period'} </button>
-            </div>
             <div className='tblWrapper'>
                 <div className='tblHead'>
                     <div className='tblHeadDate'>
