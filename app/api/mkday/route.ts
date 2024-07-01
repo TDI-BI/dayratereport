@@ -6,6 +6,7 @@ import { getPeriod } from '@/utils/payperiod';
 export const GET = async (request:  NextRequest) => {
     
     const session = await getSession();
+    console.log(session)
     //get our passed parameters
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';

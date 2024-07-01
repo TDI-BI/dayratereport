@@ -74,51 +74,49 @@ export default function Home(){
     const [jobs, setJobs]=useState({})
     const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
-        useEffect(() => {
+    useEffect(() => { 
+        //query database
+        async function getPeriodInf(){
+            const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
+            const response = await fetchBoth(apiUrlEndpoint);
+            const res = await response.json();
             
-            //query database
-            async function getPeriodInf(){
-                const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
-                const response = await fetchBoth(apiUrlEndpoint);
-                const res = await response.json();
-                
-                let ves:{[id: string] : string} = {}
-                let job:{[id: string] : string} = {}
-                try{
-                    (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
-                        if(item['day']=='-1'){
-                            item['ship']=='1' ? setCrew('domestic') : setCrew('foreign')
-                            return
-                        }
-                        ves[item['day']]=item['ship']
-                        job[item['day']]=item['type']
-                    })
-                }
-                catch{
-                    
-                }
-                setVessels(ves);
-                setJobs(job);
-                setdataResponse(res.resp); 
-                
+            let ves:{[id: string] : string} = {}
+            let job:{[id: string] : string} = {}
+            try{
+                (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
+                    if(item['day']=='-1'){
+                        item['ship']=='1' ? setCrew('domestic') : setCrew('foreign')
+                        return
+                    }
+                    ves[item['day']]=item['ship']
+                    job[item['day']]=item['type']
+                })
             }
-            getPeriodInf();
-
+            catch{
+                    
+            }
+            setVessels(ves);
+            setJobs(job);
+            setdataResponse(res.resp); 
             
-            //event listeners are async and thus must be wrapped in some kind of useeffect
-            document.addEventListener('keydown', e => { // catch ctrls
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    if(e.repeat) return; // stops hold from looping this function
-                    if((runcount%2)==1){ // ignore every other since this always triggers at least twice
-                        save();
-                    } 
-                    runcount+=1;
-                    return; // idk how important this is to be honest
-                }
-            });
-        }, []
-    );
+        }
+        getPeriodInf();
+
+        //event listeners are async and thus must be wrapped in some kind of useeffect
+        document.addEventListener('keydown', e => { // catch ctrls
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                if(e.repeat) return; // stops hold from looping this function
+                if((runcount%2)==1){ // ignore every other since this always triggers at least twice
+                    save();
+                } 
+                runcount+=1;
+                return; // idk how important this is to be honest
+            }
+        });
+    }, []);
+
     try{
         dataResponse.forEach((item) => {}); // this is literally jsut an error catcher, if this doesnt work it means we are logged out   
     }
