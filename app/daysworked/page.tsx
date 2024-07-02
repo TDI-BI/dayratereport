@@ -13,6 +13,8 @@ const period= getPeriod();
 let runcount=1;
 
 export default function Home(){
+    //build save area
+
     const router = useRouter();
     //function for saving our ship
     const review = async () => {
@@ -20,6 +22,7 @@ export default function Home(){
     }
 
     const save = async () =>{ 
+        setsaving(1)
         let strdict=''
         let derrors:HTMLElement[] = [] // gonna treat this as a stack for which days i need to flash
         period.map((day) => { 
@@ -58,12 +61,14 @@ export default function Home(){
         crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
         await fetchBoth(apiUrlEndpoint);
+        setsaving(0)
         return true;
     }
     const [vessels, setVessels]=useState({})
     const [jobs, setJobs]=useState({})
     const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
+    const [saving, setsaving] = useState(0);
         useEffect(() => {
 
             //query database
@@ -93,20 +98,6 @@ export default function Home(){
                 
             }
             getPeriodInf();
-
-            
-            //event listeners are async and thus must be wrapped in some kind of useeffect
-            document.addEventListener('keydown', e => { // catch ctrls
-                if (e.ctrlKey && e.key === 's') {
-                    e.preventDefault();
-                    if(e.repeat) return; // stops hold from looping this function
-                    if((runcount%2)==1){ // ignore every other since this always triggers at least twice
-                        save();
-                    } 
-                    runcount+=1;
-                    return; // idk how important this is to be honest
-                }
-            });
         }, []
     );
     try{
@@ -128,7 +119,7 @@ export default function Home(){
                         <strong>VESSEL</strong>
                     </div>
                     <div className='tblHeadShip'>
-                        <strong>JOB</strong>
+                        <strong>DEPT</strong>
                     </div>
                 </div>
                 <div>
@@ -154,7 +145,6 @@ export default function Home(){
                                         <option value='GYRE' label='GYRE' key='GYRE' className='shipValue'/>
                                         <option value='NAUT' label='NAUT' key='NAUT' className='shipValue'/>
                                         <option value='3RD' label='3RD' key='3RD' className='shipValue'/>
-                                        <option value='????' label='????' key='????' className='shipValue'/>
                                     </select>
                                 </div>
 
@@ -185,8 +175,9 @@ export default function Home(){
 
             <div className='tblFoot'>
                 <button className='tblFootBtn' onClick={save}> save </button>
-                <button className='tblFootBtn' onClick={review}> review </button>
+                <button className='tblFootBtn' onClick={review}> next </button>
             </div>
+            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'saving...' : 'saved'}</p>
         </main>
     );
 }
