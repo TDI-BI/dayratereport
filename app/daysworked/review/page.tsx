@@ -150,8 +150,8 @@ export default function Page() {
                 </div>
             </div>
             <div className='tblFoot'>
-                <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
                 <Link href='../'><div className='tblFootBtn'> back </div></Link>
+                <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
             </div>
         </main>
     )
