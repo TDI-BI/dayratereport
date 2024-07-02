@@ -282,3 +282,36 @@ body {
     border-style:solid;
     background-color: rgb(var(--forground-rgba));
 }
+.sadminRB, .uadminRB{
+    height:30px;
+    width:70px;
+    text-align: center;
+    line-height:30px;
+    background-color:rgb(var(--background-item-rgba-select));
+    transition:300ms;
+}
+.sadminRB{
+    background-color:rgb(var(--background-item-rgba));
+}
+.sadminRB:hover, .uadminRB:hover{
+    background-color:rgb(var(--background-item-rgba-fade));
+}
+
+.adminLabelY, .adminCell, .adminLabelX{
+    display:inline-block;
+    width:120px;
+    text-align: center;
+    border-color: rgb(var(--forground-rgba));
+    border-style:solid;
+    border-width:2px;
+}
+.adminLabelY{
+    font-weight: 600;
+}
+.adminLabelX{
+    font-weight: 600;
+    width:300px;
+}
+.adminRow{
+    
+}
