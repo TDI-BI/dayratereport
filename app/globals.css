@@ -187,7 +187,7 @@ body {
     padding:2px;
     display:inline-flex; flex-direction:row;
 }
-.tblFootBtn{
+.tblFootBtn, .topBtn{
     background-color:rgb(var(--background-item-rgba));
     outline-color:white;
     width:182.5px;
@@ -196,8 +196,11 @@ body {
     transition:300ms;
 }
 
-.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
+.tblBody:hover, .tblFootBtn:hover, .topBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
     background-color:rgb(var(--background-item-rgba-fade));
+}
+.topBtn{
+    width:300px;
 }
 
 .crewtype{/*work on this later*/

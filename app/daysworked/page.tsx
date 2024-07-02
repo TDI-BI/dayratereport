@@ -128,10 +128,10 @@ export default function Home(){
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
             <div className='tblFoot'>
-                <button className='tblFootBtn' onClick={() =>{ 
+                <button className='topBtn' onClick={() =>{ 
                     const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
                     router.push(more)
-                }}> {prev ? 'show current period' : 'show previous period'} </button>
+                }}> {prev ? 'show current period >' : '< show previous period'} </button>
             </div>
             <div className='tblWrapper'>
                 <div className='tblHead'>
