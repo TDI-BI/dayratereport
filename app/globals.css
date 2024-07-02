@@ -210,6 +210,8 @@ body {
     width:345px;
 }
 .selectedCrew, .unselectedCrew{
+    border-color:rgb(var(--background-item-rgba-select));
+    border-width:2px;
     width:115px;
     padding:10px;
     transition:300ms;
@@ -279,6 +281,7 @@ body {
 .hidethis{
     display:none;
 }
+
 .prev{
     color:rgb(var(--background-end-rgb));
     border-radius:10px;
@@ -318,3 +321,14 @@ body {
 .adminRow{
     
 }
+
+.savemsg0, .savemsg1{
+    font-weight:200;
+    color:rgb(var(--forground-rgba));
+    transition:300ms;
+    opacity:0;
+}
+.savemsg1{
+    opacity:1 !important;
+}
+
