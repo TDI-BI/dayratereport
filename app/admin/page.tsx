@@ -37,12 +37,12 @@ const adminPannel = () =>{
 
             (res.resp).forEach((day:any)=>{
                 if(day['day']=='-1'){ 
-                    tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
+                    tdict[day['uid']]=(day['ship']=="1")?'domestic' : 'foreign';
                     return
                 } 
                 if(!masterJson[day['ship']]) masterJson[day['ship']]={}
-                if(!masterJson[day['ship']][day['username']]) masterJson[day['ship']][day['username']]={}
-                masterJson[day['ship']][day['username']][day['day']]=day['type']
+                if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
+                masterJson[day['ship']][day['uid']][day['day']]=day['type']
 
             })
             setfdict(tdict);
@@ -121,14 +121,13 @@ const adminPannel = () =>{
             {
                 json[shipEh] && Object.keys(json[shipEh]).map((name)=>
                     <div className='adminRow'>
-                        <div className='adminLabelX'>.</div>
+                        <div className='adminLabelX'>{name}</div>
                         {period.map((day)=> //body example
                             <div className='adminCell'>
                                 <p>{json[shipEh][name][day] ? json[shipEh][name][day] : '.' }</p>
                         </div>
                         )}
                     </div>
-
                 )
             }   
 
