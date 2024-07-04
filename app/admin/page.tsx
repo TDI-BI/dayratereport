@@ -68,7 +68,10 @@ const adminPannel = () =>{
 
         // mkConfig merges your options with the defaults
         // and returns WithDefaults<ConfigOptions>
-        const csvConfig = mkConfig({ useKeysAsHeaders: true });
+        const csvConfig = mkConfig({ 
+            useKeysAsHeaders: true, 
+            filename:shipEh+'_'+period[0]+'_TO_'+period[6]
+        });
 
         const tblData = [
         {
@@ -85,6 +88,16 @@ const adminPannel = () =>{
 
         if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
+            let empy={ // should ommit empty rows for better readability
+                name: name,
+                mon:    '',
+                tues:   '',
+                wed:    '',
+                thurs:  '',
+                fri:    '',
+                sat:    '',
+                sun:    '',
+            }
             let row={
                 name:   name,
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
@@ -95,7 +108,6 @@ const adminPannel = () =>{
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
             }
-            
             tblData.push(row);
         })}
 
