@@ -40,6 +40,7 @@ export const GET = async (request:  NextRequest) => {
         query1+='(day="-1"));';
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
+        connection.end();
 
         return new Response(JSON.stringify({ resp: results }), {status: 200})
     }catch (error) { // try this ig, see if we spit an error
