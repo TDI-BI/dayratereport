@@ -82,7 +82,7 @@ export const GET = async (request:  NextRequest) => {
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
-                names[1] + ' @ ' + session.userEmail +' for pay period starting on' + day + 
+                names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + day + 
                 extraInfo,
             attachments:[
                 {

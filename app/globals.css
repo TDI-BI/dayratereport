@@ -332,3 +332,13 @@ body {
     opacity:1 !important;
 }
 
+.adminWrap{
+    display:inline-flex;
+    flex-direction:row;
+}
+.adminTable{
+    display:block;
+}
+.adminFilterWrap{
+    width:200px;
+}

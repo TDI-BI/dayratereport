@@ -4,7 +4,13 @@ import { getPort } from "@/utils/getPort";
 import { fetchBoth } from "@/utils/fetchBoth";
 import { redirect } from "next/navigation";
 import { getPeriod } from "@/utils/payperiod";
-import { RadioGroup, Radio } from "@nextui-org/react";
+import { 
+    RadioGroup, 
+    Radio, 
+} from "@nextui-org/react";
+import {
+    mkConfig, generateCsv, download 
+} from 'export-to-csv'
 
 const port = getPort();
 
@@ -57,7 +63,46 @@ const adminPannel = () =>{
     //console.log(dataResponse)
     
 
+    const exportCsv = () =>{
+        
 
+        // mkConfig merges your options with the defaults
+        // and returns WithDefaults<ConfigOptions>
+        const csvConfig = mkConfig({ useKeysAsHeaders: true });
+
+        const tblData = [
+        {
+            name:   "DATES",
+            mon:    period[0],
+            tues:   period[1],
+            wed:    period[2],
+            thurs:  period[3],
+            fri:    period[4],
+            sat:    period[5],
+            sun:    period[6],
+        },
+        ];
+
+        if(json[shipEh]){
+        Object.keys(json[shipEh]).map((name)=>{
+            let row={
+                name:   name,
+                mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
+                tues:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
+                wed:    json[shipEh][name][period[2]] ? json[shipEh][name][period[2]] : '',
+                thurs:  json[shipEh][name][period[3]] ? json[shipEh][name][period[3]] : '',
+                fri:    json[shipEh][name][period[4]] ? json[shipEh][name][period[4]] : '',
+                sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
+                sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
+            }
+            
+            tblData.push(row);
+        })}
+
+        // Converts your Array<Object> to a CsvOutput string based on the configs
+        const csv = generateCsv(csvConfig)(tblData);
+        download(csvConfig)(csv)
+    }
 
 
     return( // just default page wrapper for now
@@ -70,70 +115,73 @@ const adminPannel = () =>{
             {/*days.map((day)=>day['ship'] && <p key={day['day']+day['uid']}>{ // example
                 day['day'] + ' : ' + day['ship'] + ' : ' + day['type'] + ' : ' + day['uid'] + ' : ' + day['username'] + ' : ' + fdict[day['username']]
             }</p>)*/}
-            <RadioGroup
-                label='filter: '
-                value={shipEh}
-                onValueChange={(v)=>setShipEh(v)}
-            >
-                <Radio
-                    value='ALL'
-                    className={shipEh=='ALL' ? 'uadminRB' : 'sadminRB'}
-                >ALL</Radio>
-                <Radio
-                    value='BMCC'
-                    className={shipEh=='BMCC' ? 'uadminRB' : 'sadminRB'}
-                >BMCC</Radio>
-                <Radio
-                    value='EMMA'
-                    className={shipEh=='EMMA' ? 'uadminRB' : 'sadminRB'}
-                >EMMA</Radio>
-                <Radio
-                    value='PROT'
-                    className={shipEh=='PROT' ? 'uadminRB' : 'sadminRB'}
-                >PROT</Radio>
-                <Radio
-                    value='GYRE'
-                    className={shipEh=='GYRE' ? 'uadminRB' : 'sadminRB'}
-                >GYRE</Radio>
-                <Radio
-                    value='NAUT'
-                    className={shipEh=='NAUT' ? 'uadminRB' : 'sadminRB'}
-                >NAUT</Radio>
-                <Radio
-                    value='3RD'
-                    className={shipEh=='3RD' ? 'uadminRB' : 'sadminRB'}
-                >3RD</Radio>
-                <Radio
-                    value='????'
-                    className={shipEh=='????' ? 'uadminRB' : 'sadminRB'}
-                >????</Radio>
-            </RadioGroup>
+            <div className='adminWrap'>
+                <div className='adminFilterWrap'>
+                    <RadioGroup
 
-            <div className='adminRow'>
-                <div className='adminLabelX'>.</div>
-                {period.map((day)=> //header
-                    <div className='adminLabelY'>
-                        <p>{day}</p>
-                    </div>
-                )}
-            </div>
-
-            {
-                json[shipEh] && Object.keys(json[shipEh]).map((name)=>
-                    <div className='adminRow'>
-                        <div className='adminLabelX'>{name}</div>
-                        {period.map((day)=> //body example
-                            <div className='adminCell'>
-                                <p>{json[shipEh][name][day] ? json[shipEh][name][day] : '.' }</p>
-                        </div>
+                        label='filter: '
+                        value={shipEh}
+                        onValueChange={(v)=>setShipEh(v)}
+                    >
+                        <Radio
+                            value='ALL'
+                            className={shipEh=='ALL' ? 'uadminRB' : 'sadminRB'}
+                        >ALL</Radio>
+                        <Radio
+                            value='BMCC'
+                            className={shipEh=='BMCC' ? 'uadminRB' : 'sadminRB'}
+                        >BMCC</Radio>
+                        <Radio
+                            value='EMMA'
+                            className={shipEh=='EMMA' ? 'uadminRB' : 'sadminRB'}
+                        >EMMA</Radio>
+                        <Radio
+                            value='PROT'
+                            className={shipEh=='PROT' ? 'uadminRB' : 'sadminRB'}
+                        >PROT</Radio>
+                        <Radio
+                            value='GYRE'
+                            className={shipEh=='GYRE' ? 'uadminRB' : 'sadminRB'}
+                        >GYRE</Radio>
+                        <Radio
+                            value='NAUT'
+                            className={shipEh=='NAUT' ? 'uadminRB' : 'sadminRB'}
+                        >NAUT</Radio>
+                        <Radio
+                            value='3RD'
+                            className={shipEh=='3RD' ? 'uadminRB' : 'sadminRB'}
+                        >3RD</Radio>
+                        <Radio
+                            value='????'
+                            className={shipEh=='????' ? 'uadminRB' : 'sadminRB'}
+                        >????</Radio>
+                    </RadioGroup>
+                </div>
+                <div className='adminTable'>
+                    <div className='adminRow' key='headrow'>
+                        <div className='adminLabelX' key='headnamelbl'>name</div>
+                        {period.map((day)=> //header
+                            <div className='adminLabelY' key={day+'label'}>
+                                <p>{day}</p>
+                            </div>
                         )}
                     </div>
-                )
-            }   
 
-            
-                
-            
+                    {
+                        json[shipEh] && Object.keys(json[shipEh]).map((name)=>
+                            <div className='adminRow' key={name+'row'}>
+                                <div className='adminLabelX' key={name+'xlabel'}>{name}</div>
+                                {period.map((day)=> //body example
+                                    <div className='adminCell' key={name+day+'row'}>
+                                        <p>{json[shipEh][name][day] ? json[shipEh][name][day] : '.' }</p>
+                                </div>
+                                )}
+                            </div>
+                        )
+                    }   
+                </div>
+            </div>
+            <button className='tblFootBtn' onClick={exportCsv}>export</button> 
         </main>
     )
     
