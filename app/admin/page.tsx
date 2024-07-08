@@ -21,7 +21,10 @@ const AdminPannel = () =>{
     const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
     const period = getPeriod(periodEh);
     //gets stuffge
-    const [fdict, setfdict]= useState({}); // username:string : isDomestic:bool
+
+    let bweh:{[key:string]: string}={}
+    const [fdict, setfdict]= useState(bweh); // domestic v foreign
+    const [nun, setnun] = useState(bweh)
     const [dataResponse, setdataResponse] = useState([]);
 
 
@@ -36,6 +39,7 @@ const AdminPannel = () =>{
             const res = await response.json();
             let stuff:any = [];
             let tdict:{[id: string] : string} = {};
+            let gdict:{[id: string] : string} = {};
 
             let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
 
@@ -43,14 +47,16 @@ const AdminPannel = () =>{
 
             (res.resp).forEach((day:any)=>{
                 if(day['day']=='-1'){ 
-                    tdict[day['uid']]=(day['ship']=="1")?'domestic' : 'foreign';
+                    tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
                     return
                 } 
+                if(!gdict[day['uid']])gdict[day['uid']]=day['username']
                 if(!masterJson[day['ship']]) masterJson[day['ship']]={}
                 if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
                 masterJson[day['ship']][day['uid']][day['day']]=day['type']
 
             })
+            setnun(gdict);
             setfdict(tdict);
             setDays(stuff);
             setdataResponse(res);
@@ -60,8 +66,6 @@ const AdminPannel = () =>{
         getEveryting();
     },[])
     if(dataResponse['error' as any]) redirect('../../') // block non-admins
-    //console.log(dataResponse)
-    
 
     const exportCsv = () =>{
         
@@ -75,6 +79,7 @@ const AdminPannel = () =>{
 
         const tblData = [
         {
+            crew: 'CREW',
             name:   "DATES",
             mon:    period[0],
             tues:   period[1],
@@ -88,17 +93,8 @@ const AdminPannel = () =>{
 
         if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
-            let empy={ // should ommit empty rows for better readability
-                name: name,
-                mon:    '',
-                tues:   '',
-                wed:    '',
-                thurs:  '',
-                fri:    '',
-                sat:    '',
-                sun:    '',
-            }
             let row={
+                crew:   fdict[nun[name]],
                 name:   name,
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
                 tues:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
@@ -108,7 +104,9 @@ const AdminPannel = () =>{
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
             }
-            tblData.push(row);
+            if(
+                row.mon || row.tues || row.wed || row.thurs || row.fri || row.sat || row.sun
+            ) tblData.push(row);
         })}
 
         // Converts your Array<Object> to a CsvOutput string based on the configs
@@ -182,7 +180,7 @@ const AdminPannel = () =>{
                     {
                         json[shipEh] && Object.keys(json[shipEh]).map((name)=>
                             <div className='adminRow' key={name+'row'}>
-                                <div className='adminLabelX' key={name+'xlabel'}>{name}</div>
+                                <div className='adminLabelX' key={name+'xlabel'}>{name + ' ' + fdict[nun[name]]}</div>
                                 {period.map((day)=> //body example
                                     <div className='adminCell' key={name+day+'row'}>
                                         <p>{json[shipEh][name][day] ? json[shipEh][name][day] : '.' }</p>

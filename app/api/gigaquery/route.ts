@@ -1,7 +1,6 @@
 import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { connectToDb } from '@/utils/connectToDb'
-import { getPeriod } from '@/utils/payperiod';
 
 export const GET = async (request:  NextRequest) => {
     
@@ -10,7 +9,6 @@ export const GET = async (request:  NextRequest) => {
 
     const query = "SELECT * FROM days"
     const connection = await connectToDb();
-
     try{
         const [results] = await connection.execute(query);
         connection.end();

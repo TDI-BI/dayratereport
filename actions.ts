@@ -85,6 +85,8 @@ export const mkAccount = async(
     ){
         return { error: 'empty fields' }
     }
+    if(formUsername.includes(' ')) return  {error : 'username has spaces'}
+
     const fullname=formFirstname+'/'+formLastname;
     const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname;
     const response = await fetchBoth(link);

@@ -30,6 +30,7 @@ export default function Page() {
     const ex = prev ? 'prev=1' : '';
     //needs to be called from within a function (ugh)
     const router = useRouter();
+    const [saving, setsaving] = useState(0);
 
     const submit = async () =>{ // im sure this function is due for a re-write at some point
         //makes logic cleaner
@@ -77,7 +78,6 @@ export default function Page() {
             170, 
             {align: 'center'}
         )
-
         //download pdf
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
         router.push('review/thanks')
@@ -85,7 +85,6 @@ export default function Page() {
     }
     
     const [dataResponse, setdataResponse] = useState([]);
-    const [saving, setsaving] = useState(0);
     useEffect(() => {
       async function getPeriodInf(){
         const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
