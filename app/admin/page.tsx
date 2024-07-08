@@ -16,7 +16,7 @@ const port = getPort();
 
 
 
-const adminPannel = () =>{
+const AdminPannel = () =>{
     const [shipEh, setShipEh] = useState('ALL'); // 0 for curr -/+ for rest (we invert)
     const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
     const period = getPeriod(periodEh);
@@ -170,8 +170,8 @@ const adminPannel = () =>{
                     </RadioGroup>
                 </div>
                 <div className='adminTable'>
-                    <div className='adminRow' key='headrow'>
-                        <div className='adminLabelX' key='headnamelbl'>name</div>
+                    <div className='adminRowLabel' key='headrow'>
+                        <div className='adminLabelX' key='headnamelbl'><strong>NAME</strong></div>
                         {period.map((day)=> //header
                             <div className='adminLabelY' key={day+'label'}>
                                 <p>{day}</p>
@@ -198,4 +198,4 @@ const adminPannel = () =>{
     )
     
 }
-export default adminPannel;
+export default AdminPannel;

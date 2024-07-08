@@ -2,7 +2,7 @@
 import { redirect } from 'next/navigation'
 import { useSearchParams } from "next/navigation";
 //THIS PAGE JUST EXISTS TO REDIRECT US TO A DIFFERENT PAGE
-const r = () =>{
+const R = () =>{
     const sprms = useSearchParams();
     const prev= sprms.get('prev')=='1';
     return(
@@ -13,4 +13,4 @@ const r = () =>{
     ) 
 }
 //this forces us to refresh our page with a button click
-export default r
+export default R

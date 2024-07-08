@@ -122,13 +122,6 @@ body {
 .tblBodyDate{
     overflow:hidden;
     width:115px;
-    /*
-    border-width: 1px;
-    border-left-style:solid;
-    border-right-style:solid;
-    border-top-style:hidden;
-    border-bottom-style:hidden;
-    */
 }
 .tblBodyShip{
     position: relative;
@@ -296,20 +289,22 @@ body {
     background-color:rgb(var(--background-item-rgba-select));
     transition:300ms;
 }
-.sadminRB{
+.sadminRB,.adminRow{
     background-color:rgb(var(--background-item-rgba));
 }
-.sadminRB:hover, .uadminRB:hover{
+.sadminRB:hover, .uadminRB:hover,.adminRow:hover{
     background-color:rgb(var(--background-item-rgba-fade));
+    transition:300ms;
 }
 
 .adminLabelY, .adminCell, .adminLabelX{
     display:inline-block;
     width:120px;
+    height:26px;
     text-align: center;
     border-color: rgb(var(--forground-rgba));
     border-style:solid;
-    border-width:2px;
+    border-width:1px;
 }
 .adminLabelY{
     font-weight: 600;
@@ -317,9 +312,6 @@ body {
 .adminLabelX{
     font-weight: 600;
     width:300px;
-}
-.adminRow{
-    
 }
 
 .savemsg0, .savemsg1{
@@ -338,6 +330,8 @@ body {
 }
 .adminTable{
     display:block;
+    height:700px;
+    overflow-y:scroll;
 }
 .adminFilterWrap{
     width:200px;

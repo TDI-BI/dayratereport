@@ -15,9 +15,6 @@ export const GET = async (request:  NextRequest) => {
     const username = session.username;
     const prev = (searchParams.get('prev') || '0')=='1';
 
-
-    
-    
     const period = prev ? getPeriod(1) : getPeriod();
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
@@ -45,7 +42,7 @@ export const GET = async (request:  NextRequest) => {
         query1+='(day="-1"));';
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
-
+        connection.end();
         return new Response(JSON.stringify({ resp: results }), {status: 200})
     }catch (error) { // try this ig, see if we spit an error
         if(error instanceof Error){

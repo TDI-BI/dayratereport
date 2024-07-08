@@ -41,6 +41,7 @@ export default function Page() {
             flashDiv(target)
             return
         }
+        setsaving(1);
 
         let data:string[][] = [] // for pdf
         let dinf=''
@@ -58,7 +59,7 @@ export default function Page() {
 
         //send email
         const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type;
-        fetchBoth(apiUrlEndpoint);
+        await fetchBoth(apiUrlEndpoint);
 
         //generate pdf
         const doc = new jsPDF();
@@ -80,9 +81,11 @@ export default function Page() {
         //download pdf
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
         router.push('review/thanks')
+        setsaving(0);
     }
     
     const [dataResponse, setdataResponse] = useState([]);
+    const [saving, setsaving] = useState(0);
     useEffect(() => {
       async function getPeriodInf(){
         const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
@@ -160,6 +163,7 @@ export default function Page() {
                 <Link href='../'><div className='tblFootBtn'> back </div></Link>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
             </div>
+            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing pdf...' : 'saved'}</p>
         </main>
     )
 }
