@@ -46,7 +46,7 @@ export const GET = async (request:  NextRequest) => {
     let data:string[][] = []
     let dinf=''
     let jinf=''
-    let w = ''
+    let w = '' 
     let strdict=''
 
     period.map((day) => {    // we can do this better, and should pop this out into a util probably
