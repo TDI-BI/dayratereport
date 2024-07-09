@@ -6,19 +6,29 @@ import { fetchBoth } from '@/utils/fetchBoth';
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
+import { useSearchParams } from "next/navigation";
 
 //page globals
 const por=getPort();
-const period= getPeriod();
+
 let runcount=1;
+
 
 export default function Home(){
     //build save area
 
     const router = useRouter();
+
+    //flag for previous
+    const sprms = useSearchParams();
+    const prev= sprms.get('prev')=='1';
+    const period = prev? getPeriod(1) : getPeriod(0)
+    const ex = prev ? 'prev=1' : '';
+
     //function for saving our ship
     const review = async () => {
-        if(await save()) router.push('/daysworked/review')
+        const rlink = prev? '/daysworked/review?prev=1' : '/daysworked/review'
+        if(await save()) router.push(rlink)
     }
 
     const save = async () =>{ 
@@ -59,7 +69,7 @@ export default function Home(){
         }
         
         crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
-        const apiUrlEndpoint = por+'/api/mkday?days='+strdict;
+        const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
         await fetchBoth(apiUrlEndpoint);
         setsaving(0)
         return true;
@@ -69,37 +79,52 @@ export default function Home(){
     const [crew, setCrew] = useState('')
     const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
-        useEffect(() => {
 
-            //query database
-            async function getPeriodInf(){
-                const apiUrlEndpoint = por+'/api/getperiodinf';
-                const response = await fetchBoth(apiUrlEndpoint);
-                const res = await response.json();
-                
-                let ves:{[id: string] : string} = {}
-                let job:{[id: string] : string} = {}
-                try{
-                    (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
-                        if(item['day']=='-1'){
-                            item['ship']=='1' ? setCrew('domestic') : setCrew('foreign')
-                            return
-                        }
-                        ves[item['day']]=item['ship']
-                        job[item['day']]=item['type']
-                    })
-                }
-                catch{
-                    
-                }
-                setVessels(ves);
-                setJobs(job);
-                setdataResponse(res.resp); 
-                
+    useEffect(() => { 
+        //query database
+        async function getPeriodInf(){
+            const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
+            const response = await fetchBoth(apiUrlEndpoint);
+            const res = await response.json();
+            
+            let ves:{[id: string] : string} = {}
+            let job:{[id: string] : string} = {}
+            try{
+                (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
+                    if(item['day']=='-1'){
+                        item['ship']=='1' ? setCrew('domestic') : setCrew('foreign')
+                        return
+                    }
+                    ves[item['day']]=item['ship']
+                    job[item['day']]=item['type']
+                })
             }
-            getPeriodInf();
-        }, []
-    );
+            catch{
+
+                    
+            }
+            setVessels(ves);
+            setJobs(job);
+            setdataResponse(res.resp); 
+            
+        }
+        getPeriodInf();
+
+        //event listeners are async and thus must be wrapped in some kind of useeffect
+        document.addEventListener('keydown', e => { // catch ctrls
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                if(e.repeat) return; // stops hold from looping this function
+                if((runcount%2)==1){ // ignore every other since this always triggers at least twice
+                    save();
+                } 
+                runcount+=1;
+                return; // idk how important this is to be honest
+            }
+        });
+    }, []);
+
+
     try{
         dataResponse.forEach((item) => {}); // this is literally jsut an error catcher, if this doesnt work it means we are logged out   
     }
@@ -110,6 +135,12 @@ export default function Home(){
     //console.log('refresh')
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
+            <div className='tblFoot'>
+                <button className='topBtn' onClick={() =>{ 
+                    const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
+                    router.push(more)
+                }}> {prev ? 'show current period >' : '< show previous period'} </button>
+            </div>
             <div className='tblWrapper'>
                 <div className='tblHead'>
                     <div className='tblHeadDate'>

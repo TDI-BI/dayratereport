@@ -122,13 +122,6 @@ body {
 .tblBodyDate{
     overflow:hidden;
     width:115px;
-    /*
-    border-width: 1px;
-    border-left-style:solid;
-    border-right-style:solid;
-    border-top-style:hidden;
-    border-bottom-style:hidden;
-    */
 }
 .tblBodyShip{
     position: relative;
@@ -187,7 +180,7 @@ body {
     padding:2px;
     display:inline-flex; flex-direction:row;
 }
-.tblFootBtn{
+.tblFootBtn, .topBtn{
     background-color:rgb(var(--background-item-rgba));
     outline-color:white;
     width:182.5px;
@@ -196,8 +189,11 @@ body {
     transition:300ms;
 }
 
-.tblBody:hover, .tblFootBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
+.tblBody:hover, .tblFootBtn:hover, .topBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
     background-color:rgb(var(--background-item-rgba-fade));
+}
+.topBtn{
+    width:300px;
 }
 
 .crewtype{/*work on this later*/
@@ -278,6 +274,46 @@ body {
 .hidethis{
     display:none;
 }
+
+.prev{
+    color:rgb(var(--background-end-rgb));
+    border-radius:10px;
+    border-style:solid;
+    background-color: rgb(var(--forground-rgba));
+}
+.sadminRB, .uadminRB{
+    height:30px;
+    width:70px;
+    text-align: center;
+    line-height:30px;
+    background-color:rgb(var(--background-item-rgba-select));
+    transition:300ms;
+}
+.sadminRB,.adminRow{
+    background-color:rgb(var(--background-item-rgba));
+}
+.sadminRB:hover, .uadminRB:hover,.adminRow:hover{
+    background-color:rgb(var(--background-item-rgba-fade));
+    transition:300ms;
+}
+
+.adminLabelY, .adminCell, .adminLabelX{
+    display:inline-block;
+    width:120px;
+    height:26px;
+    text-align: center;
+    border-color: rgb(var(--forground-rgba));
+    border-style:solid;
+    border-width:1px;
+}
+.adminLabelY{
+    font-weight: 600;
+}
+.adminLabelX{
+    font-weight: 600;
+    width:300px;
+}
+
 .savemsg0, .savemsg1{
     font-weight:200;
     color:rgb(var(--forground-rgba));
@@ -286,4 +322,17 @@ body {
 }
 .savemsg1{
     opacity:1 !important;
+}
+
+.adminWrap{
+    display:inline-flex;
+    flex-direction:row;
+}
+.adminTable{
+    display:block;
+    height:700px;
+    overflow-y:scroll;
+}
+.adminFilterWrap{
+    width:200px;
 }

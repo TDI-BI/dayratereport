@@ -74,7 +74,6 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
-    //return {error: 'block here'} //to stop us from gettin email
     try {
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
@@ -83,7 +82,7 @@ export const GET = async (request:  NextRequest) => {
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
-                names[1] + ' @ ' + session.userEmail +' for pay period starting on' + day + 
+                names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + day + 
                 extraInfo,
             attachments:[
                 {

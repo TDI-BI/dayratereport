@@ -16,14 +16,21 @@ import {
     TableCell
 } from "@nextui-org/react"
 import {flashDiv} from '@/utils/flashDiv'
+import { useSearchParams } from "next/navigation";
+
 
 //page globals
 const por=getPort();
-const period = getPeriod();
+
 
 export default function Page() {
+    const sprms = useSearchParams();
+    const prev= sprms.get('prev')=='1';
+    const period = prev? getPeriod(1) : getPeriod(0)
+    const ex = prev ? 'prev=1' : '';
     //needs to be called from within a function (ugh)
     const router = useRouter();
+    const [saving, setsaving] = useState(0);
 
     const submit = async () =>{ // im sure this function is due for a re-write at some point
         //makes logic cleaner
@@ -35,6 +42,7 @@ export default function Page() {
             flashDiv(target)
             return
         }
+        setsaving(1);
 
         let data:string[][] = [] // for pdf
         let dinf=''
@@ -52,7 +60,7 @@ export default function Page() {
 
         //send email
         const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type;
-        fetchBoth(apiUrlEndpoint);
+        await fetchBoth(apiUrlEndpoint);
 
         //generate pdf
         const doc = new jsPDF();
@@ -70,16 +78,16 @@ export default function Page() {
             170, 
             {align: 'center'}
         )
-
         //download pdf
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
         router.push('review/thanks')
+        setsaving(0);
     }
     
     const [dataResponse, setdataResponse] = useState([]);
     useEffect(() => {
       async function getPeriodInf(){
-        const apiUrlEndpoint = por+'/api/getperiodinf';
+        const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
         const response = await fetchBoth(apiUrlEndpoint);
         const res = await response.json();
         setdataResponse(res.resp);  
@@ -140,6 +148,7 @@ export default function Page() {
                 </Table>
                 <p> crew type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
+                {prev? <p className='prev'> this is last weeks report </p> : ''}
             </div>
             <div className='affirmation' id='target'>
                 <div className='affirmRow'>
@@ -153,6 +162,7 @@ export default function Page() {
                 <Link href='../'><div className='tblFootBtn'> back </div></Link>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
             </div>
+            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing pdf...' : 'saved'}</p>
         </main>
     )
 }

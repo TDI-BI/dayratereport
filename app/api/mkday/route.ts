@@ -6,14 +6,16 @@ import { getPeriod } from '@/utils/payperiod';
 export const GET = async (request:  NextRequest) => {
     
     const session = await getSession();
+    //console.log(session)
     //get our passed parameters
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';
     const domestic = searchParams.get('dom') || '0';
-    //if(domestic) console.log('domestic')
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
-        const period = getPeriod();
+    const prev = (searchParams.get('prev') || '0')=='1';
+
+    const period = prev ? getPeriod(1) : getPeriod();
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
     try{ // esentially just making a homemade UPSERT here
@@ -41,7 +43,6 @@ export const GET = async (request:  NextRequest) => {
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
         connection.end();
-
         return new Response(JSON.stringify({ resp: results }), {status: 200})
     }catch (error) { // try this ig, see if we spit an error
         if(error instanceof Error){
