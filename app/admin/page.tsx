@@ -17,7 +17,7 @@ const port = getPort();
 
 
 const AdminPannel = () =>{
-    const [shipEh, setShipEh] = useState('ALL'); // 0 for curr -/+ for rest (we invert)
+    const [shipEh, setShipEh] = useState('BMCC'); // 0 for curr -/+ for rest (we invert)
     const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
     const period = getPeriod(periodEh);
     //gets stuffge
@@ -44,18 +44,22 @@ const AdminPannel = () =>{
             let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
 
 
+            try{
+                (res.resp).forEach((day:any)=>{
+                    if(day['day']=='-1'){ 
+                        tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
+                        return
+                    } 
+                    if(!gdict[day['uid']])gdict[day['uid']]=day['username']
+                    if(!masterJson[day['ship']]) masterJson[day['ship']]={}
+                    if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
+                    masterJson[day['ship']][day['uid']][day['day']]=day['type']
 
-            (res.resp).forEach((day:any)=>{
-                if(day['day']=='-1'){ 
-                    tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
-                    return
-                } 
-                if(!gdict[day['uid']])gdict[day['uid']]=day['username']
-                if(!masterJson[day['ship']]) masterJson[day['ship']]={}
-                if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
-                masterJson[day['ship']][day['uid']][day['day']]=day['type']
-
-            })
+                })
+            }
+            catch(e)
+            {
+            }
             setnun(gdict);
             setfdict(tdict);
             setDays(stuff);
@@ -65,7 +69,10 @@ const AdminPannel = () =>{
         }
         getEveryting();
     },[])
-    if(dataResponse['error' as any]) redirect('../../') // block non-admins
+    if(dataResponse['error' as any]){ 
+        console.log('you do not have administrator access :c')
+        redirect('../../')
+    } // block non-admins
 
     const exportCsv = () =>{
         
@@ -88,11 +95,16 @@ const AdminPannel = () =>{
             fri:    period[4],
             sat:    period[5],
             sun:    period[6],
+            sum:    ''
         },
         ];
 
         if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
+            let sum=0;
+            period.map((e) =>{
+                if(json[shipEh][name][e]) sum++;
+            })
             let row={
                 crew:   fdict[nun[name]],
                 name:   name,
@@ -103,10 +115,9 @@ const AdminPannel = () =>{
                 fri:    json[shipEh][name][period[4]] ? json[shipEh][name][period[4]] : '',
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
+                sum:    sum.toString()
             }
-            if(
-                row.mon || row.tues || row.wed || row.thurs || row.fri || row.sat || row.sun
-            ) tblData.push(row);
+            if(sum!=0) tblData.push(row);
         })}
 
         // Converts your Array<Object> to a CsvOutput string based on the configs
@@ -128,15 +139,10 @@ const AdminPannel = () =>{
             <div className='adminWrap'>
                 <div className='adminFilterWrap'>
                     <RadioGroup
-
                         label='filter: '
                         value={shipEh}
                         onValueChange={(v)=>setShipEh(v)}
                     >
-                        <Radio
-                            value='ALL'
-                            className={shipEh=='ALL' ? 'uadminRB' : 'sadminRB'}
-                        >ALL</Radio>
                         <Radio
                             value='BMCC'
                             className={shipEh=='BMCC' ? 'uadminRB' : 'sadminRB'}
