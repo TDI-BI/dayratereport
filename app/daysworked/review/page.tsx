@@ -28,6 +28,7 @@ export default function Page() {
     const prev= sprms.get('prev')=='1';
     const period = prev? getPeriod(1) : getPeriod(0)
     const ex = prev ? 'prev=1' : '';
+    
     //needs to be called from within a function (ugh)
     const router = useRouter();
     const [saving, setsaving] = useState(0);
@@ -59,7 +60,7 @@ export default function Page() {
         })
 
         //send email
-        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type;
+        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type+'&'+ex;
         await fetchBoth(apiUrlEndpoint);
 
         //generate pdf

@@ -8,7 +8,6 @@ import autoTable from 'jspdf-autotable' // this is so gas actually
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
-//console.log(process.env.RESEND_API_KEY);
 
 export const GET = async (request:  NextRequest) => {
     //important setup
@@ -16,13 +15,16 @@ export const GET = async (request:  NextRequest) => {
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
     const type = searchParams.get('type') || '';
+    const prev = Number(searchParams.get('prev') || '0');
     const extraInfo:string = '';
     const session = await getSession();
     let names:string[] = session.userId!.split('/')
+    console.log(names)
 
     if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
 
     //assemble our dictionary from a string
+
     let list = pdf.split(';');
     var dict: {[id: string] : string} = {};
     var jdict: {[id: string] : string} = {};
@@ -32,14 +34,10 @@ export const GET = async (request:  NextRequest) => {
         
         dict[line[0]]=line[1]
         jdict[line[0]]=line[2]
-        if(line[1]){
-            daysworked+=1;
-        }
+        if(line[1]) daysworked+=1;
     })
 
-    //console.log(daysworked);
-
-    const period = getPeriod();
+    const period = getPeriod(prev);
 
     //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
     const doc = new jsPDF();
@@ -75,6 +73,7 @@ export const GET = async (request:  NextRequest) => {
     )
     let pds = doc.output()
     try {
+        //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
             to: 'dayrate@tdi-bi.com',
@@ -92,11 +91,8 @@ export const GET = async (request:  NextRequest) => {
               ]
         });
 
-		//console.log(data)
-        //console.log('no error, sent')
         return Response.json(data);
     } catch (error:any) {
-        //console.log('some error occured')
         if(error instanceof Error){
             return  new Response(JSON.stringify({ error: error.message }), {status: 200});
         }

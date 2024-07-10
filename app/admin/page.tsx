@@ -86,8 +86,9 @@ const AdminPannel = () =>{
 
         const tblData = [
         {
-            crew: 'CREW',
-            name:   "DATES",
+            crew:   'CREW',
+            name1:   "",
+            name2:  "Dates: ",
             mon:    period[0],
             tues:   period[1],
             wed:    period[2],
@@ -107,7 +108,8 @@ const AdminPannel = () =>{
             })
             let row={
                 crew:   fdict[nun[name]],
-                name:   name,
+                name1:  name.split('/')[0],
+                name2:  name.split('/')[1],
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
                 tues:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
                 wed:    json[shipEh][name][period[2]] ? json[shipEh][name][period[2]] : '',
