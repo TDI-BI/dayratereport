@@ -14,8 +14,9 @@ export const GET = async (request:  NextRequest) => {
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
     const prev = (searchParams.get('prev') || '0')=='1';
-
+    //console.log(prev);
     const period = prev ? getPeriod(1) : getPeriod();
+    //console.log(period)
     //i need to find a way to wrap this in a utility function and call it
     const connection = await connectToDb();
     try{ // esentially just making a homemade UPSERT here
@@ -40,8 +41,11 @@ export const GET = async (request:  NextRequest) => {
         //update this to track domestic
         query2+='("","-1","'+domestic+'","'+username+'", "");'
         query1+='(day="-1"));';
+        //console.log(query1);
+        //console.log(query2);
         await connection.execute(query1);
         const [results] = await connection.execute(query2);
+        //console.log(results);
         connection.end();
         return new Response(JSON.stringify({ resp: results }), {status: 200})
     }catch (error) { // try this ig, see if we spit an error
