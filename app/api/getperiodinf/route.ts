@@ -32,7 +32,7 @@ export const GET = async (request: NextRequest) => {
         //console.log(query)
         
         const [results] = await connection.execute(query, values);
-        connection.end();
+        connection.destroy();
 
         return new Response(JSON.stringify({ resp: results }), {
         status: 200,
@@ -43,6 +43,7 @@ export const GET = async (request: NextRequest) => {
         
         });
     } catch (error) {
+        connection.destroy();
         if(error instanceof Error){
         return new Response(JSON.stringify({ error: error.message }), { 
             // idk why this throws an eror, doesnt stop the program from running though so ill ignore it :)

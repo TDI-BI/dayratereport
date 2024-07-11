@@ -22,7 +22,7 @@ export const GET = async (request: NextRequest) => {
         const query2= "update users set password='"+password+"' where password='"+oldhash+"';"
         //(query2)
         const [results2] = await connection.execute(query2);
-        connection.end();
+        connection.destroy();
         //console.log(results2)
         return new Response(JSON.stringify({ resp: results2 }), {status: 200});
     } catch (error) {

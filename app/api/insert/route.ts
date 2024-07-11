@@ -8,7 +8,7 @@ export const GET = async (request: Request) => {
         const query = "INSERT INTO msgs (msg) VALUES (?)";
         const values:string[] = ['another one'];
         const [results] = await connection.execute(query, values);
-        connection.end();
+        connection.destroy();
         return new Response(JSON.stringify({ resp: results }), {status: 200});
     } catch (error) {
         if(error instanceof Error){

@@ -11,7 +11,7 @@ export const GET = async (request:  NextRequest) => {
     const connection = await connectToDb();
     try{
         const [results] = await connection.execute(query);
-        connection.end();
+        connection.destroy();
         return new Response(JSON.stringify({ resp: results }), {
             status: 200,
             headers: {

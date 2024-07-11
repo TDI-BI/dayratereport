@@ -12,7 +12,7 @@ export const GET = async (request: NextRequest) => {
         const query = "SELECT * FROM msgs";
         
         const [results] = await connection.execute(query, values);
-        connection.end();
+        connection.destroy();
 
         return new Response(JSON.stringify({ resp: results }), {
         status: 200,
