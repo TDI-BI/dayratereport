@@ -31,7 +31,6 @@ const AdminPannel = () =>{
     let jtype:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
     const [json, setjson] = useState(jtype)
 
-
     const [days, setDays] = useState([]);
     useEffect(()=>{
         const getEveryting = async () =>{
@@ -42,8 +41,6 @@ const AdminPannel = () =>{
             let gdict:{[id: string] : string} = {};
 
             let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
-
-
             try{
                 (res.resp).forEach((day:any)=>{
                     if(day['day']=='-1'){ 
@@ -84,12 +81,13 @@ const AdminPannel = () =>{
                 if(json[shipEh][name][e]) sum++;
             })
             let row={
-                crew:   fdict[nun[name]],
-                name:   name,
+                cre:   fdict[nun[name]],
+                fna:    name.split('/')[0],
+                lna:    name.split('/')[1],
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
-                tue:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
+                tue:    json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
                 wed:    json[shipEh][name][period[2]] ? json[shipEh][name][period[2]] : '',
-                thu:  json[shipEh][name][period[3]] ? json[shipEh][name][period[3]] : '',
+                thu:    json[shipEh][name][period[3]] ? json[shipEh][name][period[3]] : '',
                 fri:    json[shipEh][name][period[4]] ? json[shipEh][name][period[4]] : '',
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
@@ -101,12 +99,13 @@ const AdminPannel = () =>{
 
     const exportCsv = () =>{
         const expTableData =    [{
-            crew: 'CREW',
-            name:   "DATES",
+            cre:   'CREW',
+            fna:    "first name",
+            lna:    "last name",
             mon:    period[0],
-            tue:   period[1],
+            tue:    period[1],
             wed:    period[2],
-            thu:  period[3],
+            thu:    period[3],
             fri:    period[4],
             sat:    period[5],
             sun:    period[6],
@@ -182,16 +181,16 @@ const AdminPannel = () =>{
                         )}
                     </div>
                     {json[shipEh] && tblData.map((el)=>
-                        <div className='adminRow' key={el.name}>
-                            <div className='adminLabelX' key={el.name+'label'}>{el.name}</div>
-                            <div className='adminCell' key={el.name+'dom'}>{el.crew}</div>
-                            <div className='adminCell' key={el.name+'mon'}>{el.mon}</div>
-                            <div className='adminCell' key={el.name+'tue'}>{el.tue}</div>
-                            <div className='adminCell' key={el.name+'wed'}>{el.wed}</div>
-                            <div className='adminCell' key={el.name+'thu'}>{el.thu}</div>
-                            <div className='adminCell' key={el.name+'fri'}>{el.fri}</div>
-                            <div className='adminCell' key={el.name+'sat'}>{el.sat}</div>
-                            <div className='adminCell' key={el.name+'sun'}>{el.sun}</div>
+                        <div className='adminRow' key={el.fna+el.lna}>
+                            <div className='adminLabelX' key={el.fna+el.lna+'name'}>{el.fna + ' ' + el.lna}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'dom'}>{el.cre}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'mon'}>{el.mon}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'tue'}>{el.tue}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'wed'}>{el.wed}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'thu'}>{el.thu}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'fri'}>{el.fri}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'sat'}>{el.sat}</div>
+                            <div className='adminCell' key={el.fna+el.lna+'sun'}>{el.sun}</div>
                         </div>
                     )}
                 </div>
