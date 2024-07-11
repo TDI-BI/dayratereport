@@ -2,14 +2,16 @@
 import { useState, useEffect } from "react";
 import { fetchBoth } from "@/utils/fetchBoth";
 import { getPort } from "@/utils/getPort";
+import { getPeriod } from "@/utils/payperiod";
 
 
 
 const Confirmations = () =>{
-
+    
     //FOR SORTING OUR TABLE
+    const period = getPeriod()
     const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('uid');
+    const [sort, setSort] = useState('lastConfirmed');
     const searchFilter = (array:any) => {
         return array.filter(
             (el:any)=>el['uid'].includes(search)
@@ -26,6 +28,7 @@ const Confirmations = () =>{
     //DATABASE QUERIES
     const [users, setUsers] = useState([])
     useEffect(()=>{
+        
         const getArr = async () =>{
             let resp = await fetchBoth(getPort()+'/api/getusers')
             const users = (await resp.json()).resp;
@@ -42,11 +45,21 @@ const Confirmations = () =>{
             <input type='text' onChange={(e)=>{
                 setSearch(e.target.value)
             }}/>
-            {
-                sorted.map((inp:any)=>
-                <p key={inp['uid']}>{inp['uid']}</p>
-                )
-            }
+            <div className='adminTable'>
+                <div className='adminRow'>
+                        <div className='adminLabelX' key='uidlabel'><strong>UID</strong></div>
+                        <div className='adminLabelX' key='emaillabel'><strong>EMAIL</strong></div>
+                        <div className='adminCell' key='conflabel'>confirmed:</div>
+                    </div>
+                
+                {sorted.map((inp:any)=>
+                    <div className='adminRow'>
+                        <div className='adminLabelX' key={inp['uid']+'uid'}>{inp['uid']} </div>
+                        <div className='adminLabelX' key={inp['uid']+'email'}>{inp['email']} </div>
+                        <div className={(period.includes(inp['lastConfirm']) && inp['lastConfirm']) ? 'adminCellG' : 'adminCellR'} key={inp['uid']+'confirmation'}>{inp['lastConfirm']} </div>
+                    </div>
+                )}
+            </div>
         </main>
     )
 }

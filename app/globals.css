@@ -300,7 +300,7 @@ body {
     height:26px;
 }
 
-.adminLabelY, .adminCell, .adminLabelX{
+.adminLabelY, .adminCell, .adminCellG, .adminCellR, .adminLabelX{
     overflow-x:hidden;
     display:inline-block;
     width:120px;
@@ -316,6 +316,12 @@ body {
 .adminLabelX{
     font-weight: 600;
     width:300px;
+}
+.adminCellR{
+    background-color: red;
+}
+.adminCellG{
+    background-color: green;
 }
 
 .savemsg0, .savemsg1{

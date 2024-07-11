@@ -5,6 +5,7 @@ import { NextRequest } from 'next/server';
 import { getPeriod } from '@/utils/payperiod';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
+import { connectToDb } from '@/utils/connectToDb';
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -72,12 +73,17 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
+    const connection = await connectToDb();
     try {
+        const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
+        console.log(query)
+        const [results] = await connection.execute(query);
+        console.log('results')
         //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
             to: 'dayrate@tdi-bi.com',
-				//'dayratereportdonotrespond@gmail.com', ', // swap for dev/prod
+				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
@@ -91,8 +97,10 @@ export const GET = async (request:  NextRequest) => {
               ]
         });
 
-        return Response.json(data);
+        connection.end();
+        return Response.json({data, results});
     } catch (error:any) {
+        connection.end();
         if(error instanceof Error){
             return  new Response(JSON.stringify({ error: error.message }), {status: 200});
         }
