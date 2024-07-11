@@ -26,6 +26,7 @@ export const GET = async (request: NextRequest) => {
         //console.log(results2)
         return new Response(JSON.stringify({ resp: results2 }), {status: 200});
     } catch (error) {
+        connection.end();
         if(error instanceof Error){
         return new Response(JSON.stringify({ error: error.message }), { status: 500});
         }
