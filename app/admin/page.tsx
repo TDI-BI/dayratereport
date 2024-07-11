@@ -74,32 +74,10 @@ const AdminPannel = () =>{
         redirect('../../')
     } // block non-admins
 
-    const exportCsv = () =>{
-        
+    //generate our table
+    const tblData:any[] = [];
 
-        // mkConfig merges your options with the defaults
-        // and returns WithDefaults<ConfigOptions>
-        const csvConfig = mkConfig({ 
-            useKeysAsHeaders: true, 
-            filename:shipEh+'_'+period[0]+'_TO_'+period[6]
-        });
-
-        const tblData = [
-        {
-            crew: 'CREW',
-            name:   "DATES",
-            mon:    period[0],
-            tues:   period[1],
-            wed:    period[2],
-            thurs:  period[3],
-            fri:    period[4],
-            sat:    period[5],
-            sun:    period[6],
-            sum:    ''
-        },
-        ];
-
-        if(json[shipEh]){
+    if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
             let sum=0;
             period.map((e) =>{
@@ -109,19 +87,39 @@ const AdminPannel = () =>{
                 crew:   fdict[nun[name]],
                 name:   name,
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
-                tues:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
+                tue:   json[shipEh][name][period[1]] ? json[shipEh][name][period[1]] : '',
                 wed:    json[shipEh][name][period[2]] ? json[shipEh][name][period[2]] : '',
-                thurs:  json[shipEh][name][period[3]] ? json[shipEh][name][period[3]] : '',
+                thu:  json[shipEh][name][period[3]] ? json[shipEh][name][period[3]] : '',
                 fri:    json[shipEh][name][period[4]] ? json[shipEh][name][period[4]] : '',
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
                 sum:    sum.toString()
             }
             if(sum!=0) tblData.push(row);
-        })}
+        })
+    }
 
+    const exportCsv = () =>{
+        const expTableData =    [{
+            crew: 'CREW',
+            name:   "DATES",
+            mon:    period[0],
+            tue:   period[1],
+            wed:    period[2],
+            thu:  period[3],
+            fri:    period[4],
+            sat:    period[5],
+            sun:    period[6],
+            sum:    ''
+        }].concat(tblData)
+        // mkConfig merges your options with the defaults
+        // and returns WithDefaults<ConfigOptions>
+        const csvConfig = mkConfig({ 
+            useKeysAsHeaders: true, 
+            filename:shipEh+'_'+period[0]+'_TO_'+period[6]
+        });
         // Converts your Array<Object> to a CsvOutput string based on the configs
-        const csv = generateCsv(csvConfig)(tblData);
+        const csv = generateCsv(csvConfig)(expTableData);
         download(csvConfig)(csv)
     }
 
@@ -176,25 +174,26 @@ const AdminPannel = () =>{
                 <div className='adminTable'>
                     <div className='adminRowLabel' key='headrow'>
                         <div className='adminLabelX' key='headnamelbl'><strong>NAME</strong></div>
+                        <div className='adminLabelY' key='headnamelbl'>CREW</div>
                         {period.map((day)=> //header
                             <div className='adminLabelY' key={day+'label'}>
                                 <p>{day}</p>
                             </div>
                         )}
                     </div>
-
-                    {
-                        json[shipEh] && Object.keys(json[shipEh]).map((name)=>
-                            <div className='adminRow' key={name+'row'}>
-                                <div className='adminLabelX' key={name+'xlabel'}>{name + ' ' + fdict[nun[name]]}</div>
-                                {period.map((day)=> //body example
-                                    <div className='adminCell' key={name+day+'row'}>
-                                        <p>{json[shipEh][name][day] ? json[shipEh][name][day] : '.' }</p>
-                                </div>
-                                )}
-                            </div>
-                        )
-                    }   
+                    {json[shipEh] && tblData.map((el)=>
+                        <div className='adminRow' key={el.name}>
+                            <div className='adminLabelX' key={el.name+'label'}>{el.name}</div>
+                            <div className='adminCell' key={el.name+'dom'}>{el.crew}</div>
+                            <div className='adminCell' key={el.name+'mon'}>{el.mon}</div>
+                            <div className='adminCell' key={el.name+'tue'}>{el.tue}</div>
+                            <div className='adminCell' key={el.name+'wed'}>{el.wed}</div>
+                            <div className='adminCell' key={el.name+'thu'}>{el.thu}</div>
+                            <div className='adminCell' key={el.name+'fri'}>{el.fri}</div>
+                            <div className='adminCell' key={el.name+'sat'}>{el.sat}</div>
+                            <div className='adminCell' key={el.name+'sun'}>{el.sun}</div>
+                        </div>
+                    )}
                 </div>
             </div>
             <button className='tblFootBtn' onClick={exportCsv}>export</button> 
