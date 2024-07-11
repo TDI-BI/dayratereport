@@ -31,7 +31,7 @@ export const GET = async (request: NextRequest) => {
         const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+password+"','"+username+"','"+email+"')"
         //console.log(query2)
         const [results2] = await connection.execute(query2);
-        connection.destroy();
+        connection.end();
         return new Response(JSON.stringify({ resp: results2 }), {status: 200});
     } catch (error) {
         if(error instanceof Error){

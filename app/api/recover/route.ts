@@ -19,7 +19,7 @@ export const GET = async (request: NextRequest) => {
         const query = "select * from users where email='"+email+"'";
         const values:string[] = ['another one'];
         const [results] = await connection.execute(query, values);
-        connection.destroy();
+        connection.end();
         return new Response(JSON.stringify({ resp: results }), {status: 200});
     } catch (error) {
         if(error instanceof Error){

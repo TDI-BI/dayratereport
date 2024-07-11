@@ -5,7 +5,6 @@ import { NextRequest } from 'next/server';
 import { getPeriod } from '@/utils/payperiod';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
-import { connectToDb } from '@/utils/connectToDb'
 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -75,14 +74,7 @@ export const GET = async (request:  NextRequest) => {
         {align: 'center'}
     )
     let pds = doc.output()
-
-    const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
-    const connection = await connectToDb();
     try {
-        const [results] = await connection.execute(query);
-        connection.destroy();
-        return Response.json({resp: results});
-        throw {error: 'break out'}
         const data = await resend.emails.send({
             from: 'onboarding@resend.dev', // we will change this probably
             to: 'dayrate@tdi-bi.com',
@@ -98,11 +90,13 @@ export const GET = async (request:  NextRequest) => {
                   content: btoa(pds),
                 }
               ]
-        }); 
+        });
 
-        return Response.json({data, results});
+		//console.log(data)
+        //console.log('no error, sent')
+        return Response.json(data);
     } catch (error:any) {
-        console.log('some error occured: ' + error)
+        //console.log('some error occured')
         if(error instanceof Error){
             return  new Response(JSON.stringify({ error: error.message }), {status: 200});
         }
