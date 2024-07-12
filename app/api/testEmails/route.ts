@@ -9,11 +9,11 @@ export const GET = async (request:  NextRequest) => {
     try {
         //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
         const data = await resend.emails.send({
-            from: 'onboarding@tdifielddays.com', // we will change this probably
-            to: 'ava.irlol@gmail.com',
+            from: 'reports@tdifielddays.com', // we will change this probably
+            to: 'parkerseeley@tdi-bi.com',
             subject: 'test the email!',
             text: 
-                'FEIN FEIN FEIN FEIN',
+                'FEIN FEIN FEIN FEIN fweh',
         });
 
         return Response.json(data);
