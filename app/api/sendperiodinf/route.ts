@@ -81,7 +81,7 @@ export const GET = async (request:  NextRequest) => {
         console.log('results')
         //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
         const data = await resend.emails.send({
-            from: 'onboarding@resend.dev', // we will change this probably
+            from: 'reports@tdifielddays.com', // we will change this probably
             to: 'dayrate@tdi-bi.com',
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
