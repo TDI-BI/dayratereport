@@ -53,7 +53,7 @@ const Confirmations = () =>{
                     </div>
                 
                 {sorted.map((inp:any)=>
-                    <div className='adminRow'>
+                    <div className='adminRow' key={inp['uid'] + 'row'}>
                         <div className='adminLabelX' key={inp['uid']+'uid'}>{inp['uid']} </div>
                         <div className='adminLabelX' key={inp['uid']+'email'}>{inp['email']} </div>
                         <div className={(period.includes(inp['lastConfirm']) && inp['lastConfirm']) ? 'adminCellG' : 'adminCellR'} key={inp['uid']+'confirmation'}>{inp['lastConfirm']} </div>
