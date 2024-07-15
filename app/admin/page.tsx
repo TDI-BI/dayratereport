@@ -27,7 +27,6 @@ const AdminPannel = () =>{
     const [nun, setnun] = useState(bweh)
     const [dataResponse, setdataResponse] = useState([]);
 
-
     let jtype:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
     const [json, setjson] = useState(jtype)
 
@@ -91,7 +90,7 @@ const AdminPannel = () =>{
                 fri:    json[shipEh][name][period[4]] ? json[shipEh][name][period[4]] : '',
                 sat:    json[shipEh][name][period[5]] ? json[shipEh][name][period[5]] : '',
                 sun:    json[shipEh][name][period[6]] ? json[shipEh][name][period[6]] : '',
-                sum:    sum.toString()
+                sum:    sum.toString(),
             }
             if(sum!=0) tblData.push(row);
         })
@@ -109,7 +108,7 @@ const AdminPannel = () =>{
             fri:    period[4],
             sat:    period[5],
             sun:    period[6],
-            sum:    ''
+            sum:    '',
         }].concat(tblData)
         // mkConfig merges your options with the defaults
         // and returns WithDefaults<ConfigOptions>
