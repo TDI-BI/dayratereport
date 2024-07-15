@@ -80,15 +80,16 @@ export const GET = async (request:  NextRequest) => {
         const [results] = await connection.execute(query);
         console.log('results')
         //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
-        const data = await resend.emails.send({
+        const data = await resend.emails.send(
+            {
             from: 'reports@tdifielddays.com', // we will change this probably
-            to: 'dayrate@tdi-bi.com',
+            to: [session.userEmail!, 'ava.irlol@gmail.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
                 names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + day + 
-                extraInfo,
+                extraInfo + ' \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email. ',
             attachments:[
                 {
                   filename:"report_for_"+session.username+"_"+day+".pdf",

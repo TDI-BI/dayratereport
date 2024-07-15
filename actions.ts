@@ -119,13 +119,12 @@ export const recover = async (
     const link = por+'/api/recover?&email='+formEmail;
     //console.log(link);
     const response = await fetchBoth(link);
-    const res = await response.json();
-    const dbAcc= res.resp[0];
-    if(!dbAcc) return {error: 'no account'}
-
-    //doesnt look like i need to fetchBoth on this
-    fetch('http://geodatapub.com/shiptracker/freeloademail.php?to='+formEmail+'&acc='+dbAcc.password);
-    return {error: 'recovery instructions sent'}
+    try{
+        const res = await response.json();
+        const rmessage= res.resp;
+        if(rmessage=='fein') return {error: 'recovery instructions sent'}
+    }
+    catch(e){ return {error: 'account not found'}}
     //redirect("../../")
 }
 
