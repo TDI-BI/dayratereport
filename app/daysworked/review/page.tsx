@@ -1,7 +1,5 @@
 "use client"; // needed for interactivity
 import Link from "next/link";
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable' // this is so gas actually
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
 import { redirect, useRouter } from 'next/navigation'
@@ -44,43 +42,6 @@ export default function Page() {
             return
         }
         setsaving(1);
-
-        let data:string[][] = [] // for pdf
-        let dinf=''
-        let jinf=''
-        let w = ''
-        let strdict='' // for query
-        //build data
-        period.map((day) => {   
-            strdict+=day+':'+dict[day]+':'+jdict[day]+';';
-            dict[day] ? dinf = dict[day] : dinf = '';
-            jdict[day] ? jinf = jdict[day] : jinf = '';
-            dict[day] ? w = '[X]' : w ='[  ]'
-            data.push([day, w, dinf, jinf])
-        })
-
-        //send email
-        const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type+'&'+ex;
-        await fetchBoth(apiUrlEndpoint);
-
-        //generate pdf
-        const doc = new jsPDF();
-        doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
-        autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
-            head: [["date","worked?","vessel", "job"]], 
-            body: data,
-        })
-        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
-        doc.text('crew type: '+type, 100, 120, {align: 'center'})
-        doc.setFontSize(12)
-        doc.text(
-            'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
-            100,    
-            170, 
-            {align: 'center'}
-        )
-        //download pdf
-        doc.save("report_for_" + name + "_" + period[0] +".pdf");
         router.push('review/thanks')
         setsaving(0);
     }

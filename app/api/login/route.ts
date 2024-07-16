@@ -10,9 +10,6 @@ export const GET = async (request: NextRequest) => {
     const { searchParams } = request.nextUrl;
     const username = searchParams.get('username') || '';
 
-
-
-    //i need to find a way to wrap this in a function and call it
     const connection = await connectToDb();
 
     try {

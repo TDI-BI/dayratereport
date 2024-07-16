@@ -40,7 +40,6 @@ export const GET = async (request:  NextRequest) => {
 
     const period = getPeriod(prev);
 
-    //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
     const doc = new jsPDF();
     let data:string[][] = []
     let dinf=''
@@ -48,7 +47,7 @@ export const GET = async (request:  NextRequest) => {
     let w = '' 
     let strdict=''
 
-    period.map((day) => {    // we can do this better, and should pop this out into a util probably
+    period.map((day) => { 
         strdict+=day+':'+dict[day]+';';
         dict[day] ? dinf = dict[day] : dinf = '';
         jdict[day] ? jinf = jdict[day] : jinf = '';
@@ -65,7 +64,6 @@ export const GET = async (request:  NextRequest) => {
     doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
     doc.text('crew type: '+type, 100, 120, {align: 'center'})
     doc.setFontSize(12)
-    //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
     doc.text(
         'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
         100,    
@@ -79,10 +77,9 @@ export const GET = async (request:  NextRequest) => {
         console.log(query)
         const [results] = await connection.execute(query);
         console.log('results')
-        //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
         const data = await resend.emails.send(
             {
-            from: 'reports@tdifielddays.com', // we will change this probably
+            from: 'reports@tdifielddays.com', 
             to: [session.userEmail!, 'dayrate@tdi-bi.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,

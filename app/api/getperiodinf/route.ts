@@ -3,9 +3,9 @@ import { getSession } from '@/actions';
 import { getPeriod } from '@/utils/payperiod';
 import { connectToDb } from '@/utils/connectToDb'
 
-//this works on pulling individual days!
-
 export const GET = async (request: NextRequest) => {
+
+    //param getters
     const { searchParams } = request.nextUrl;
     const prev = (searchParams.get('prev') || '0')=='1';
     
@@ -16,14 +16,12 @@ export const GET = async (request: NextRequest) => {
         dparam+="or day='"+item+"'";
     });
     dparam+=")"
-    //building the query like this feels deeply unserious but whatever lol
     
+    //async getters
     const session = await getSession();
-    //i need to find a way to wrap this in a function and call it
-    //const { searchParams } = request.nextUrl; -> was originally passing the day but ive decided against it
-    //const day = searchParams.get('day') || 'day_broken';
-    const uid = session.username; // replace this with UID at some point
     const connection = await connectToDb();
+
+    const uid = session.username; // replace this with UID at some point
 
     try {
         if(!session.isLoggedIn) return new Response(JSON.stringify({ error: "not logged in"}), {status: 200});
@@ -43,14 +41,6 @@ export const GET = async (request: NextRequest) => {
         
         });
     } catch (error) {
-        if(error instanceof Error){
-        return new Response(JSON.stringify({ error: error.message }), { 
-            // idk why this throws an eror, doesnt stop the program from running though so ill ignore it :)
-            status: 500,
-            headers: {
-            'Content-Type': 'application/json',
-            },
-        });
-        }
+        return new Response(JSON.stringify({ error: (error as Error).message }));
     }
 }
