@@ -1,3 +1,4 @@
+// returns the current payperiod as YYYY-MM-DD isostrings
 export const getPeriod = (input=0) =>{ // found this online
     //for now it just gets the last week and next. at some point
     //i will have to fix this fraud function and make it work better so it can actually load stuff

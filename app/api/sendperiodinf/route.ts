@@ -1,94 +1,100 @@
-//import { EmailTemplate } from '@/components/emailtemplate'; //-> reccomended we use this but im not sure i care lol
-import { Resend } from 'resend';
+// build a PDF and email it as an attachment to the user and dayrate
+// theres probably a bug somewhere in this script, check logs in teh database for what im trcking to hunt it
+import { Resend } from 'resend'; const resend = new Resend(process.env.RESEND_API_KEY);
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
 import { getPeriod } from '@/utils/payperiod';
+import { connectToDb } from '@/utils/connectToDb';
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable' // this is so gas actually
-import { connectToDb } from '@/utils/connectToDb';
 
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const GET = async (request:  NextRequest) => {
-    //important setup
+    //URL parameters
     const { searchParams } = request.nextUrl;
     const day = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
     const type = searchParams.get('type') || '';
     const prev = Number(searchParams.get('prev') || '0');
-    const extraInfo:string = '';
+
+    //block if not logged in 
     const session = await getSession();
-    let names:string[] = session.userId!.split('/')
+    if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 500});
 
-    if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
+    //get session info
+    let names:string[] = session.userId!.split('/');
 
-    //assemble our dictionary from a string
+    //datatype declarations
+    let vesseldict: {[id: string] : string} = {};
+    let jobdict: {[id: string] : string} = {};
+    const doc = new jsPDF();
+    let data:string[][] = [];
+    let workedEh:string;
+    let vesselinf:string;
+    let jobinf:string;
 
+    // var setup
     let list = pdf.split(';');
-    var dict: {[id: string] : string} = {};
-    var jdict: {[id: string] : string} = {};
-    var daysworked=0;
-    list.map((item)=>{
+    let daysworked=0;
+    
+    list.map((item)=>{ // process input into dictionaries
         let line = item.split(':')
-        
-        dict[line[0]]=line[1]
-        jdict[line[0]]=line[2]
+        vesseldict[line[0]]=line[1]
+        jobdict[line[0]]=line[2]
         if(line[1]) daysworked+=1;
-    })
+    });
 
     const period = getPeriod(prev);
 
-    //BELOW THIS POINT IS COPIED IN FROM THE OLD PDF SOLUTION, ITS ESSENTIALLY DUPLICATE CODE
-    const doc = new jsPDF();
-    let data:string[][] = []
-    let dinf=''
-    let jinf=''
-    let w = '' 
-    let strdict=''
+    //setup data for autotable
+    period.map((day) => { 
+        vesseldict[day] ? vesselinf = vesseldict[day] : vesselinf = '';
+        jobdict[day] ? jobinf = jobdict[day] : jobinf = '';
+        vesseldict[day] ? workedEh = '[X]' : workedEh ='[  ]';
+        data.push([day, workedEh, vesselinf, jobinf]);
+    });
 
-    period.map((day) => {    // we can do this better, and should pop this out into a util probably
-        strdict+=day+':'+dict[day]+';';
-        dict[day] ? dinf = dict[day] : dinf = '';
-        jdict[day] ? jinf = jdict[day] : jinf = '';
-        dict[day] ? w = '[X]' : w ='[  ]'
-        data.push([day, w, dinf, jinf])
-    })
-
-    doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
-    //make pdf
+    // build our pdf
+    doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'});
     autoTable(doc, { 
         head: [["date","worked?","vessel", "job"]], 
         body: data,
-    })
-    doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
-    doc.text('crew type: '+type, 100, 120, {align: 'center'})
-    doc.setFontSize(12)
-    //doc.addFont('ComicSansMS', 'Comic Sans', 'normal');
+    });
+    doc.text('days worked: '+daysworked, 100, 100, {align: 'center'});
+    doc.text('crew type: '+type, 100, 120, {align: 'center'});
+    doc.setFontSize(12);
     doc.text(
         'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
         100,    
         170, 
         {align: 'center'}
-    )
-    let pds = doc.output()
+    );
+    //get PDF as raw text string
+    let pds = doc.output();
+
+    //init connection
     const connection = await connectToDb();
     try {
+        //build queries to log this report
         const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
         const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + '", "pdf generation");';
-        console.log(q2);
-        const [results] = await connection.execute(query);
+
+        //execute queries
+        await connection.execute(query);
         await connection.execute(q2);
+        connection.end();
+
+        //send email
         const data = await resend.emails.send(
             {
-            from: 'reports@tdifielddays.com', // we will change this probably
+            from: 'reports@tdifielddays.com',
             to: [session.userEmail!, 'dayratereportdonotrespond@gmail.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
-            subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
+            subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day,
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
                 names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + day + 
-                extraInfo + ' \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email. ',
+                ' \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email. ',
             attachments:[
                 {
                   filename:"report_for_"+session.username+"_"+day+".pdf",
@@ -96,13 +102,10 @@ export const GET = async (request:  NextRequest) => {
                 }
               ]
         });
-
-        connection.end();
-        return Response.json({data, results});
+        
+        return Response.json({data}, {status: 200});
     } catch (error:any) {
         connection.end();
-        if(error instanceof Error){
-            return  new Response(JSON.stringify({ error: error.message }), {status: 200});
-        }
+        return  new Response(JSON.stringify({ error: (error as Error).message }), {status: 500});
     }
 }

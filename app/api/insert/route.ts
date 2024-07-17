@@ -1,18 +1,22 @@
+//debugging tool for testing db connection, just inserts 'another one' into our msgs table
 import { connectToDb } from '@/utils/connectToDb'
 
 export const GET = async (request: Request) => {
-    //i need to find a way to wrap this in a function and call it
+    //initiate connection
     const connection = await connectToDb();
 
     try {
+        //build query
         const query = "INSERT INTO msgs (msg) VALUES (?)";
         const values:string[] = ['another one'];
+
+        //execute query
         const [results] = await connection.execute(query, values);
         connection.end();
+
         return new Response(JSON.stringify({ resp: results }), {status: 200});
     } catch (error) {
-        if(error instanceof Error){
-        return new Response(JSON.stringify({ error: error.message }), { status: 500});
-        }
+        connection.end();
+        return new Response(JSON.stringify({ error: (error as Error).message }), {status: 500});
     }
 };

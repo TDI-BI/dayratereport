@@ -34,12 +34,19 @@ the only other dependency you have to set up is our database, formatted as follo
 - - -       password    varchar(255)
 - - -       uid         varchar(255)
 - - -       email       varchar(255)
+- - -       isAdmin     varchar(255)
+- - -       lastConfirm varchar(255)
 - -     days
 - - -       uid         varchar(255)
 - - -       day         varchar(255)
 - - -       ship        varchar(255)
 - - -       username    varchar(255)
-- -     msgs #this is just for debugging purposes
+- -     msgs 
 - - -       msg varchar(255)
+- -     logs
+- - -       email       varchar(255)
+- - -       date        varchar(255)
+- - -       request     text
+- - -       type        varchar(255)
 
 icon masterlist @ https://ionic.io/ionicons

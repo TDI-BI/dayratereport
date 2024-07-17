@@ -1,11 +1,9 @@
-"use client"; // needed for interactivity
-import Link from "next/link";
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable' // this is so gas actually
+"use client"; 
+import { getPort } from '@/utils/getPort'; const por=getPort();
 import { useEffect, useState } from "react";
 import { getPeriod } from '@/utils/payperiod';
-import { redirect, useRouter } from 'next/navigation'
-import { getPort } from '@/utils/getPort';
+import {flashDiv} from '@/utils/flashDiv'
+import { useSearchParams } from "next/navigation";
 import { fetchBoth } from "@/utils/fetchBoth";
 import {
     Table,
@@ -15,48 +13,53 @@ import {
     TableRow,
     TableCell
 } from "@nextui-org/react"
-import {flashDiv} from '@/utils/flashDiv'
-import { useSearchParams } from "next/navigation";
-
-
-//page globals
-const por=getPort();
-
+import { 
+    redirect, 
+    useRouter 
+} from 'next/navigation'
+import Link from "next/link";
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable' // this is so gas actually
 
 export default function Page() {
+    //check previous or current
     const sprms = useSearchParams();
     const prev= sprms.get('prev')=='1';
-    const period = prev? getPeriod(1) : getPeriod(0)
+    const period = prev? getPeriod(1) : getPeriod(0);
     const ex = prev ? 'prev=1' : '';
     
     //needs to be called from within a function (ugh)
     const router = useRouter();
+
+    //states
     const [saving, setsaving] = useState(0);
+    const [dataResponse, setdataResponse] = useState([]);
 
     const submit = async () =>{ // im sure this function is due for a re-write at some point
         //makes logic cleaner
-        const affirm = document.getElementById('affirm') as HTMLInputElement
-        const target = document.getElementById('target') as HTMLElement
+        const affirm = document.getElementById('affirm') as HTMLInputElement;
+        const target = document.getElementById('target') as HTMLElement;
 
         //flashes our confirm if its not clicked
         if(!affirm.checked){
-            flashDiv(target)
-            return
+            flashDiv(target);
+            return;
         }
         setsaving(1);
 
-        let data:string[][] = [] // for pdf
-        let dinf=''
-        let jinf=''
-        let w = ''
-        let strdict='' // for query
-        //build data
+        //currently legacy code, not going to clean up bc alot of this is going to be scrapped soon inshallah. 
+        //see sendperiodinf if you want info on how this works
+        let data:string[][] = [] 
+        let dinf='';
+        let jinf='';
+        let w = '';
+        let strdict='';
         period.map((day) => {   
-            strdict+=day+':'+dict[day]+':'+jdict[day]+';';
-            dict[day] ? dinf = dict[day] : dinf = '';
-            jdict[day] ? jinf = jdict[day] : jinf = '';
-            dict[day] ? w = '[X]' : w ='[  ]'
-            data.push([day, w, dinf, jinf])
+            strdict+=day+':'+vesselDict[day]+':'+crewDict[day]+';';
+            vesselDict[day] ? dinf = vesselDict[day] : dinf = '';
+            crewDict[day] ? jinf = crewDict[day] : jinf = '';
+            vesselDict[day] ? w = '[X]' : w ='[  ]';
+            data.push([day, w, dinf, jinf]);
         })
 
         //send email
@@ -65,27 +68,29 @@ export default function Page() {
 
         //generate pdf
         const doc = new jsPDF();
-        doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'})
-        autoTable(doc, { //autotable is a package built ontop of jspdf that just makes my life way easier
+        doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'});
+        autoTable(doc, {
             head: [["date","worked?","vessel", "job"]], 
             body: data,
-        })
-        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'})
-        doc.text('crew type: '+type, 100, 120, {align: 'center'})
-        doc.setFontSize(12)
+        });
+        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'});
+        doc.text('crew type: '+type, 100, 120, {align: 'center'});
+        doc.setFontSize(12);
         doc.text(
             'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
             100,    
             170, 
             {align: 'center'}
-        )
+        );
         //download pdf
         doc.save("report_for_" + name + "_" + period[0] +".pdf");
-        router.push('review/thanks')
+
+        //redirect :p
         setsaving(0);
+        router.push('review/thanks');
     }
     
-    const [dataResponse, setdataResponse] = useState([]);
+    //database queries
     useEffect(() => {
       async function getPeriodInf(){
         const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
@@ -96,22 +101,24 @@ export default function Page() {
       getPeriodInf();
     }, []);
    
-    // this is all just for building our page
-    let name=''
-    let daysworked=0
-    var dict: {[id: string] : string} = {};
-    var jdict: {[id: string] : string} = {};
-    let type=''
+    // type declarations
+    let name:string='';
+    let type:string='';
+    var vesselDict: {[id: string] : string} = {};
+    var crewDict: {[id: string] : string} = {};
+
+    let daysworked=0;
+
     try{
-        dataResponse.forEach((item) => {
+        dataResponse.forEach((item) => { // build dictionaries for page
             if(item['day']==-1){
                 item['ship']=='1' ? type = 'domestic' : type = 'foreign';
                 return
             } 
             if(!name) name=item['uid'];
             if(item['ship']) daysworked+=1;
-            dict[item['day']]=item['ship']
-            jdict[item['day']]=item['type']
+            vesselDict[item['day']]=item['ship']
+            crewDict[item['day']]=item['type']
            
         }) ;
     }
@@ -142,8 +149,8 @@ export default function Page() {
                     period.map((day) => 
                         <TableRow key={day} className='reportLine'> 
                             <TableCell className='reportTxt' key={day+'date'}>{day}</TableCell> 
-                            <TableCell className='reportTxt'key={day+'ship'}>{dict[day] ? dict[day] : ''}</TableCell>
-                            <TableCell className='reportTxt'key={day+'job'}>{jdict[day] ? jdict[day] : ''}</TableCell>
+                            <TableCell className='reportTxt'key={day+'ship'}>{vesselDict[day] ? vesselDict[day] : ''}</TableCell>
+                            <TableCell className='reportTxt'key={day+'job'}>{crewDict[day] ? crewDict[day] : ''}</TableCell>
                         </TableRow>) // for now we are jtus gonna try to pull 1 line    
                     }</TableBody>
                 </Table>

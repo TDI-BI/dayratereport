@@ -1,78 +1,85 @@
 'use client'
-import { useState, useEffect } from "react";
-import { getPort } from "@/utils/getPort";
+import { getPort } from "@/utils/getPort"; const port = getPort();
 import { fetchBoth } from "@/utils/fetchBoth";
 import { redirect } from "next/navigation";
 import { getPeriod } from "@/utils/payperiod";
+import { 
+    useState, 
+    useEffect 
+} from "react";
 import { 
     RadioGroup, 
     Radio, 
 } from "@nextui-org/react";
 import {
-    mkConfig, generateCsv, download 
+    mkConfig, 
+    generateCsv, 
+    download 
 } from 'export-to-csv'
-
-const port = getPort();
-
 
 
 const AdminPannel = () =>{
-    const [shipEh, setShipEh] = useState('BMCC'); // 0 for curr -/+ for rest (we invert)
-    const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
-    const period = getPeriod(periodEh);
-    //gets stuffge
 
-    let bweh:{[key:string]: string}={}
-    const [fdict, setfdict]= useState(bweh); // domestic v foreign
-    const [nun, setnun] = useState(bweh)
-    const [dataResponse, setdataResponse] = useState([]);
-
+    //datatype declarations
+    let bweh:{[key:string]: string}={};
     let jtype:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
-    const [json, setjson] = useState(jtype)
+    const tblData:any[] = [];
 
-    const [days, setDays] = useState([]);
+    //states
+    const [shipEh, setShipEh] = useState('BMCC'); // ship filter
+    const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
+    const [crewDict, setcrewDict]= useState(bweh); // domestic v foreign
+    const [userDict, setuserDict] = useState(bweh);
+    const [dataResponse, setdataResponse] = useState([]);
+    const [json, setjson] = useState(jtype);
+
+    const period = getPeriod(periodEh);
+
+    //database queries
     useEffect(()=>{
         const getEveryting = async () =>{
-            const response = await fetchBoth(port+'/api/gigaquery')
+            //fetch from database
+            const response = await fetchBoth(port+'/api/gigaquery');
             const res = await response.json();
-            let stuff:any = [];
-            let tdict:{[id: string] : string} = {};
-            let gdict:{[id: string] : string} = {};
 
-            let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
+            //type declarations
+            let crewDict:{[id: string] : string} = {};
+            let userDict:{[id: string] : string} = {};
+            let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={}; // a mess really, but whatever works
+
             try{
+                //build responses
                 (res.resp).forEach((day:any)=>{
                     if(day['day']=='-1'){ 
-                        tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
-                        return
+                        crewDict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign'; // log crew type
+                        return;
                     } 
-                    if(!gdict[day['uid']])gdict[day['uid']]=day['username']
-                    if(!masterJson[day['ship']]) masterJson[day['ship']]={}
-                    if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
-                    masterJson[day['ship']][day['uid']][day['day']]=day['type']
+                    if(!userDict[day['uid']])userDict[day['uid']]=day['username']; // match UID to username
+                    if(!masterJson[day['ship']]) masterJson[day['ship']]={};
+                    if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={};
+                    masterJson[day['ship']][day['uid']][day['day']]=day['type'];
 
                 })
             }
-            catch(e)
-            {
-            }
-            setnun(gdict);
-            setfdict(tdict);
-            setDays(stuff);
+            catch(e){} // just so page doesnt crash for non-admin users
+
+            //set states
+            setuserDict(userDict);
+            setcrewDict(crewDict);
             setdataResponse(res);
             setjson(masterJson)
 
         }
         getEveryting();
     },[])
+
+    //block non-admins & redirect
     if(dataResponse['error' as any]){ 
-        console.log('you do not have administrator access :c')
-        redirect('../../')
-    } // block non-admins
+        console.log('you do not have administrator access :c');
+        redirect('../../');
+    } 
 
-    //generate our table
-    const tblData:any[] = [];
-
+    //build our table
     if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
             let sum=0;
@@ -80,7 +87,7 @@ const AdminPannel = () =>{
                 if(json[shipEh][name][e]) sum++;
             })
             let row={
-                cre:   fdict[nun[name]],
+                cre:    crewDict[userDict[name]],
                 fna:    name.split('/')[0],
                 lna:    name.split('/')[1],
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
@@ -96,7 +103,9 @@ const AdminPannel = () =>{
         })
     }
 
+    //export csv
     const exportCsv = () =>{
+        //setup label columns
         const expTableData =    [{
             cre:   'CREW',
             fna:    "first name",
@@ -110,28 +119,23 @@ const AdminPannel = () =>{
             sun:    period[6],
             sum:    '',
         }].concat(tblData)
-        // mkConfig merges your options with the defaults
-        // and returns WithDefaults<ConfigOptions>
+
+        // generate from CSV, basically just copied from export-to-csv documentation
         const csvConfig = mkConfig({ 
             useKeysAsHeaders: true, 
             filename:shipEh+'_'+period[0]+'_TO_'+period[6]
         });
-        // Converts your Array<Object> to a CsvOutput string based on the configs
         const csv = generateCsv(csvConfig)(expTableData);
         download(csvConfig)(csv)
     }
 
-
-    return( // just default page wrapper for now
+    return(
         <main className="flex min-h-screen flex-col items-center">
             <p>
                 <button className='tblFootBtn' onClick={()=>{setPeriodEh(periodEh+1)}}> {'< '} back</button>
                 {period[0]} to {period[6]}
                 <button className='tblFootBtn' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
             </p>
-            {/*days.map((day)=>day['ship'] && <p key={day['day']+day['uid']}>{ // example
-                day['day'] + ' : ' + day['ship'] + ' : ' + day['type'] + ' : ' + day['uid'] + ' : ' + day['username'] + ' : ' + fdict[day['username']]
-            }</p>)*/}
             <div className='adminWrap'>
                 <div className='adminFilterWrap'>
                     <RadioGroup
@@ -173,7 +177,7 @@ const AdminPannel = () =>{
                     <div className='adminRowLabel' key='headrow'>
                         <div className='adminLabelX' key='headnamelbl'><strong>NAME</strong></div>
                         <div className='adminLabelY' key='headnamelbl'>CREW</div>
-                        {period.map((day)=> //header
+                        {period.map((day)=>
                             <div className='adminLabelY' key={day+'label'}>
                                 <p>{day}</p>
                             </div>

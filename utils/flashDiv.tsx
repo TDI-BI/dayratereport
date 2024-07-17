@@ -1,3 +1,4 @@
+//animates a flash of our div
 export const flashDiv = async (target: HTMLElement) => {
     target.style.transition = '100ms';
     target.style.background = 'rgb(255, 255, 255, 1)';

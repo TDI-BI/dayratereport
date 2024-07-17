@@ -1,43 +1,51 @@
 'use client'
-import { useState, useEffect } from "react";
+import { getPort } from "@/utils/getPort"; const por = getPort();
 import { fetchBoth } from "@/utils/fetchBoth";
-import { getPort } from "@/utils/getPort";
 import { getPeriod } from "@/utils/payperiod";
-
-
+import { 
+    useState, 
+    useEffect 
+} from "react";
 
 const Confirmations = () =>{
-    
-    //FOR SORTING OUR TABLE
-    const period = getPeriod()
+    const period = getPeriod();
+
+    //states
     const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('lastConfirmed');
+    const [sort, setSort] = useState('UID'); // currently unused
+    const [users, setUsers] = useState([]);
+
+    //filters
     const searchFilter = (array:any) => {
         return array.filter(
             (el:any)=>el['uid'].includes(search)
-        )
+        );
     }
     const sortBy = (array:any)=>{
         return array.sort(
             (el1:any, el2:any)=>{
                 if(el1[sort]==el2[sort]) return 0;
-                else return el1[sort]>el2[sort] ? 1 : -1
+                else return el1[sort]>el2[sort] ? 1 : -1;
             }
-        )
+        );
     }
-    //DATABASE QUERIES
-    const [users, setUsers] = useState([])
+    
+    //database queries
     useEffect(()=>{
-        
         const getArr = async () =>{
-            let resp = await fetchBoth(getPort()+'/api/getusers')
+            //fetch from database
+            let resp = await fetchBoth(por+'/api/getusers');
             const users = (await resp.json()).resp;
-            setUsers(users)
+
+            //set states
+            setUsers(users);
         }
         getArr();
 
     }, [])
-    const filtered = searchFilter(users)
+
+    //deploy filters
+    const filtered = searchFilter(users);
     const sorted = sortBy(filtered);
 
     return(

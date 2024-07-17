@@ -1,41 +1,43 @@
+//insert users account into our database
 
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
 import { connectToDb } from '@/utils/connectToDb'
-const bcrypt = require('bcrypt')    
 
 export const GET = async (request: NextRequest) => {
 
-    //return new Response(JSON.stringify({ error: 'test' }), { status: 500});
+    //block if the user is logged in
     const session = await getSession();
-    //if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
+    if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
 
+    //get URL parameters
     const { searchParams } = request.nextUrl;
     const username = searchParams.get('username') || '';
     const password = searchParams.get('password') || '';
     const fullname = searchParams.get('fullname') || '';
     const email = searchParams.get('email') || '';
 
-    //i need to find a way to wrap this in a function and call it
+    //estab. connection
     const connection = await connectToDb();
 
     try {
-        //ok for some reason trying to nest api calls inside eachother was just breaking everything so instead im gonna do this
+        //check simmilar account exists
         const query = "select * from users where username='"+username+"' or email='"+email+"' or uid='"+fullname+"'";
-        //console.log(query);
         const [results] = await connection.execute(query);
+        //block if we find a result
         if(String(results)) return new Response(JSON.stringify({error: 'account exists'}), { status: 500});
-        //clever solution to check if there are any results and return an error if our account exists
 
-        //create our account
-        const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+password+"','"+username+"','"+email+"')"
-        //console.log(query2)
+        //build query
+        const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+password+"','"+username+"','"+email+"')";
+
+        //execute query
         const [results2] = await connection.execute(query2);
         connection.end();
+
         return new Response(JSON.stringify({ resp: results2 }), {status: 200});
     } catch (error) {
-        if(error instanceof Error){
-        return new Response(JSON.stringify({ error: error.message }), { status: 500});
-        }
+        connection.end();
+        return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500});
+        
     }
 };

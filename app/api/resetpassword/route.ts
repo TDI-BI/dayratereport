@@ -1,14 +1,16 @@
+//updates hashed password in our user entry
+
 import { getSession } from '@/actions';
 import { NextRequest } from 'next/server';
-import { connectToDb } from '@/utils/connectToDb'
-const bcrypt = require('bcrypt')    
+import { connectToDb } from '@/utils/connectToDb' 
 
 export const GET = async (request: NextRequest) => {
 
-    //return new Response(JSON.stringify({ error: 'test' }), { status: 500});
+    //block if you are logged in... how would you even get here
     const session = await getSession();
-    //if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
+    if(session.isLoggedIn) return new Response(JSON.stringify({ error: 'already logged in' }), { status: 500});
 
+    //get URL parameters
     const { searchParams } = request.nextUrl;
     const password = searchParams.get('password') || '';
     const oldhash = searchParams.get('oldhash') || '';
@@ -18,17 +20,16 @@ export const GET = async (request: NextRequest) => {
     const connection = await connectToDb();
 
     try {
-        //update our password
-        const query2= "update users set password='"+password+"' where password='"+oldhash+"';"
-        //(query2)
-        const [results2] = await connection.execute(query2);
+        //build query
+        const query= "update users set password='"+password+"' where password='"+oldhash+"';";
+
+        //execute query
+        const [results] = await connection.execute(query);
         connection.end();
-        //console.log(results2)
-        return new Response(JSON.stringify({ resp: results2 }), {status: 200});
+
+        return new Response(JSON.stringify({ resp: results }), {status: 200});
     } catch (error) {
         connection.end();
-        if(error instanceof Error){
-        return new Response(JSON.stringify({ error: error.message }), { status: 500});
-        }
+        return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500});
     }
 };

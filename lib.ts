@@ -1,6 +1,6 @@
 import {SessionOptions } from "iron-session";
 
-export interface sessionData{
+export interface sessionData{ // init
     userId?:string;
     username?:string;
     userEmail?:string;

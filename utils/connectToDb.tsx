@@ -1,3 +1,4 @@
+//creates a connection to our mysql database
 import mysql from 'mysql2/promise';
 
 export const connectToDb = async () => {
