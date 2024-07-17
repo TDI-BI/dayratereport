@@ -20,7 +20,6 @@ export const GET = async (request:  NextRequest) => {
     const extraInfo:string = '';
     const session = await getSession();
     let names:string[] = session.userId!.split('/')
-    console.log(names)
 
     if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 200});// get defensive
 
@@ -76,14 +75,14 @@ export const GET = async (request:  NextRequest) => {
     const connection = await connectToDb();
     try {
         const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
-        console.log(query)
+        const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + '", "pdf generation");';
+        console.log(q2);
         const [results] = await connection.execute(query);
-        console.log('results')
-        //return  new Response(JSON.stringify({ resp: 'fweh, bypassing emails for right now' }), {status: 200});
+        await connection.execute(q2);
         const data = await resend.emails.send(
             {
             from: 'reports@tdifielddays.com', // we will change this probably
-            to: [session.userEmail!, 'dayrate@tdi-bi.com'],
+            to: [session.userEmail!, 'dayratereportdonotrespond@gmail.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day + extraInfo,
             text: 
