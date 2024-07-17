@@ -88,7 +88,7 @@ export const GET = async (request:  NextRequest) => {
         const data = await resend.emails.send(
             {
             from: 'reports@tdifielddays.com',
-            to: [session.userEmail!, 'dayratereportdonotrespond@gmail.com'],
+            to: [session.userEmail!, 'dayrate@tdi-bi.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
             subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day,
             text: 
