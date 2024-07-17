@@ -12,71 +12,75 @@ import {
     mkConfig, generateCsv, download 
 } from 'export-to-csv'
 
+const port = getPort();
+
+
 
 const AdminPannel = () =>{
-    const tblData:any[] = [];
-    let bweh:{[key:string]: string}={}
-    let jtype:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
-
-    //states
-    const [shipEh, setShipEh] = useState('BMCC'); // filter by
+    const [shipEh, setShipEh] = useState('BMCC'); // 0 for curr -/+ for rest (we invert)
     const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
-    const [crewDict, setcrewDict]= useState(bweh); // domestic v foreign
-    const [uidNameDict, setuidNameDict] = useState(bweh)
+    const period = getPeriod(periodEh);
+    //gets stuffge
+
+    let bweh:{[key:string]: string}={}
+    const [fdict, setfdict]= useState(bweh); // domestic v foreign
+    const [nun, setnun] = useState(bweh)
     const [dataResponse, setdataResponse] = useState([]);
+
+    let jtype:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
     const [json, setjson] = useState(jtype)
 
-    //my getters
-    const port = getPort();
-    const period = getPeriod(periodEh);
-
+    const [days, setDays] = useState([]);
     useEffect(()=>{
         const getEveryting = async () =>{
-
-            const response = await fetchBoth(port+'/api/gigaquery') // gives us every entry into days
+            const response = await fetchBoth(port+'/api/gigaquery')
             const res = await response.json();
+            let stuff:any = [];
+            let tdict:{[id: string] : string} = {};
+            let gdict:{[id: string] : string} = {};
 
-            //setup for returns
-            let crewDict:{[id: string] : string} = {}; // type dictionary
-            let uidNameDict:{[id: string] : string} = {};
             let masterJson:{[ship: string] : {[user:string]: {[day:string]: string}}}={};
-
             try{
                 (res.resp).forEach((day:any)=>{
                     if(day['day']=='-1'){ 
-                        crewDict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
+                        tdict[day['username']]=(day['ship']=="1")?'domestic' : 'foreign';
                         return
                     } 
-                    if(!uidNameDict[day['uid']])uidNameDict[day['uid']]=day['username']
+                    if(!gdict[day['uid']])gdict[day['uid']]=day['username']
                     if(!masterJson[day['ship']]) masterJson[day['ship']]={}
                     if(!masterJson[day['ship']][day['uid']]) masterJson[day['ship']][day['uid']]={}
                     masterJson[day['ship']][day['uid']][day['day']]=day['type']
 
                 })
             }
-            catch(e){} // literally just exists to make sure the page doesnt break down :p
-            setuidNameDict(uidNameDict);
-            setcrewDict(crewDict);
+            catch(e)
+            {
+            }
+            setnun(gdict);
+            setfdict(tdict);
+            setDays(stuff);
             setdataResponse(res);
             setjson(masterJson)
 
         }
         getEveryting();
     },[])
-
-    if(dataResponse['error' as any]){ // redirects non admin accounts
+    if(dataResponse['error' as any]){ 
         console.log('you do not have administrator access :c')
         redirect('../../')
-    }
+    } // block non-admins
 
-    if(json[shipEh]){ // build our current 1 week table
+    //generate our table
+    const tblData:any[] = [];
+
+    if(json[shipEh]){
         Object.keys(json[shipEh]).map((name)=>{
             let sum=0;
             period.map((e) =>{
                 if(json[shipEh][name][e]) sum++;
             })
             let row={
-                cre:    crewDict[uidNameDict[name]],
+                cre:   fdict[nun[name]],
                 fna:    name.split('/')[0],
                 lna:    name.split('/')[1],
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
@@ -93,7 +97,6 @@ const AdminPannel = () =>{
     }
 
     const exportCsv = () =>{
-        //rebuild tabledata in proper format
         const expTableData =    [{
             cre:   'CREW',
             fna:    "first name",
@@ -107,17 +110,18 @@ const AdminPannel = () =>{
             sun:    period[6],
             sum:    '',
         }].concat(tblData)
-
-        //below copied in from documentation for export-to-csv
+        // mkConfig merges your options with the defaults
+        // and returns WithDefaults<ConfigOptions>
         const csvConfig = mkConfig({ 
             useKeysAsHeaders: true, 
             filename:shipEh+'_'+period[0]+'_TO_'+period[6]
         });
+        // Converts your Array<Object> to a CsvOutput string based on the configs
         const csv = generateCsv(csvConfig)(expTableData);
         download(csvConfig)(csv)
     }
 
-    
+
     return( // just default page wrapper for now
         <main className="flex min-h-screen flex-col items-center">
             <p>
@@ -125,6 +129,9 @@ const AdminPannel = () =>{
                 {period[0]} to {period[6]}
                 <button className='tblFootBtn' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
             </p>
+            {/*days.map((day)=>day['ship'] && <p key={day['day']+day['uid']}>{ // example
+                day['day'] + ' : ' + day['ship'] + ' : ' + day['type'] + ' : ' + day['uid'] + ' : ' + day['username'] + ' : ' + fdict[day['username']]
+            }</p>)*/}
             <div className='adminWrap'>
                 <div className='adminFilterWrap'>
                     <RadioGroup
