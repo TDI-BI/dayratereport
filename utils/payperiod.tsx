@@ -1,5 +1,7 @@
 // returns the current payperiod as YYYY-MM-DD isostrings
-/* utc version - useless and fucking stupid and i hate it
+
+
+/* utc version - useless and stupid and i hate it
 export const getPeriod = (input=0) =>{ // found this online
     //for now it just gets the last week and next. at some point
     //solution for last monday: https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
@@ -20,9 +22,10 @@ export const getPeriod = (input=0) =>{ // found this online
 }
 */
 
+//legacy version, hopefully fine still :)
 export const getPeriod = (input=0) =>{ // found this online
     //for now it just gets the last week and next. at some point
-    //i will have to fix this fraud function and make it work better so it can actually load stuff
+    //extremely fraudulent function but probably makes nice w/ server still :p
     const curPeriod=[];
 
     //solution for last monday: https://stackoverflow.com/questions/35088088/javascript-for-getting-the-previous-monday
