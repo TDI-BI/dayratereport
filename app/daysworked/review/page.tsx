@@ -25,13 +25,13 @@ export default function Page() {
     //check previous or current
     const sprms = useSearchParams();
     const prev= sprms.get('prev')=='1';
-    const period = prev? getPeriod(1) : getPeriod(0);
     const ex = prev ? 'prev=1' : '';
     
     //needs to be called from within a function (ugh)
     const router = useRouter();
 
     //states
+    const [period, setPeriod] = useState(prev? getPeriod(1) : getPeriod(0));
     const [saving, setsaving] = useState(0);
     const [dataResponse, setdataResponse] = useState([]);
 
@@ -92,12 +92,17 @@ export default function Page() {
     
     //database queries
     useEffect(() => {
-      async function getPeriodInf(){
-        const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
-        const response = await fetchBoth(apiUrlEndpoint);
-        const res = await response.json();
-        setdataResponse(res.resp);  
-      }
+        async function getPeriodInf(){
+            const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
+            const response = await fetchBoth(apiUrlEndpoint);
+            const res = await response.json();
+            
+            const perResp = await (fetchBoth(por+'/api/verifydate?'+ex))
+            const serverPeriod = (await perResp.json()).resp;
+
+            setPeriod(serverPeriod);
+            setdataResponse(res.resp);  
+        }
       getPeriodInf();
     }, []);
    

@@ -19,7 +19,6 @@ export default function Home(){
     //cur or prev report
     const sprms = useSearchParams();
     const prev= sprms.get('prev')=='1';
-    const period = prev? getPeriod(1) : getPeriod(0);
     const ex = prev ? 'prev=1' : '';
 
     //save then redirect
@@ -78,6 +77,7 @@ export default function Home(){
     }
 
     //states
+    const [period, setPeriod] = useState(prev? getPeriod(1) : getPeriod(0)); // init period
     const [vessels, setVessels]=useState({});
     const [jobs, setJobs]=useState({});
     const [crew, setCrew] = useState('');
@@ -104,6 +104,11 @@ export default function Home(){
                 })
             }
             catch(e){}   // make sure page doesnt crash
+
+            const perResp = await (fetchBoth(por+'/api/verifydate?'+ex))
+            const serverPeriod = (await perResp.json()).resp;
+
+            setPeriod(serverPeriod);
             setVessels(ves);
             setJobs(job);
             setdataResponse(res.resp); 
