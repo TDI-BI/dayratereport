@@ -27,11 +27,11 @@ export const GET = async (request:  NextRequest) => {
 
     try{ // from here below is our homebrew upsert
 
-        //wipe overlapping entrys from our database
-        let query1 = 'delete from days where (username="'+username+'") and ((day="-1"));';
-        await connection.execute(query1);
+        const q3 = 'insert into logs (email, date, request, type) values ("'+session.userEmail+'", "'+new Date().toISOString()+'", "'+days+ ' and ' +period[0]+'", "save");'
+        const [results2] = await connection.execute(q3);
 
-        //build query
+        //build queries
+        let query1 = 'delete from days where (username="'+username+'") and (';
         let query2= 'insert into days (uid, day, ship, username, type) VALUES ';
 
         let list = days.split(';'); // break down passed parameters
@@ -48,9 +48,13 @@ export const GET = async (request:  NextRequest) => {
             query2+='("'+uid+'","'+day+'","'+dict[day][0]+'","'+username+'","'+dict[day][1]+'"),';
         })
         query2+='("","-1","'+domestic+'","'+username+'", "");'
+        query1+='(day="-1"));';
 
+        await connection.execute(query1);
         //execute query
         const [results] = await connection.execute(query2);
+
+        //create log
         connection.end();
   
         return new Response(JSON.stringify({ resp: results }), {status: 200});
