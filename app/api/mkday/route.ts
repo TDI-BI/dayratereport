@@ -27,9 +27,6 @@ export const GET = async (request:  NextRequest) => {
 
     try{ // from here below is our homebrew upsert
 
-        const q3 = 'insert into logs (email, date, request, type) values ("'+session.userEmail+'", "'+new Date().toISOString()+'", "'+days+ ' and ' +period[0]+'", "save");'
-        const [results2] = await connection.execute(q3);
-
         //build queries
         let query1 = 'delete from days where (username="'+username+'") and (';
         let query2= 'insert into days (uid, day, ship, username, type) VALUES ';
@@ -50,13 +47,16 @@ export const GET = async (request:  NextRequest) => {
         query2+='("","-1","'+domestic+'","'+username+'", "");'
         query1+='(day="-1"));';
 
+        const q3 = 'insert into logs (email, date, request, type) values ("'+session.userEmail+'", "'+new Date().toISOString()+'", \''+'q1='+query1 + ' and q2='+query2+'\', "save");'
+        console.log(q3);
+        await connection.execute(q3);
+
         await connection.execute(query1);
         //execute query
         const [results] = await connection.execute(query2);
 
         //create log
         connection.end();
-  
         return new Response(JSON.stringify({ resp: results }), {status: 200});
     }catch (error) { 
         connection.end();
