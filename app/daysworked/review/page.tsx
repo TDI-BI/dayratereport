@@ -145,7 +145,7 @@ export default function Page() {
                 <Link href='../'><div className='tblFootBtn'> back </div></Link>
                 <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
             </div>
-            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing pdf...' : 'saved'}</p>
+            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing email...' : 'sent'}</p>
         </main>
     )
 }
