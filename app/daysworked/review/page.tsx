@@ -47,43 +47,13 @@ export default function Page() {
         }
         setsaving(1);
 
-        //currently legacy code, not going to clean up bc alot of this is going to be scrapped soon inshallah. 
-        //see sendperiodinf if you want info on how this works
-        let data:string[][] = [] 
-        let dinf='';
-        let jinf='';
-        let w = '';
+        // client pdf generation removed
         let strdict='';
-        period.map((day) => {   
-            strdict+=day+':'+vesselDict[day]+':'+crewDict[day]+';';
-            vesselDict[day] ? dinf = vesselDict[day] : dinf = '';
-            crewDict[day] ? jinf = crewDict[day] : jinf = '';
-            vesselDict[day] ? w = '[X]' : w ='[  ]';
-            data.push([day, w, dinf, jinf]);
-        })
+        period.map((day) => strdict+=day+':'+vesselDict[day]+':'+crewDict[day]+';')
 
         //send email
         const apiUrlEndpoint = por+'/api/sendperiodinf?day='+period[0]+'&pdf='+strdict+'&type='+type+'&'+ex;
         await fetchBoth(apiUrlEndpoint);
-
-        //generate pdf
-        const doc = new jsPDF();
-        doc.text('report for: '+ names[0] + ' ' + names[1], 100, 10, {align: 'center'});
-        autoTable(doc, {
-            head: [["date","worked?","vessel", "job"]], 
-            body: data,
-        });
-        doc.text('days worked: '+daysworked, 100, 100, {align: 'center'});
-        doc.text('crew type: '+type, 100, 120, {align: 'center'});
-        doc.setFontSize(12);
-        doc.text(
-            'I, '+ names[0] + ' ' + names[1] +', acknowledge and certify that the information \non this document is true and accurate', 
-            100,    
-            170, 
-            {align: 'center'}
-        );
-        //download pdf
-        doc.save("report_for_" + name + "_" + period[0] +".pdf");
 
         //redirect :p
         setsaving(0);
