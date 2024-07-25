@@ -148,6 +148,8 @@ export const resetPassword = async(
     const formPassword = formData.get('password1') as string
     const formPasswordRepeat = formData.get('password2') as string
 
+    if(formPassword == '' || formPasswordRepeat=='') return { error: 'empty fields' }
+
     //block if something is incorrect
     if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
 
