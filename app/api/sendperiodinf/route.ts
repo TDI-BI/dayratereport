@@ -75,13 +75,16 @@ export const GET = async (request:  NextRequest) => {
     //init connection
     const connection = await connectToDb();
     try {
-        //build queries to log this report
-        const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
-        const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + '", "pdf generation");';
+        if(!prev){ //only want to log for current period
+            const query = 'UPDATE users set lastConfirm="'+(new Date()).toISOString().substring(0, 10)+'" where uid="'+session.userId+'";';
+            await connection.execute(query);
+        }
 
-        //execute queries
-        await connection.execute(query);
+        //this is a debugging tool, commented out for now as we have no known issues
+        /*
+        const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + '", "pdf generation");';
         await connection.execute(q2);
+        */
         connection.end();
 
         //send email

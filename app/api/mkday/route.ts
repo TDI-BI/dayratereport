@@ -47,10 +47,12 @@ export const GET = async (request:  NextRequest) => {
         query2+='("","-1","'+domestic+'","'+username+'", "");'
         query1+='(day="-1"));';
 
+        //debugging tool, commented otu for now
+        /*
         const q3 = 'insert into logs (email, date, request, type) values ("'+session.userEmail+'", "'+new Date().toISOString()+'", \''+'q1='+query1 + ' and q2='+query2+'\', "save");'
-        console.log(q3);
         await connection.execute(q3);
-
+        */
+        
         await connection.execute(query1);
         //execute query
         const [results] = await connection.execute(query2);
