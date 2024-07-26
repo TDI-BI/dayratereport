@@ -346,3 +346,24 @@ body {
 .adminFilterWrap{
     width:200px;
 }
+
+.exportSettings{
+    width:100px;
+    text-align: center;
+}
+
+.sexportSetting, .uexportSetting{
+    height:30px;
+    width:100px;
+    text-align: center;
+    line-height:30px;
+    background-color:rgb(var(--background-item-rgba-select));
+    transition:300ms;
+}
+.sexportSetting{
+    background-color:rgb(var(--background-item-rgba));
+}
+.sexportSetting:hover, .uexportSetting:hover{
+    background-color:rgb(var(--background-item-rgba-fade));
+    transition:300ms;
+}
