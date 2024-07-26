@@ -135,6 +135,7 @@ export const recover = async (
         const res = await response.json();
         const rmessage= res.resp;
         if(rmessage=='email sent') return {error: 'recovery instructions sent'}
+        throw 'just need to catch this';
     }
     catch(e){ return {error: 'account not found'}}
 }
