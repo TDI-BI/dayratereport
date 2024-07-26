@@ -153,7 +153,7 @@ const AdminPannel = () =>{
         // generate from CSV, basically just copied from export-to-csv documentation
         const csvConfig = mkConfig({ 
             useKeysAsHeaders: true, 
-            filename:shipEh+'_'+period[0]+'_TO_'+period[6]
+            filename:shipEh+'_'+period[0]+'_TO_'+period[6]+'_'+crewEh
         });
         const csv = generateCsv(csvConfig)(expTableData);
         download(csvConfig)(csv)
