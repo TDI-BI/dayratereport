@@ -255,10 +255,10 @@ const AdminPannel = () =>{
                         className={weeks=='2' ? 'uexportSetting' : 'sexportSetting'}
                     >2</Radio>
                     <Radio
-                        key='4'
-                        value='4'
-                        className={weeks=='4' ? 'uexportSetting' : 'sexportSetting'}
-                    >4</Radio>
+                        key='5'
+                        value='5'
+                        className={weeks=='5' ? 'uexportSetting' : 'sexportSetting'}
+                    >5</Radio>
                 </RadioGroup>
 
 

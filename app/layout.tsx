@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
     title: "TDI Field Days Worked",
-    description: "get hr to write me a tag line later",
+    description: "tool for tdi employees to log days worked",
 };
 export default function RootLayout({
     children,
