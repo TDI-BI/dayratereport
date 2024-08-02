@@ -93,6 +93,7 @@ export const mkAccount = async(
         return { error: 'empty fields' }
     }
     if(formUsername.includes(' ')) return  {error : 'username has spaces'}
+    if(formEmail.includes(' ')) return  {error : 'email has spaces'}
 
     //query API
     const fullname=formFirstname+'/'+formLastname;
