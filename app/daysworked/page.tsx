@@ -84,7 +84,7 @@ export default function Home(){
     const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
 
-    useEffect(() => { 
+    useEffect(() => { //MAYBE CAUSING ISSUE
         //query database
         async function getPeriodInf(){
             const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
@@ -116,6 +116,7 @@ export default function Home(){
         getPeriodInf();
 
         //event listeners are async and thus must be wrapped in some kind of useeffect. stupid feature I added for fun. nobody even knows it exists
+        /*
         document.addEventListener('keydown', e => { // catch ctrls
             if (e.ctrlKey && e.key === 's') {
                 e.preventDefault();
@@ -127,6 +128,7 @@ export default function Home(){
                 return; // idk how important this is to be honest
             }
         });
+        */
     }, []);
 
     try{
