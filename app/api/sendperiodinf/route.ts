@@ -12,7 +12,7 @@ import autoTable from 'jspdf-autotable' // this is so gas actually
 export const GET = async (request:  NextRequest) => {
     //URL parameters
     const { searchParams } = request.nextUrl;
-    const day = searchParams.get('day') || '';
+    const dayL = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
     const type = searchParams.get('type') || '';
     const prev = Number(searchParams.get('prev') || '0');
@@ -81,10 +81,10 @@ export const GET = async (request:  NextRequest) => {
         }
 
         //this is a debugging tool, commented out for now as we have no known issues
-        /*
-        const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + '", "pdf generation");';
+        
+        const q2 = 'INSERT INTO logs (email, date, request, type) VALUES ("' + session.userEmail + '", "' + new Date().toISOString() + '", "' + pdf + ' : ' + dayL + '", "pdf generation");';
         await connection.execute(q2);
-        */
+        
         connection.end();
 
         //send email
@@ -93,14 +93,14 @@ export const GET = async (request:  NextRequest) => {
             from: 'reports@tdifielddays.com', // we will change this probably
             to: [session.userEmail!, 'dayrate@tdi-bi.com'],
 				//'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
-            subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + day,
+            subject: 'travel report for ' + names[0] + ' ' + names[1] + ' from period starting ' + period[0],
             text: 
                 'the following attached file is a travel report for '+ names[0] + ' ' + 
-                names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + day + 
+                names[1] + ' @ ' + session.userEmail +' for pay period starting on ' + period[0] + 
                 ' \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email. ',
             attachments:[
                 {
-                  filename:"report_for_"+session.username+"_"+day+".pdf",
+                  filename:"report_for_"+session.username+"_"+period[0]+".pdf",
                   content: btoa(pds),
                 }
               ]
