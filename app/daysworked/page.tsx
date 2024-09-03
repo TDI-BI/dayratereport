@@ -32,6 +32,7 @@ export default function Home(){
         setsaving(1);
         let strdict='';
         let derrors:HTMLElement[] = []; // gonna treat this as a stack for which days i need to flash
+        
         period.map((day) => { 
 
             if( // one or not hte other
@@ -54,6 +55,7 @@ export default function Home(){
             strdict+=day+':'+cship+':'+cjob+';';
             
         })
+        
 
         //if we have any errors inform the user they need to make changes before they can save
         if(derrors.length!=0){
@@ -67,6 +69,7 @@ export default function Home(){
             flashDiv(target);
             return false;
         }
+        
         
         //if no errors let the user save
         crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker

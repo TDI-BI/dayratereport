@@ -31,6 +31,7 @@ export default function Page() {
     const router = useRouter();
 
     //states
+    const [pulled, setPulled] = useState(0);
     const [period, setPeriod] = useState(prev? getPeriod(1) : getPeriod(0));
     const [saving, setsaving] = useState(0);
     const [dataResponse, setdataResponse] = useState([]);
@@ -72,8 +73,13 @@ export default function Page() {
 
             setPeriod(serverPeriod);
             setdataResponse(res.resp);  
+            setPulled(1);
         }
-      getPeriodInf();
+        getPeriodInf();
+
+        
+
+
     }, []);
    
     // type declarations
@@ -133,19 +139,28 @@ export default function Page() {
                 <p> TOTAL DAYS: {daysworked}</p>
                 {prev? <p className='prev'> this is last weeks report </p> : ''}
             </div>
-            <div className='affirmation' id='target'>
-                <div className='affirmRow'>
-                    <p>
-                        <input type='checkbox' id='affirm'/>
-                        : I acknowledge and certify that the information on this document is true and accurate
-                    </p>
+
+            {/* from here i need to obscure this stuff until its loaded */}
+            <div className={pulled ? 'report' : 'report hidethis'}>
+                <div className='affirmation' id='target'>
+                    <div className='affirmRow'>
+                        <p className='rp'>
+                            <input type='checkbox' id='affirm'/>
+                            : I acknowledge and certify that the information on this document is true and accurate
+                        </p>
+                    </div>
                 </div>
+                <div className='reportFoot'>
+                    <Link href='../'><div className='reportBtn'> back </div></Link>
+                    <button onClick={submit}><div className='reportBtn'> confirm and submit </div></button>
+                </div>
+                <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing email...' : 'sent'}</p>
             </div>
-            <div className='tblFoot'>
-                <Link href='../'><div className='tblFootBtn'> back </div></Link>
-                <button onClick={submit}><div className='tblFootBtn'> confirm and submit </div></button>
+            {/* display 'loading' otherwise */}
+            <div className={pulled ? 'hidethis' : ''}>
+                <p className='savemsg1'>loading</p>
             </div>
-            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing email...' : 'sent'}</p>
+            
         </main>
     )
 }

@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
 :root {
     --foreground-rgb: 0, 0, 0;
     --background-start-rgb: 214, 219, 220;
@@ -180,7 +178,10 @@ body {
     padding:2px;
     display:inline-flex; flex-direction:row;
 }
-.tblFootBtn, .topBtn{
+.reportFoot{
+    display:inline-flex; flex-direction:row;
+}
+.tblFootBtn, .topBtn, .reportBtn{
     background-color:rgb(var(--background-item-rgba));
     outline-color:white;
     width:182.5px;
@@ -188,8 +189,11 @@ body {
     text-align:center;
     transition:300ms;
 }
+.reportBtn{
+    width:172.5px !important;
+}
 
-.tblBody:hover, .tblFootBtn:hover, .topBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover{
+.tblBody:hover, .tblFootBtn:hover, .topBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover, .reportBtn:hover{
     background-color:rgb(var(--background-item-rgba-fade));
 }
 .topBtn{
@@ -255,12 +259,17 @@ body {
 }
 .report{
     text-align: center;
+    width:345px;
+}
+.rp{
+    width:345px;
 }
 .affirmation{
-    padding:10px;
+    padding-top: 10px;
+    padding-bottom: 10px;
     transition: 300ms;
     background-color:rgb(255, 255, 255, 0);
-    width:300px;
+    width:345px;
 }
 .affirmRow{
     display:inline-flex; flex-direction:row;
