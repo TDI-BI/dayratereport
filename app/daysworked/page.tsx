@@ -147,7 +147,7 @@ export default function Home(){
                 <button className='topBtn' onClick={() =>{ 
                     const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
                     router.push(more)
-                }}> {prev ? 'show current period >' : '< show previous period'} </button>
+                }}> {prev ? 'show current week >' : '< show previous week'} </button>
             </div>
             <div className='tblWrapper'>
                 <div className='tblHead'>
