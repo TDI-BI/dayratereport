@@ -16,7 +16,7 @@ const profile = async () => {
                 <p> you are only required to submit one report per pay period </p>
                 <p> you may resubmit if you find any issues within your report </p>
                 <p> issues/inquiries email parkerseeley@tdi-bi.com </p>
-                <Link href='../../../'><div className='tblFootBtn'>home</div></Link>
+                <Link href='../../../'><div className='w-[180px] btnh btn hoverbg'>home</div></Link>
         </main>
     ) 
 }

@@ -13,14 +13,14 @@ const Navbar = async () => {
     return(    
     <nav className='head'>
         {session.isLoggedIn && <LogoutForm/>}        
-        {!session.isLoggedIn && <Link href='/login' ><div className='headBtn'>login</div></Link>}
+        {!session.isLoggedIn && <Link href='/login' ><div className='w-[calc(100vw/3)] h-[50px] line-h-[50px] btn hoverbg'>login</div></Link>}
 
         <Link href={session.isLoggedIn? '/daysworked' : '/login'} >
-        <div className='headBtn'>Days Worked</div>
+            <button className='w-[calc(100vw/3)] h-[50px] line-h-[50px] btn hoverbg'>Days Worked</button>
         </Link>
 
         <Link href={session.isLoggedIn? '/info' : '/login'}>
-        <div className='headBtn'>info</div>
+            <button className='w-[calc(100vw/3)] h-[50px] line-h-[50px] btn hoverbg'>info</button>
         </Link>
     </nav>
     )

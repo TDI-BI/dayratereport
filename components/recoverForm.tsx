@@ -32,12 +32,12 @@ const RecoverForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='email' type='text' placeholder='email'/>
+                    <input className='hoverLn hoverLnF formInput' name='email' type='text' placeholder='email'/>
                 </h1>
 
                 <h1 className='formLine'>
-                    <button> <p className='formBtn'>recover</p> </button>
-                    <Link href='../login'> <p className='formBtn'> back </p> </Link>
+                    <button> <p className='w-[140px] btnh btn hoverbg'>recover</p> </button>
+                    <Link href='../login'> <p className='w-[140px] btnh btn hoverbg'> back </p> </Link>
                 </h1>
                 <h1 className='formLine'>
                     <div className='errMessage' id='error'> {

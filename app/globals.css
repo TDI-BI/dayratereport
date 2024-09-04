@@ -66,13 +66,6 @@ body {
         text-wrap: balance;
     }
 }
-.headBtn{
-    text-align: center;
-    height:100%;
-    width:calc(100vw / 3); /* kind of silly, ill figure it out later */
-    background-color:rgb(129, 133, 137, 0);
-    transition:300ms;
-}
 
 .tblWrapper{
     outline-style:solid;
@@ -83,59 +76,31 @@ body {
     border-radius:20px;
 }
 
-.tblHead{
-    /*worry abt this later*/
-    padding-top:10px;
-    display:inline-flex;
-    outline-width: 0px;
-}
-.tblHeadDate, .tblHeadShip{
+.tblHeadItm{
     text-align: left;
     padding:10px;
     width:115px;
 }
-.tblRow{
-    padding-top:15px;
-    height:60px;
-    background-color:rgb(var(--background-item-rgba));
-    transition:300ms;
-}
-.tblRow:hover{
-    background-color:rgb(var(--background-item-rgba-fade));
-}
-
-.tblBodyCheck, .tblBodyDate, .tblBodyShip{
-    display:inline-flex;
+.tblBodyDate, .tblDD{
     line-height:30px;
     height:50px !important;
     padding-left:10px;
     padding-right:10px; 
     width:115px;
 }
-.tblBodyCheck{
-    display:inline-table;
-    padding-top:10px;
-    width:50px !important;
-}
 .tblBodyDate{
+    display:inline-flex;
     overflow:hidden;
-    width:115px;
 }
-.tblBodyShip{
+.tblDD{
     position: relative;
     display:inline-block;
 }
-.tblBodyShip::before{
+.tblDD::before{
     position:absolute;
     top:0px;
     right:-1px;
 }
-
-.stuff{
-    display:block;
-    flex-direction:column;  
-}
-
 
 .shipInput, .formInput{
     padding-left:7px;
@@ -144,9 +109,6 @@ body {
     width:160px;
     background: transparent;
     border: none;
-    transition:300ms;
-    border-bottom:1px solid;
-    border-color:rgb(var(--forground-rgba-fade));
 }
 .shipValue{
     color:black;
@@ -167,60 +129,32 @@ body {
     text-align:center;
     width:280px
 }
-.shipInput:hover, .formInput:hover{
-    border-color:rgb(var(--forground-rgba));
-}
-.shipInput:focus, .formInput:focus{
-    outline:none;
-    border-color:rgb(var(--forground-rgba));
-}
 .tblFoot{
+    height: 44px;
     padding:2px;
     display:inline-flex; flex-direction:row;
 }
-.reportFoot{
-    display:inline-flex; flex-direction:row;
-}
-.tblFootBtn, .topBtn, .reportBtn{
-    background-color:rgb(var(--background-item-rgba));
-    outline-color:white;
-    width:182.5px;
-    padding:10px;
+.btn{
     text-align:center;
     transition:300ms;
 }
-.reportBtn{
-    width:172.5px !important;
+.btnh{ /*this is just the default widely applied rule*/
+    height:44px;
+    line-height:44px;
 }
-
-.tblBody:hover, .tblFootBtn:hover, .topBtn:hover, .headBtn:hover, .formBtn:hover, .selectedCrew:hover, .unselectedCrew:hover, .reportBtn:hover{
-    background-color:rgb(var(--background-item-rgba-fade));
-}
-.topBtn{
-    width:300px;
-}
-
 .crewtype{/*work on this later*/
     text-align:center;
     line-height:25px;
     height:60px;
     width:345px;
 }
-.selectedCrew, .unselectedCrew{
+.crew{
     border-color:rgb(var(--background-item-rgba-select));
     border-width:2px;
     width:115px;
     padding:10px;
     transition:300ms;
 }
-.selectedCrew{
-    background-color:rgb(var(--background-item-rgba-select))
-}
-.unselectedCrew{
-    background-color:rgb(var(--background-item-rgba));
-}
-
-
 .formLine{
     margin:auto;
     display:flex;
@@ -232,84 +166,31 @@ body {
     justify-content: center;
 }
 
-.reporthead{
-    display:none;
-}
 .reportLine{
     height:30px;
     line-height: 30px;
-    transition:300ms;
     border-bottom:1px solid;
-    border-color:rgb(var(--forground-rgba-fade));
-}
-
-.reportLine:hover{
-    border-color:rgb(var(--forground-rgba));
 }
 
 .reportTxt{
     width:115px;
     text-align: center;
 }
-.formBtn{
-    background-color:rgb(129, 133, 137, 0);
-    width:140px;
-    text-align:center;
-    transition:300ms;
-}
-.report{
-    text-align: center;
-    width:345px;
-}
-.rp{
-    width:345px;
-}
-.affirmation{
-    padding-top: 10px;
-    padding-bottom: 10px;
-    transition: 300ms;
-    background-color:rgb(255, 255, 255, 0);
-    width:345px;
-}
-.affirmRow{
-    display:inline-flex; flex-direction:row;
-}
 
-.infoText{
-    width:400px;
-    text-align: center;
-}
-
-.hidethis{
-    display:none;
-}
-
-.prev{
+.prev{ /* only 1 ref but needs color assigned so oop */
     color:rgb(var(--background-end-rgb));
     border-radius:10px;
     border-style:solid;
     background-color: rgb(var(--forground-rgba));
 }
-.sadminRB, .uadminRB{
+.adminRB{
     height:30px;
     width:70px;
     text-align: center;
     line-height:30px;
-    background-color:rgb(var(--background-item-rgba-select));
     transition:300ms;
 }
-.sadminRB,.adminRow{
-    background-color:rgb(var(--background-item-rgba));
-}
-.sadminRB:hover, .uadminRB:hover,.adminRow:hover{
-    background-color:rgb(var(--background-item-rgba-fade));
-    transition:300ms;
-}
-.adminRow, .adminRowLabel{
-    height:26px;
-}
-
-.adminLabelY, .adminCell, .adminCellG, .adminCellR, .adminLabelX{
+.adminCell{
     overflow-x:hidden;
     display:inline-block;
     width:120px;
@@ -343,17 +224,10 @@ body {
     opacity:1 !important;
 }
 
-.adminWrap{
-    display:inline-flex;
-    flex-direction:row;
-}
 .adminTable{
     display:block;
     height:700px;
     overflow-y:scroll;
-}
-.adminFilterWrap{
-    width:200px;
 }
 
 .exportSettings{
@@ -361,18 +235,31 @@ body {
     text-align: center;
 }
 
-.sexportSetting, .uexportSetting{
+.exportSetting{
+    padding-left:10px;
     height:30px;
     width:100px;
     text-align: center;
     line-height:30px;
-    background-color:rgb(var(--background-item-rgba-select));
-    transition:300ms;
 }
-.sexportSetting{
+
+.select{
+    background-color:rgb(var(--background-item-rgba-select)) !important;
+}
+
+.hoverbg{
     background-color:rgb(var(--background-item-rgba));
-}
-.sexportSetting:hover, .uexportSetting:hover{
-    background-color:rgb(var(--background-item-rgba-fade));
     transition:300ms;
+}
+.hoverbg:hover{
+    background-color:rgb(var(--background-item-rgba-fade)) !important;
+}
+.hoverLn{
+    border-bottom:1px solid;
+    border-color:rgb(var(--forground-rgba-fade));
+    transition:300ms;
+}
+.hoverLn:hover, .hoverLnF:focus{ /*split out bc i dont want everything focusable*/
+    outline:none;
+    border-color:rgb(var(--forground-rgba));
 }

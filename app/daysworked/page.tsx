@@ -144,20 +144,20 @@ export default function Home(){
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
             <div className='tblFoot'>
-                <button className='topBtn' onClick={() =>{ 
+                <button className='w-[300px] btnh btn hoverbg' onClick={() =>{ 
                     const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
                     router.push(more)
                 }}> {prev ? 'show current week >' : '< show previous week'} </button>
             </div>
             <div className='tblWrapper'>
-                <div className='tblHead'>
-                    <div className='tblHeadDate'>
+                <div className='pt-[10px] inline-flex'>
+                    <div className='tblHeadItm'>
                         <strong>DATE</strong>
                     </div>
-                    <div className='tblHeadShip'>
+                    <div className='tblHeadItm'>
                         <strong>VESSEL</strong>
                     </div>
-                    <div className='tblHeadShip'>
+                    <div className='tblHeadItm'>
                         <strong>DEPT</strong>
                     </div>
                 </div>
@@ -165,13 +165,13 @@ export default function Home(){
                     {
                     period.map((day:string)=>
                         <div key={day} id={day+'flash'}>
-                            <div key={day} id={day+'_item'} className='tblRow'>{/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
+                            <div key={day} id={day+'_item'} className='pt-[15px] h-[60px] hoverbg'>{/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
                                 <div className="tblBodyDate">
                                     {day}
                                 </div>
 
-                                <div className="tblBodyShip">
-                                    <select className='shipInput' id={day+'_ship'} value={vessels[day as keyof {}] ? vessels[day as keyof {}] : ''} onChange={(e)=>{
+                                <div className="tblDD">
+                                    <select className='hoverLn shipInput' id={day+'_ship'} value={vessels[day as keyof {}] ? vessels[day as keyof {}] : ''} onChange={(e)=>{
                                         //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict:{[id: string] : string}=structuredClone(vessels)
                                         ndict[day]=e.target.value
@@ -186,9 +186,9 @@ export default function Home(){
                                         <option value='3RD' label='3RD' key='3RD' className='shipValue'/>
                                     </select>
                                 </div>
-
-                                <div className="tblBodyShip">
-                                    <select className='shipInput' id={day+'_job'} value={jobs[day as keyof {}] ? jobs[day as keyof {}] : ''} onChange={(e)=>{
+ 
+                                <div className="tblDD">
+                                    <select className='hoverLn shipInput' id={day+'_job'} value={jobs[day as keyof {}] ? jobs[day as keyof {}] : ''} onChange={(e)=>{
                                         //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict:{[id: string] : string}=structuredClone(jobs)
                                         ndict[day]=e.target.value
@@ -207,14 +207,14 @@ export default function Home(){
 
                 <div className='crewtype' id='target'>
                     CREW:
-                        <button onClick={()=>setCrew('domestic')} className={crew=='domestic'? 'selectedCrew': 'unselectedCrew'}>domestic</button>
-                        <button onClick={()=>setCrew('foreign')} className={crew=='foreign'? 'selectedCrew': 'unselectedCrew'}>foreign</button>
+                        <button onClick={()=>setCrew('domestic')} className={'hoverbg crew '+(crew=='domestic'? 'select': '')}>domestic</button>
+                        <button onClick={()=>setCrew('foreign')} className={'hoverbg crew '+(crew=='foreign'? 'select': '')}>foreign</button>
                 </div>
             </div>
 
             <div className='tblFoot'>
-                <button className='tblFootBtn' onClick={save}> save </button>
-                <button className='tblFootBtn' onClick={review}> next </button>
+                <button className='w-[185.5px] btnh btn hoverbg' onClick={save}> save </button>
+                <button className='w-[185.5px] btnh btn hoverbg' onClick={review}> next </button>
             </div>
             <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'saving...' : 'saved'}</p>
         </main>
