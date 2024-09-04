@@ -32,7 +32,7 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='firstname' type='text' placeholder='first name'/> 
+                    <input className='hoverLn hoverLnF formInput' name='firstname' type='text' placeholder='first name'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -42,7 +42,7 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='lastname' type='text' placeholder='last name'/> 
+                    <input className='hoverLn hoverLnF formInput' name='lastname' type='text' placeholder='last name'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -52,7 +52,7 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='nusername' type='text' placeholder='username'/> 
+                    <input className='hoverLn hoverLnF formInput' name='nusername' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -62,7 +62,7 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='email' type='text' placeholder='email'/> 
+                    <input className='hoverLn hoverLnF formInput' name='email' type='text' placeholder='email'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -72,7 +72,7 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='password1' type='password' placeholder='password'/> 
+                    <input className='hoverLn hoverLnF formInput' name='password1' type='password' placeholder='password'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -82,10 +82,10 @@ const MkaccountForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='password2' type='password' placeholder='repeat password'/> 
+                    <input className='hoverLn hoverLnF formInput' name='password2' type='password' placeholder='repeat password'/> 
                 </h1>
                 <h1 className='formLine'>
-                    <button><p className='formBtn'>register</p></button>
+                    <button><p className='w-[280px] btnh btn hoverbg'>register</p></button>
                 </h1>
 
 

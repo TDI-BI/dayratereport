@@ -30,7 +30,7 @@ const LoginForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='username' type='text' placeholder='username'/> 
+                    <input className='hoverLn hoverLnF formInput' name='username' type='text' placeholder='username'/> 
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -40,18 +40,18 @@ const LoginForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='password' type='password' placeholder='password'/>
+                    <input className='hoverLn hoverLnF formInput ' name='password' type='password' placeholder='password'/>
                 </h1>
                 <h1 className='formLine'>
-                    <button> <p className='formBtn'>login</p> </button>
-                    <Link href='login/mkaccount'> <p className='formBtn'> register </p> </Link>
+                    <button> <p className='w-[140px] btnh btn hoverbg'>login</p> </button>
+                    <Link href='login/mkaccount'> <p className='w-[140px] btnh btn hoverbg'> register </p> </Link>
                 </h1>
                 
                 <h1 className='formLine'><div className='errMessage' id='error'> {
                     state?.error && <p>{state.error}</p>
                 } </div></h1>
                 
-                <h1 className='formLine'><Link href='login/rcvaccount'> <p className='formBtn'> recover account </p> </Link></h1>
+                <h1 className='formLine'><Link href='login/rcvaccount'> <p className='w-[280px] btnh btn hoverbg'> recover account </p> </Link></h1>
             </form>
         </div>
     )

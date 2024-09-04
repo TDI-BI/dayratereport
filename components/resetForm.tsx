@@ -25,7 +25,7 @@ const ResetForm = () => {
     return (
         <div className='tblWrapper'>
             <form action={formAction}>
-                <input className='hidethis' name='acc' type='password' value={oldHash}/>
+                <input className='hidden' name='acc' type='password' value={oldHash}/>
 
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -35,7 +35,7 @@ const ResetForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='password1' type='password' placeholder='new password'/>
+                    <input className='hoverLn hoverLnF formInput' name='password1' type='password' placeholder='new password'/>
                 </h1>
                 <h1 className='formLine'>
                     <p className='formIcon'>
@@ -45,11 +45,10 @@ const ResetForm = () => {
                             alt='icon'
                         />
                     </p>
-                    <input className='formInput' name='password2' type='password' placeholder='repeat password'/>
+                    <input className='hoverLn hoverLnF formInput' name='password2' type='password' placeholder='repeat password'/>
                 </h1>
-
                 <h1 className='formLine'>
-                    <button> <p className='formBtn'>reset password</p> </button>
+                    <button> <p className='w-[280px] btnh btn hoverbg'>reset password</p> </button>
                 </h1>
                 
                 <h1 className='formLine'>

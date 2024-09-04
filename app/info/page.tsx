@@ -16,13 +16,13 @@ const profile = async () => {
                     <p> email: {session.userEmail} </p>
                     <p> full name: {name[0] + " " + name[1]} </p>
                 </div>
-                <p className='infoText'> 
+                <p className='text-center w-[300px]'> 
                     <br></br>
                     comments or complaints please email dayratereportdonotrespond@gmail.com or fill out our feedback form:
                 </p>
  
                 <Link href='https://forms.gle/EKyxpDDTSZknZYpe8'>
-                    <p className='tblFootBtn'>
+                    <p className='w-[180px] btnh btn hoverbg'>
                         feedback
                     </p>
                     

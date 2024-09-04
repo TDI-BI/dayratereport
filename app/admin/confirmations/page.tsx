@@ -55,16 +55,16 @@ const Confirmations = () =>{
             }}/>
             <div className='adminTable'>
                 <div className='adminRow'>
-                        <div className='adminLabelX' key='uidlabel'><strong>UID</strong></div>
-                        <div className='adminLabelX' key='emaillabel'><strong>EMAIL</strong></div>
+                        <div className='adminCell adminLabelX' key='uidlabel'><strong>UID</strong></div>
+                        <div className='adminCell adminLabelX' key='emaillabel'><strong>EMAIL</strong></div>
                         <div className='adminCell' key='conflabel'>confirmed:</div>
                     </div>
-                
+                 
                 {sorted.map((inp:any)=>
                     <div className='adminRow' key={inp['uid'] + 'row'}>
-                        <div className='adminLabelX' key={inp['uid']+'uid'}>{inp['uid']} </div>
-                        <div className='adminLabelX' key={inp['uid']+'email'}>{inp['email']} </div>
-                        <div className={(period.includes(inp['lastConfirm']) && inp['lastConfirm']) ? 'adminCellG' : 'adminCellR'} key={inp['uid']+'confirmation'}>{inp['lastConfirm']} </div>
+                        <div className='adminCell adminLabelX' key={inp['uid']+'uid'}>{inp['uid']} </div>
+                        <div className='adminCell adminLabelX' key={inp['uid']+'email'}>{inp['email']} </div>
+                        <div className={(period.includes(inp['lastConfirm']) && inp['lastConfirm']) ? 'adminCell adminCellG' : 'adminCell adminCellR'} key={inp['uid']+'confirmation'}>{inp['lastConfirm']} </div>
                     </div>
                 )}
             </div>

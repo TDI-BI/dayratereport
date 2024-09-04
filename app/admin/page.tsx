@@ -162,12 +162,12 @@ const AdminPannel = () =>{
     return(
         <main className="flex min-h-screen flex-col items-center">
             <p>
-                <button className='tblFootBtn' key='back' onClick={()=>{setPeriodEh(periodEh+1)}}> {'< '} back</button>
+                <button className='w-[180px] btnh btn hoverbg' key='back' onClick={()=>{setPeriodEh(periodEh+1)}}> {'< '} back</button>
                 {period[0]} to {period[6]}
-                <button className='tblFootBtn' key='forward' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
+                <button className='w-[180px] btnh btn hoverbg' key='forward' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
             </p>
-            <div className='adminWrap'>
-                <div className='adminFilterWrap'>
+            <div className='inline-flex flex-row'>
+                <div className='w-[200px]'>
                     <RadioGroup
                         key='filter'
                         label='filter: '
@@ -177,53 +177,53 @@ const AdminPannel = () =>{
                         <Radio
                             key='BMCC'
                             value='BMCC'
-                            className={shipEh=='BMCC' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='BMCC' ? 'select' : '')}
                         >BMCC</Radio>
                         <Radio
                             key='EMMA'
                             value='EMMA'
-                            className={shipEh=='EMMA' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='EMMA' ? 'select' : '')}
                         >EMMA</Radio>
                         <Radio
                             key='PROT'
                             value='PROT'
-                            className={shipEh=='PROT' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='PROT' ? 'select' : '')}
                         >PROT</Radio>
                         <Radio
                             key='GYRE'
                             value='GYRE'
-                            className={shipEh=='GYRE' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='GYRE' ? 'select' : '')}
                         >GYRE</Radio>
                         <Radio
                             key='NAUT'
                             value='NAUT'
-                            className={shipEh=='NAUT' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='NAUT' ? 'select' : '')}
                         >NAUT</Radio>
                         <Radio
                             key='3RD'
                             value='3RD'
-                            className={shipEh=='3RD' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='3RD' ? 'select' : '')}
                         >3RD</Radio>
                         <Radio
                             key='????'
                             value='????'
-                            className={shipEh=='????' ? 'uadminRB' : 'sadminRB'}
+                            className={'hoverbg adminRB ' + (shipEh=='????' ? 'select' : '')}
                         >????</Radio>
                     </RadioGroup>
                 </div>
                 <div className='adminTable'>
-                    <div className='adminRowLabel' key='headrow'>
-                        <div className='adminLabelX' key='headnamelblx'><strong>NAME</strong></div>
-                        <div className='adminLabelY' key='headnamelbly'>CREW</div>
+                    <div className='h-[26px]' key='headrow'>
+                        <div className='adminCell adminLabelX' key='headnamelblx'><strong>NAME</strong></div>
+                        <div className='adminCell adminLabelY' key='headnamelbly'>CREW</div>
                         {period.map((day)=>
-                            <div className='adminLabelY' key={day+'label'}>
+                            <div className='adminCell adminLabelY' key={day+'label'}>
                                 <p>{day}</p>
                             </div>
                         )}
                     </div>
                     {json[shipEh] && tblData.map((el)=>
-                        <div className='adminRow' key={el.fna+el.lna}>
-                            <div className='adminLabelX' key={el.fna+el.lna+'name'}>{el.fna + ' ' + el.lna}</div>
+                        <div className='h-[26px] bghover' key={el.fna+el.lna}>
+                            <div className='adminCell adminLabelX' key={el.fna+el.lna+'name'}>{el.fna + ' ' + el.lna}</div>
                             <div className='adminCell' key={el.fna+el.lna+'dom'}>{el.cre}</div>
                             <div className='adminCell' key={el.fna+el.lna+'mon'}>{el.mon}</div>
                             <div className='adminCell' key={el.fna+el.lna+'tue'}>{el.tue}</div>
@@ -236,7 +236,7 @@ const AdminPannel = () =>{
                     )}
                 </div>
             </div>
-            <div className='tblHead'>
+            <div className='pt-[10px] inline-flex'>
                 <RadioGroup
                     className='exportSettings'
                     key='weeks'
@@ -247,17 +247,17 @@ const AdminPannel = () =>{
                     <Radio
                         key='1'
                         value='1'
-                        className={weeks=='1' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(weeks=='1' ? 'select' : '')+' exportSetting hoverbg'}
                     >1</Radio>
                     <Radio
                         key='2'
                         value='2'
-                        className={weeks=='2' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(weeks=='2' ? 'select' : '')+' exportSetting hoverbg'}
                     >2</Radio>
                     <Radio
                         key='5'
                         value='5'
-                        className={weeks=='5' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(weeks=='5' ? 'select' : '')+' exportSetting hoverbg'}
                     >5</Radio>
                 </RadioGroup>
 
@@ -272,21 +272,21 @@ const AdminPannel = () =>{
                     <Radio
                         key='all'
                         value='all'
-                        className={crewEh=='all' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(crewEh=='all' ? 'select' : '')+' exportSetting hoverbg'}
                     >all</Radio>
                     <Radio
                         key='domestic'
                         value='domestic'
-                        className={crewEh=='domestic' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(crewEh=='domestic' ? 'select' : '')+' exportSetting hoverbg'}
                     >domestic</Radio>
                     <Radio
                         key='foreign'
                         value='foreign'
-                        className={crewEh=='foreign' ? 'uexportSetting' : 'sexportSetting'}
+                        className={(crewEh=='foreign' ? 'select' : '')+' exportSetting hoverbg'}
                     >foreign</Radio>
                 </RadioGroup>
 
-                <button className='tblFootBtn' onClick={exportCsv}>export</button> 
+                <button className='w-[180px] h-[115px] btn hoverbg' onClick={exportCsv}>export</button> 
             </div>
 
         </main>

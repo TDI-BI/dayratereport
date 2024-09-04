@@ -110,7 +110,7 @@ export default function Page() {
 
     return (
         <main className="flex min-h-screen flex-col items-center">
-            <div className='report'>
+            <div className='text-center w-[345px]'>
                 <p><strong>COMFIRM REPORT</strong></p>
                 <p> PERIOD REPORT FOR: {names[0] + ' ' + names[1]}</p>
                 
@@ -128,7 +128,7 @@ export default function Page() {
                     </TableHeader>
                     <TableBody>{
                     period.map((day) => 
-                        <TableRow key={day} className='reportLine'> 
+                        <TableRow key={day} className='reportLine hoverLn'> 
                             <TableCell className='reportTxt' key={day+'date'}>{day}</TableCell> 
                             <TableCell className='reportTxt'key={day+'ship'}>{vesselDict[day] ? vesselDict[day] : ''}</TableCell>
                             <TableCell className='reportTxt'key={day+'job'}>{crewDict[day] ? crewDict[day] : ''}</TableCell>
@@ -141,23 +141,23 @@ export default function Page() {
             </div>
 
             {/* from here i need to obscure this stuff until its loaded */}
-            <div className={pulled ? 'report' : 'report hidethis'}>
-                <div className='affirmation' id='target'>
-                    <div className='affirmRow'>
-                        <p className='rp'>
+            <div className={pulled ? 'report' : 'report hidden'}>
+                <div className='w-[345px] pt-[10px] pb-[10px]' id='target'>
+                    <div className='inline-flex flex-row'>
+                        <p className='w-[345px] text-center'>
                             <input type='checkbox' id='affirm'/>
                             : I acknowledge and certify that the information on this document is true and accurate
                         </p>
                     </div>
                 </div>
-                <div className='reportFoot'>
-                    <Link href='../'><div className='reportBtn'> back </div></Link>
-                    <button onClick={submit}><div className='reportBtn'> confirm and submit </div></button>
+                <div className='inline-flex flex-row'>
+                    <Link href='../'><div className=' w-[174px] btnh btn hoverbg'> back </div></Link>
+                    <button onClick={submit}><div className='w-[174px] btnh btn hoverbg'> confirm and submit </div></button>
                 </div>
-                <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing email...' : 'sent'}</p>
+                <p className={'text-center ' + (saving ? 'savemsg1' : 'savemsg0')}>{saving ? 'preparing email...' : 'sent'}</p>
             </div>
             {/* display 'loading' otherwise */}
-            <div className={pulled ? 'hidethis' : ''}>
+            <div className={pulled ? 'hidden' : ''}>
                 <p className='savemsg1'>loading</p>
             </div>
             
