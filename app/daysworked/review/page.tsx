@@ -154,7 +154,7 @@ export default function Page() {
                     <Link href='../'><div className=' w-[174px] btnh btn hoverbg'> back </div></Link>
                     <button onClick={submit}><div className='w-[174px] btnh btn hoverbg'> confirm and submit </div></button>
                 </div>
-                <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'preparing email...' : 'sent'}</p>
+                <p className={'text-center ' + (saving ? 'savemsg1' : 'savemsg0')}>{saving ? 'preparing email...' : 'sent'}</p>
             </div>
             {/* display 'loading' otherwise */}
             <div className={pulled ? 'hidden' : ''}>
