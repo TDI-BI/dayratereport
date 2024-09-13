@@ -179,7 +179,7 @@ const AdminPannel = () =>{
                 </p>
                 <div className='pt-[7px]'>
                     <div className='bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden'>
-                        <input type='text' className='text-black h-[24px] focus:outline-none' value={userfilter} onChange={(e)=>setuserFilter(e.target.value)}></input>
+                        <input type='text' className='text-black h-[24px] focus:outline-none' value={userfilter} onChange={(e)=>setuserFilter(e.target.value)} placeholder='search users...'></input>
                     </div>
                 </div>
             </div>
