@@ -91,6 +91,7 @@ const AdminPannel = () =>{
             })
             let row={
                 cre:    crewDict[userDict[name]],
+                nam:    name.split('/')[0]  + ' ' + name.split('/')[1], 
                 fna:    name.split('/')[0],
                 lna:    name.split('/')[1],
                 mon:    json[shipEh][name][period[0]] ? json[shipEh][name][period[0]] : '',
@@ -159,13 +160,29 @@ const AdminPannel = () =>{
         download(csvConfig)(csv)
     }
 
+    const [userfilter, setuserFilter] = useState('')
+    const searchFilteru = (array:any) => {
+        return array.filter(
+            (el:any)=>(el['nam'].toLowerCase()).includes(userfilter.toLowerCase())
+        );
+    }
+
+    const userlist = searchFilteru(tblData)
+
     return(
         <main className="flex min-h-screen flex-col items-center">
-            <p>
-                <button className='w-[180px] btnh btn hoverbg' key='back' onClick={()=>{setPeriodEh(periodEh+1)}}> {'< '} back</button>
-                {period[0]} to {period[6]}
-                <button className='w-[180px] btnh btn hoverbg' key='forward' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
-            </p>
+            <div className='inline-flex flex-row pb-[10px]'>
+                <p>
+                    <button className='w-[180px] btnh btn hoverbg' key='back' onClick={()=>{setPeriodEh(periodEh+1)}}> {'< '} back</button>
+                    {period[0]} to {period[6]}
+                    <button className='w-[180px] btnh btn hoverbg' key='forward' onClick={()=>{setPeriodEh(periodEh-1)}}>forward {' >'}</button>
+                </p>
+                <div className='pt-[7px]'>
+                    <div className='bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden'>
+                        <input type='text' className='text-black h-[24px] focus:outline-none' value={userfilter} onChange={(e)=>setuserFilter(e.target.value)}></input>
+                    </div>
+                </div>
+            </div>
             <div className='inline-flex flex-row'>
                 <div className='w-[200px]'>
                     <RadioGroup
@@ -221,7 +238,7 @@ const AdminPannel = () =>{
                             </div>
                         )}
                     </div>
-                    {json[shipEh] && tblData.map((el)=>
+                    {json[shipEh] && userlist.map((el:any)=>
                         <div className='h-[26px] bghover' key={el.fna+el.lna}>
                             <div className='adminCell adminLabelX' key={el.fna+el.lna+'name'}>{el.fna + ' ' + el.lna}</div>
                             <div className='adminCell' key={el.fna+el.lna+'dom'}>{el.cre}</div>
