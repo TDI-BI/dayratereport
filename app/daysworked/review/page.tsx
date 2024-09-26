@@ -78,7 +78,7 @@ export default function Page() {
         
 
 
-    }, []);
+    }, [ex]);
    
     // type declarations
     let name:string='';
@@ -135,7 +135,7 @@ export default function Page() {
                 </Table>
                 <p> crew type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
-                {prev? <p className='prev'> NOT THIS WEEK'S REPORT </p> : ''}
+                {prev? <p className='prev'> {"NOT THIS WEEK'S REPORT"} </p> : ''}
             </div>
 
             {/* from here i need to obscure this stuff until its loaded */}

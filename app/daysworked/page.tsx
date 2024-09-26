@@ -132,7 +132,7 @@ export default function Home(){
             }
         });
         */
-    }, []);
+    }, [ex]);
 
     try{
         dataResponse.forEach((item) => {}); // this will throw an error if the user isnt logged in
