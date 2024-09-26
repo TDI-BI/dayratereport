@@ -12,10 +12,10 @@ export const GET = async (request: NextRequest) => {
 
     //get URL parameters
     const { searchParams } = request.nextUrl;
-    const prev = (searchParams.get('prev') || '0')=='1';
+    const prev = Number(searchParams.get('prev'));
     
     //query info building
-    const period = prev ? getPeriod(1) : getPeriod();
+    const period = getPeriod(prev);
     let dparam:string = "(day='-1' ";
     period.forEach((item)=>{
         dparam+="or day='"+item+"'";

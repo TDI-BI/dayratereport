@@ -18,21 +18,19 @@ import {
     useRouter 
 } from 'next/navigation'
 import Link from "next/link";
-import jsPDF from 'jspdf'
-import autoTable from 'jspdf-autotable' // this is so gas actually
 
 export default function Page() {
     //check previous or current
     const sprms = useSearchParams();
-    const prev= sprms.get('prev')=='1';
-    const ex = prev ? 'prev=1' : '';
+    const prev= Number(sprms.get('prev'));
+    const ex = 'prev=' + prev;
     
     //needs to be called from within a function (ugh)
     const router = useRouter();
 
     //states
     const [pulled, setPulled] = useState(0);
-    const [period, setPeriod] = useState(prev? getPeriod(1) : getPeriod(0));
+    const [period, setPeriod] = useState(getPeriod(prev));
     const [saving, setsaving] = useState(0);
     const [dataResponse, setdataResponse] = useState([]);
 
@@ -137,7 +135,7 @@ export default function Page() {
                 </Table>
                 <p> crew type: {type}</p>
                 <p> TOTAL DAYS: {daysworked}</p>
-                {prev? <p className='prev'> this is last weeks report </p> : ''}
+                {prev? <p className='prev'> NOT THIS WEEK'S REPORT </p> : ''}
             </div>
 
             {/* from here i need to obscure this stuff until its loaded */}

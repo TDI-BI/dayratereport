@@ -19,8 +19,8 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';
     const domestic = searchParams.get('dom') || '0';
-    const prev = (searchParams.get('prev') || '0')=='1';
-    const period = prev ? getPeriod(1) : getPeriod();
+    const prev = Number(searchParams.get('prev') || '0');
+    const period = getPeriod(prev);
 
     //estab. connection
     const connection = await connectToDb();

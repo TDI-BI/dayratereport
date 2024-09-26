@@ -15,7 +15,7 @@ export const GET = async (request:  NextRequest) => {
     const dayL = searchParams.get('day') || '';
     const pdf = searchParams.get('pdf') || '';
     const type = searchParams.get('type') || '';
-    const prev = Number(searchParams.get('prev') || '0');
+    const prev = Number(searchParams.get('prev'));
 
     //block if not logged in 
     const session = await getSession();
@@ -106,6 +106,8 @@ export const GET = async (request:  NextRequest) => {
                 }
               ]
         });
+
+        console.log(pds)
         
         return Response.json({data}, {status: 200});
     } catch (error:any) {

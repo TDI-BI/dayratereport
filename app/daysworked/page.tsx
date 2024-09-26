@@ -11,19 +11,20 @@ import {
     useEffect 
 } from "react";
 
-let runcount=1; // helps block exsessive useEffect refreshes
+//let runcount=1; // legacy
 
 export default function Home(){
+
     const router = useRouter();
 
     //cur or prev report
     const sprms = useSearchParams();
-    const prev= sprms.get('prev')=='1';
-    const ex = prev ? 'prev=1' : '';
+    const prev= Number(sprms.get('prev'));
+    const ex = 'prev=' + prev;
 
     //save then redirect
     const review = async () => {
-        const rlink = prev? '/daysworked/review?prev=1' : '/daysworked/review';
+        const rlink = '/daysworked/review?'+ex;
         if(await save()) router.push(rlink);
     }
 
@@ -70,17 +71,16 @@ export default function Home(){
             return false;
         }
         
-        
-        //if no errors let the user save
         crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
+        console.log(apiUrlEndpoint)
         await fetchBoth(apiUrlEndpoint);
         setsaving(0);
         return true;
     }
 
     //states
-    const [period, setPeriod] = useState(prev? getPeriod(1) : getPeriod(0)); // init period
+    const [period, setPeriod] = useState(getPeriod(prev)); // init period
     const [vessels, setVessels]=useState({});
     const [jobs, setJobs]=useState({});
     const [crew, setCrew] = useState('');
@@ -143,11 +143,15 @@ export default function Home(){
 
     return (
         <main className="flex min-h-screen flex-col items-center px-1">  
-            <div className='tblFoot'>
-                <button className='w-[300px] btnh btn hoverbg' onClick={() =>{ 
-                    const more = prev? 'redirect?prev=0' : 'redirect?prev=1'
-                    router.push(more)
-                }}> {prev ? 'show current week >' : '< show previous week'} </button>
+            <div className='inline-flex p-[10px]'>
+                <button className='w-[150px] btnh btn hoverbg' onClick={() =>{ 
+                    const nex = prev+1;
+                    router.push('redirect?prev=' + nex)
+                }}> {'< back a week'} </button>
+                <button className='w-[150px] btnh btn hoverbg' onClick={() =>{ 
+                    const nex = prev-1;
+                    router.push('redirect?prev=' + nex)
+                }}> {'forward a week >'} </button>
             </div>
             <div className='tblWrapper'>
                 <div className='pt-[10px] inline-flex'>
@@ -220,3 +224,4 @@ export default function Home(){
         </main>
     );
 }
+
