@@ -10,6 +10,7 @@ import person from '@/rsrsc/ionicons.designerpack/person-circle-outline.svg'
 import lock from '@/rsrsc/ionicons.designerpack/lock-closed-outline.svg'
 import mail from '@/rsrsc/ionicons.designerpack/mail-open-outline.svg'
 import names from '@/rsrsc/ionicons.designerpack/body-outline.svg'
+import boat from '@/rsrsc/ionicons.designerpack/boat-outline.svg'
 
 const MkaccountForm = () => {
     const [state,formAction] = useFormState<any, FormData>(mkAccount, undefined);
@@ -84,6 +85,23 @@ const MkaccountForm = () => {
                     </p>
                     <input className='hoverLn hoverLnF formInput' name='password2' type='password' placeholder='repeat password'/> 
                 </h1>
+
+                <h1 className='formLine'>
+                    <p className='formIcon w-[48px]'>
+                        <Image
+                            priority
+                            src={boat}
+                            alt='icon'
+                        />
+                    </p>
+                    <select className='w-[232px] h-[50px] formInput hoverLn hoverLnF' name='crew'>
+                        <option value=''>select a crew</option>
+                        <option value='domestic'>domestic</option>
+                        <option value='foreign'>foreign</option>
+                    </select>
+                </h1>
+
+
                 <h1 className='formLine'>
                     <button><p className='w-[280px] btnh btn hoverbg'>register</p></button>
                 </h1>

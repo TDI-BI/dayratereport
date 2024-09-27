@@ -10,8 +10,7 @@ import {
     useState, 
     useEffect 
 } from "react";
-
-//let runcount=1; // legacy
+import { getSession } from '@/actions';
 
 export default function Home(){
 
@@ -33,7 +32,7 @@ export default function Home(){
         setsaving(1);
         let strdict='';
         let derrors:HTMLElement[] = []; // gonna treat this as a stack for which days i need to flash
-        
+
         period.map((day) => { 
 
             if( // one or not hte other
@@ -56,7 +55,6 @@ export default function Home(){
             strdict+=day+':'+cship+':'+cjob+';';
             
         })
-        
 
         //if we have any errors inform the user they need to make changes before they can save
         if(derrors.length!=0){
@@ -65,13 +63,8 @@ export default function Home(){
             });
             return false;
         }
-        if(crew==''){
-            const target= document.getElementById('target') as HTMLElement;
-            flashDiv(target);
-            return false;
-        }
         
-        crew=='domestic' ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
+        crew ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
         console.log(apiUrlEndpoint)
         await fetchBoth(apiUrlEndpoint);
@@ -83,7 +76,7 @@ export default function Home(){
     const [period, setPeriod] = useState(getPeriod(prev)); // init period
     const [vessels, setVessels]=useState({});
     const [jobs, setJobs]=useState({});
-    const [crew, setCrew] = useState('');
+    const [crew, setCrew] = useState(true);
     const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
 
@@ -99,7 +92,6 @@ export default function Home(){
             try{
                 (res.resp).forEach((item:any)=>{ // for some reason i need to :any to compile, annoying!
                     if(item['day']=='-1'){
-                        item['ship']=='1' ? setCrew('domestic') : setCrew('foreign');
                         return;
                     }
                     ves[item['day']]=item['ship'];
@@ -111,6 +103,9 @@ export default function Home(){
             const perResp = await (fetchBoth(por+'/api/verifydate?'+ex))
             const serverPeriod = (await perResp.json()).resp;
 
+            const session = (await (await fetchBoth(por+'/api/sessionforclient')).json()).resp
+
+            setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
             setVessels(ves);
             setJobs(job);
@@ -118,20 +113,6 @@ export default function Home(){
         }
         getPeriodInf();
 
-        //event listeners are async and thus must be wrapped in some kind of useeffect. stupid feature I added for fun. nobody even knows it exists
-        /*
-        document.addEventListener('keydown', e => { // catch ctrls
-            if (e.ctrlKey && e.key === 's') {
-                e.preventDefault();
-                if(e.repeat) return; // stops hold from looping this function
-                if((runcount%2)==1){ // ignore every other since this always triggers at least twice
-                    save();
-                } 
-                runcount+=1;
-                return; // idk how important this is to be honest
-            }
-        });
-        */
     }, [ex]);
 
     try{
@@ -142,8 +123,8 @@ export default function Home(){
     }
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-1">  
-            <div className='inline-flex p-[10px]'>
+        <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">  
+            <div className='inline-flex'>
                 <button className='w-[150px] btnh btn hoverbg' onClick={() =>{ 
                     const nex = prev+1;
                     router.push('redirect?prev=' + nex)
@@ -207,12 +188,6 @@ export default function Home(){
                         </div>
                         
                     )}
-                </div>
-
-                <div className='crewtype' id='target'>
-                    CREW:
-                        <button onClick={()=>setCrew('domestic')} className={'hoverbg crew '+(crew=='domestic'? 'select': '')}>domestic</button>
-                        <button onClick={()=>setCrew('foreign')} className={'hoverbg crew '+(crew=='foreign'? 'select': '')}>foreign</button>
                 </div>
             </div>
 
