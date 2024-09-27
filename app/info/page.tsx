@@ -9,6 +9,7 @@ import { fetchBoth } from '@/utils/fetchBoth';
 
 const Profile = () => {
 
+    const [pl, setpl] = useState(0) /// tracks initial page load, useful for redirect
     const [session, setSesh]  = useState({} as {[key:string]:any})
     
 
@@ -25,11 +26,15 @@ const Profile = () => {
     const gsesh = async () => {
         const ret = (await (await fetchBoth(port+'/api/sessionforclient')).json()).resp
         setSesh(ret)
+        setpl(1)
     }
     
     useEffect(()=>{
         gsesh()
     },[])
+
+    if(!session.isLoggedIn && pl) redirect('../../../') // block viewing the page in some cases
+
     return(
         <main className="flex min-h-screen flex-col items-center"> 
                 <div id="bweh">
@@ -57,7 +62,6 @@ const Profile = () => {
                     <p className='w-[180px] btnh btn hoverbg'>
                         feedback
                     </p>
-                    
                 </Link>
         </main>
     ) 
