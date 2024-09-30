@@ -10,7 +10,11 @@ import {
     useState, 
     useEffect 
 } from "react";
-import { getSession } from '@/actions';
+
+
+
+
+//we need some helper function to check the bounds of what is legal and what isnt
 
 export default function Home(){
 
@@ -21,6 +25,15 @@ export default function Home(){
     const prev= Number(sprms.get('prev'));
     const ex = 'prev=' + prev;
 
+    //states
+    const [period, setPeriod] = useState(getPeriod(prev)); // init period
+    const [vessels, setVessels]=useState({});
+    const [jobs, setJobs]=useState({});
+    const [crew, setCrew] = useState(true);
+    const [dataResponse, setdataResponse] = useState([]);
+    const [saving, setsaving] = useState(0);
+    const [umsg, setUmsg] = useState('');
+
     //save then redirect
     const review = async () => {
         const rlink = '/daysworked/review?'+ex;
@@ -30,6 +43,7 @@ export default function Home(){
     //save table entrys
     const save = async () =>{ 
         setsaving(1);
+        setUmsg('saving...')
         let strdict='';
         let derrors:HTMLElement[] = []; // gonna treat this as a stack for which days i need to flash
 
@@ -68,19 +82,27 @@ export default function Home(){
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
         console.log(apiUrlEndpoint)
         await fetchBoth(apiUrlEndpoint);
+        setUmsg('saved')
         setsaving(0);
         return true;
     }
 
-    //states
-    const [period, setPeriod] = useState(getPeriod(prev)); // init period
-    const [vessels, setVessels]=useState({});
-    const [jobs, setJobs]=useState({});
-    const [crew, setCrew] = useState(true);
-    const [dataResponse, setdataResponse] = useState([]);
-    const [saving, setsaving] = useState(0);
+    const checkBounds = async (t:boolean) => { // incoming 1 for next 0 for last, also needs to be async for verify
 
-    useEffect(() => { //MAYBE CAUSING ISSUE
+        if(crew){
+            return true
+        }
+        else{
+            const thismonth = new Date((await (await (fetchBoth(por+'/api/getday'))).json()).resp).getMonth(); // zero indexed so +1 this is really stupid
+            const nweek = (await (await (fetchBoth(por+'/api/verifydate?prev='+(t ? prev - 1 : prev + 1)))).json()).resp // get next week in intended direction
+            const fweek=nweek.filter((e:any)=>
+                (Number(e.slice(5, 7)) == thismonth+1)
+            )
+            return fweek.length > 0 
+        }
+    }
+
+    useEffect(() => {
         //query database
         async function getPeriodInf(){
             const apiUrlEndpoint = por+'/api/getperiodinf?'+ex;
@@ -124,17 +146,25 @@ export default function Home(){
 
     return (
         <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">  
-            <div className='inline-flex'>
-                <button className='w-[150px] btnh btn hoverbg' onClick={() =>{ 
+            <div className='inline-flex h-[44px]'>
+                <button className='w-[150px] btnh btn hoverbg' onClick={async () =>{ 
+                    if(!await checkBounds(false)){ 
+                        return;
+                    }
                     const nex = prev+1;
                     router.push('redirect?prev=' + nex)
                 }}> {'< back a week'} </button>
-                <button className='w-[150px] btnh btn hoverbg' onClick={() =>{ 
+                
+                
+                <button className='w-[150px] btnh btn hoverbg' onClick={async () =>{ 
+                    if(!await checkBounds(true)){ 
+                        return;
+                    }
                     const nex = prev-1;
                     router.push('redirect?prev=' + nex)
                 }}> {'forward a week >'} </button>
             </div>
-            <div className='tblWrapper'>
+            <div className='tblWrapper' id='pgtbl'>
                 <div className='pt-[10px] inline-flex'>
                     <div className='tblHeadItm'>
                         <strong>DATE</strong>
@@ -195,7 +225,7 @@ export default function Home(){
                 <button className='w-[185.5px] btnh btn hoverbg' onClick={save}> save </button>
                 <button className='w-[185.5px] btnh btn hoverbg' onClick={review}> next </button>
             </div>
-            <p className={saving ? 'savemsg1' : 'savemsg0'}>{saving ? 'saving...' : 'saved'}</p>
+            <div> <p className={saving ? 'savemsg1' : 'savemsg0'}>{umsg}</p> </div>
         </main>
     );
 }
