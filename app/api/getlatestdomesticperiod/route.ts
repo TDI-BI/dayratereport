@@ -12,7 +12,7 @@ export const GET = async () => {
     try{
         //execute query
 
-        const existsQuery = "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;";
+        const existsQuery = "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;"; // this could totally just be a tuesday...
         console.log(existsQuery)
         const dateret = JSON.parse(JSON.stringify(await connection.execute(existsQuery)))[0][0]['date'] // gets the date
 

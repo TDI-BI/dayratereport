@@ -7,8 +7,9 @@ import { connectToDb } from '@/utils/connectToDb'
 export const GET = async (request:  NextRequest) => {
 
     const { searchParams } = request.nextUrl; // getters
-    const passkey = Boolean(Number(searchParams.get('p'))); // this will be a secret passkey eventually to ensure our cromtask is the only thing that can access it
+    const passkey = searchParams.get('p') || ''; // secret passkey to ensure that our server is the only thing calling. 
     
+    if(passkey!=process.env.SERVER_KEY) return new Response(JSON.stringify({ error: 'incorrect key' }), { status: 500});
 
 
     //build query
@@ -21,7 +22,7 @@ export const GET = async (request:  NextRequest) => {
         const existsQuery = "SELECT * FROM periodstarts WHERE date='"+pstart+"';";
         const dateret =  JSON.parse(JSON.stringify(await connection.execute(existsQuery)))[0]
 
-        if(dateret.length>0) throw {err: 'period start already exists'};
+        if(dateret.length>0) throw {error: 'period start already exists'};
 
         const addDayQ = "INSERT INTO periodstarts (date) VALUES ('"+pstart+"');"; // make sure to update this to be yesterday at some point
         const addret =  await connection.execute(addDayQ)
