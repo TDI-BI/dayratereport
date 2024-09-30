@@ -5,34 +5,27 @@ import { fetchBoth } from '@/utils/fetchBoth';
 import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
-import { useSearchParams } from "next/navigation";
 import { 
     useState, 
     useEffect 
 } from "react";
-
-
-
 
 //we need some helper function to check the bounds of what is legal and what isnt
 
 export default function Home(){
 
     const router = useRouter();
-
-    //cur or prev report
-    const sprms = useSearchParams();
-    const prev= Number(sprms.get('prev'));
-    const ex = 'prev=' + prev;
-
+    
     //states
-    const [period, setPeriod] = useState(getPeriod(prev)); // init period
+    const [period, setPeriod] = useState(getPeriod()); // init period
     const [vessels, setVessels]=useState({});
     const [jobs, setJobs]=useState({});
     const [crew, setCrew] = useState(true);
     const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState('');
+    const [prev, setprev] = useState(0);
+    const ex = 'prev=' + prev;
 
     //save then redirect
     const review = async () => {
@@ -88,15 +81,14 @@ export default function Home(){
     }
 
     const checkBounds = async (t:boolean) => { // incoming 1 for next 0 for last, also needs to be async for verification
+        const nweek = (await (await (fetchBoth(por+'/api/verifydate?prev='+(t ? prev - 1 : prev + 1)))).json()).resp // get next week in intended direction
         if(crew){
             const thisp = (await(await fetchBoth(por+'/api/getlatestdomesticperiod')).json()).resp
-            const nweek = (await (await (fetchBoth(por+'/api/verifydate?prev='+(t ? prev - 1 : prev + 1)))).json()).resp // get next week in intended direction
             const checkday = t ? nweek[0] : nweek[6]
             return thisp.includes(checkday)
         }
         else{
             const thismonth = new Date((await (await (fetchBoth(por+'/api/getday'))).json()).resp).getMonth(); // zero indexed so +1 this is really stupid
-            const nweek = (await (await (fetchBoth(por+'/api/verifydate?prev='+(t ? prev - 1 : prev + 1)))).json()).resp // get next week in intended direction
             const fweek=nweek.filter((e:any)=>
                 (Number(e.slice(5, 7)) == thismonth+1)
             )
@@ -134,6 +126,7 @@ export default function Home(){
             setVessels(ves);
             setJobs(job);
             setdataResponse(res.resp); 
+            
         }
         getPeriodInf();
 
@@ -153,8 +146,7 @@ export default function Home(){
                     if(!await checkBounds(false)){ 
                         return;
                     }
-                    const nex = prev+1;
-                    router.push('redirect?prev=' + nex)
+                    setprev(prev+1);
                 }}> {'< back a week'} </button>
                 
                 
@@ -162,8 +154,7 @@ export default function Home(){
                     if(!await checkBounds(true)){ 
                         return;
                     }
-                    const nex = prev-1;
-                    router.push('redirect?prev=' + nex)
+                    setprev(prev-1);
                 }}> {'forward a week >'} </button>
             </div>
             <div className='tblWrapper' id='pgtbl'>
