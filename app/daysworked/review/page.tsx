@@ -140,7 +140,7 @@ export default function Page() {
 
             {/* from here i need to obscure this stuff until its loaded */}
             <div className={pulled ? 'report' : 'report hidden'}>
-                <div className='w-[345px] pt-[10px] pb-[10px]' id='target'>
+                <div className='w-[345px] pt-[10px] pb-[10px] rounded-2xl' id='target'>
                     <div className='inline-flex flex-row'>
                         <p className='w-[345px] text-center'>
                             <input type='checkbox' id='affirm'/>

@@ -15,11 +15,11 @@ import {
 export default function Home(){
 
     const router = useRouter();
-    
+
     //states
     const [period, setPeriod] = useState(getPeriod()); // init period
-    const [vessels, setVessels]=useState({});
-    const [jobs, setJobs]=useState({});
+    const [vessels, setVessels]=useState({} as {[key:string]:any});
+    const [jobs, setJobs]=useState({} as {[key:string]:any});
     const [crew, setCrew] = useState(true);
     const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
@@ -43,8 +43,8 @@ export default function Home(){
         period.map((day) => { 
 
             if( // one or not hte other
-                !vessels[day as keyof {}] && jobs[day as keyof {}] || 
-                vessels[day as keyof {}] && !jobs[day as keyof {}]
+                !vessels[day] && jobs[day] || 
+                vessels[day] && !jobs[day]
             ){
                 derrors.push(document.getElementById(day+'flash') as HTMLElement);
                 return; //skip the rest of this since it errors anyway
@@ -54,13 +54,11 @@ export default function Home(){
             var cship='';
             var cjob='';
 
-            //i hate typescript what are these declarations man
-            vessels[day as keyof {}] ? cship=vessels[day as keyof {}] : '';
-            jobs[day as keyof {}] ? cjob = jobs[day as keyof {}] : '';
+            vessels[day] ? cship=vessels[day] : '';
+            jobs[day] ? cjob = jobs[day] : '';
             
             //prepare our output
             strdict+=day+':'+cship+':'+cjob+';';
-            
         })
 
         //if we have any errors inform the user they need to make changes before they can save
@@ -141,17 +139,21 @@ export default function Home(){
 
     return (
         <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">  
-            <div className='inline-flex h-[44px]'>
+            <div className='inline-flex h-[44px]' id='buttons'>
                 <button className='w-[150px] btnh btn hoverbg' onClick={async () =>{ 
-                    if(!await checkBounds(false)){ 
+                    if(!await checkBounds(false)){ //need to create some visual indication that we are maximally backed
+                        const flashme =document.getElementById('buttons') as HTMLElement 
+                        flashDiv(flashme)
                         return;
                     }
                     setprev(prev+1);
                 }}> {'< back a week'} </button>
                 
                 
-                <button className='w-[150px] btnh btn hoverbg' onClick={async () =>{ 
+                <button id='forbutton' className='w-[150px] btnh btn hoverbg' onClick={async () =>{ 
                     if(!await checkBounds(true)){ 
+                        const flashme =document.getElementById('buttons') as HTMLElement 
+                        flashDiv(flashme)
                         return;
                     }
                     setprev(prev-1);
