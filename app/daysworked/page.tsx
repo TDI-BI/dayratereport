@@ -87,10 +87,12 @@ export default function Home(){
         return true;
     }
 
-    const checkBounds = async (t:boolean) => { // incoming 1 for next 0 for last, also needs to be async for verify
-
+    const checkBounds = async (t:boolean) => { // incoming 1 for next 0 for last, also needs to be async for verification
         if(crew){
-            return true
+            const thisp = (await(await fetchBoth(por+'/api/getlatestdomesticperiod')).json()).resp
+            const nweek = (await (await (fetchBoth(por+'/api/verifydate?prev='+(t ? prev - 1 : prev + 1)))).json()).resp // get next week in intended direction
+            const checkday = t ? nweek[0] : nweek[6]
+            return thisp.includes(checkday)
         }
         else{
             const thismonth = new Date((await (await (fetchBoth(por+'/api/getday'))).json()).resp).getMonth(); // zero indexed so +1 this is really stupid
