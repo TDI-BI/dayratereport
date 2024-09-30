@@ -19,7 +19,12 @@ export const GET = async (request:  NextRequest) => {
     const { searchParams } = request.nextUrl;
     const days = searchParams.get('days') || '';
     const domestic = searchParams.get('dom') || '0';
-    const prev = Number(searchParams.get('prev') || '0');
+    var prev = Number(searchParams.get('prev'));
+
+    //force constrain us to a week
+    if(prev>0) prev=1;
+    if(prev<0) prev=-1;
+
     const period = getPeriod(prev);
 
     //estab. connection

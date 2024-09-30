@@ -19,7 +19,12 @@ export default function Home(){
 
     //cur or prev report
     const sprms = useSearchParams();
-    const prev= Number(sprms.get('prev'));
+    var prev= Number(sprms.get('prev'));
+
+    //force constrain us to a week
+    if(prev>0) prev=1;
+    if(prev<0) prev=-1;
+
     const ex = 'prev=' + prev;
 
     //save then redirect
