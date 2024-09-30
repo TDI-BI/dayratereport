@@ -7,7 +7,7 @@ echo "TASK DATE AND TIME: $(date)" >> log.txt
 #important to have consistent naming so gitignore works
 filename="eow.txt"
 
-#if this file does not exist we create it
+#check if our file exists, if not we create it
 if [ ! -f "$filename" ]; then
 	echo "1" >> "$filename"
 	echo "eow not found, created file & set 1" >> log.txt
@@ -15,7 +15,6 @@ fi
 
 #get first character of eow
 first=$(head -c 1 "$filename")
-
 
 if [ "$first" = 0 ]; then
 	new="1"
@@ -30,6 +29,7 @@ else
 	exit 1
 fi
 
+#modify first character
 sed -i "1s/^./$new/" "$filename"
 
 echo "character changed to $new" >> log.txt
