@@ -15,7 +15,7 @@ import {
 export default function Home(){
 
     const router = useRouter();
-
+  
     //states
     const [period, setPeriod] = useState(getPeriod()); // init period
     const [vessels, setVessels]=useState({} as {[key:string]:any});
@@ -25,6 +25,7 @@ export default function Home(){
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState('');
     const [prev, setprev] = useState(0);
+
     const ex = 'prev=' + prev;
 
     //save then redirect
