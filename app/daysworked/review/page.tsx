@@ -24,10 +24,6 @@ export default function Page() {
     const sprms = useSearchParams();
     var prev= Number(sprms.get('prev'));
 
-    //force constrain us to a week
-    if(prev>0) prev=1;
-    if(prev<0) prev=-1;
-
     const ex = 'prev=' + prev;
     
     //needs to be called from within a function (ugh)

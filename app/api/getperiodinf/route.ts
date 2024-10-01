@@ -14,10 +14,6 @@ export const GET = async (request: NextRequest) => {
     const { searchParams } = request.nextUrl;
     var prev = Number(searchParams.get('prev'));
 
-    //force constrain us to a week
-    if(prev>0) prev=1;
-    if(prev<0) prev=-1;
-    
     //query info building
     const period = getPeriod(prev);
     let dparam:string = "(day='-1' ";

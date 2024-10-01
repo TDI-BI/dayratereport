@@ -16,11 +16,7 @@ export const GET = async (request:  NextRequest) => {
     const pdf = searchParams.get('pdf') || '';
     const type = searchParams.get('type') || '';
     var prev = Number(searchParams.get('prev'));
-
-    //force constrain us to a week
-    if(prev>0) prev=1;
-    if(prev<0) prev=-1;
-
+    
     //block if not logged in 
     const session = await getSession();
     if(session.isLoggedIn==false || pdf=='') return new Response(JSON.stringify({error: 'issue with request'}), {status: 500});
