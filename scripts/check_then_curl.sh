@@ -33,5 +33,5 @@ fi
 echo "$new" > "$filename" 
 
 echo "character changed to $new" >> log.txt
-exit 0
+
 

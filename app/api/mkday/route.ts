@@ -4,6 +4,7 @@ import { NextRequest } from 'next/server';
 import { getSession } from '@/actions';
 import { connectToDb } from '@/utils/connectToDb'
 import { getPeriod } from '@/utils/payperiod';
+import { error } from 'console';
 
 export const GET = async (request:  NextRequest) => {
     
@@ -23,10 +24,27 @@ export const GET = async (request:  NextRequest) => {
 
     const period = getPeriod(prev);
 
+    
+
     //estab. connection
     const connection = await connectToDb();
 
     try{ // from here below is our homebrew upsert
+
+        //i need to set up some protection here to make sure you arent doing illegal stuff
+        if(session.isDomestic) {
+            
+            const existsQuery = "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;"; // this could totally just be a tuesday...
+            const dateret = JSON.parse(JSON.stringify(await connection.execute(existsQuery)))[0][0]['date'] // gets the date
+            console.log(getPeriod())
+            const thingy = getPeriod().includes(dateret) ? prev=-1 || prev==0 : prev==1 || prev==0; 
+            if(!thingy) throw {error: 'you are oob ...'}
+
+        } else {
+            const thismonth = (new Date).getMonth();
+            const np = period.filter((e)=>((new Date(e)).getMonth() == thismonth))
+            if(np.length==0) throw {error : 'you are oob ...'};
+        }
 
         //build queries
         let query1 = 'delete from days where (username="'+username+'") and (';
@@ -63,6 +81,6 @@ export const GET = async (request:  NextRequest) => {
         return new Response(JSON.stringify({ resp: results }), {status: 200});
     }catch (error) { 
         connection.end();
-        return new Response(JSON.stringify({ error: (error as Error).message }), { status: 500});
+        return new Response(JSON.stringify({ error: error }), { status: 500});
     }
 };
