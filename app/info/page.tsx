@@ -18,7 +18,7 @@ const Profile = () => {
         const ret = await (await fetchBoth(query)).json()
         
         if(ret.resp){ 
-            console.log(ret)
+            //console.log(ret)
             gsesh();
         }
     }

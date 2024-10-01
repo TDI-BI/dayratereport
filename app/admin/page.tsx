@@ -78,7 +78,7 @@ const AdminPannel = () =>{
 
     //block non-admins & redirect
     if(dataResponse['error' as any]){ 
-        console.log('you do not have administrator access :c');
+        //console.log('you do not have administrator access :c');
         redirect('../../');
     } 
 
@@ -146,10 +146,10 @@ const AdminPannel = () =>{
             
             if(sum!=0 && (usr['cre']==crewEh || crewEh=='all')){
                 expTableData.push(usr)
-                console.log(usr)
+                //console.log(usr)
             } 
         })
-        console.log(expTableData)
+        //console.log(expTableData)
 
         // generate from CSV, basically just copied from export-to-csv documentation
         const csvConfig = mkConfig({ 

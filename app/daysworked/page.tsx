@@ -72,7 +72,7 @@ export default function Home(){
         
         crew ? strdict+='&dom=1':strdict+='&dom=0' // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por+'/api/mkday?days='+strdict+'&'+ex;
-        console.log(apiUrlEndpoint)
+        //console.log(apiUrlEndpoint)
         await fetchBoth(apiUrlEndpoint);
         setUmsg('saved')
         setsaving(0);

@@ -22,7 +22,7 @@ export const GET = async (request:  NextRequest) => {
     try{
         //execute query
         const updateCrewQ = 'UPDATE users SET isDomestic='+crew+" WHERE username='"+session.username+"';";
-        console.log(updateCrewQ)
+        //console.log(updateCrewQ)
 
         session.isDomestic = crew;
         await session.save();

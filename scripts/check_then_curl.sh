@@ -22,7 +22,7 @@ if [ "$first" = 0 ]; then
 elif [ "$first" = 1 ]; then
 	new="0"
 	echo "in case 1" >> log.txt
-	curl google.com >> log.txt
+	curl https://tdifielddays.com/api/addperiod?p=Tac7h8WeVHZm3JffWdRmCBp5lHoL8lQ7dVdL850W0Dz >> log.txt
 	echo "curl executed" >> log.txt
 else
 	echo "error: invalid character... please check eow.txt or remove the file" >> log.txt
