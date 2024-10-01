@@ -272,10 +272,10 @@ const AdminPannel = () =>{
                         className={(weeks=='2' ? 'select' : '')+' exportSetting hoverbg'}
                     >2</Radio>
                     <Radio
-                        key='5'
-                        value='5'
-                        className={(weeks=='5' ? 'select' : '')+' exportSetting hoverbg'}
-                    >5</Radio>
+                        key='6'
+                        value='6'
+                        className={(weeks=='6' ? 'select' : '')+' exportSetting hoverbg'}
+                    >6</Radio>
                 </RadioGroup>
 
 

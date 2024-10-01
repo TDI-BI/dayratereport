@@ -16,6 +16,8 @@ export const GET = async (request: NextRequest) => {
     const password = searchParams.get('password') || '';
     const fullname = searchParams.get('fullname') || '';
     const email = searchParams.get('email') || '';
+    const isDomestic = searchParams.get('isdomestic');
+    const isDomesticCheck = isDomestic=='domestic'
 
     //estab. connection
     const connection = await connectToDb();
@@ -28,8 +30,7 @@ export const GET = async (request: NextRequest) => {
         if(String(results)) return new Response(JSON.stringify({error: 'account exists'}), { status: 500});
 
         //build query
-        const query2= "insert into users (uid, password, username, email) values ('"+fullname+"','"+password+"','"+username+"','"+email+"')";
-
+        const query2= "insert into users (uid, password, username, email, isDomestic) values ('"+fullname+"','"+password+"','"+username+"','"+email+"', "+isDomesticCheck+")";
         //execute query
         const [results2] = await connection.execute(query2);
         connection.end();

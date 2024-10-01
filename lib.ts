@@ -6,6 +6,7 @@ export interface sessionData{ // init
     userEmail?:string;
     isLoggedIn?:boolean;
     isAdmin?:boolean;
+    isDomestic?:boolean;
 }
 
 export const sessionOptions: SessionOptions ={
