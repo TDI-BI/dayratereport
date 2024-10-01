@@ -30,8 +30,8 @@ else
 fi
 
 #modify first character
-sed -i "1s/^./$new/" "$filename"
+echo "$new" > "$filename" 
 
 echo "character changed to $new" >> log.txt
-exit 1
+exit 0
 

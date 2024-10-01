@@ -12,7 +12,11 @@ export const GET = async (request: NextRequest) => {
 
     //get URL parameters
     const { searchParams } = request.nextUrl;
-    const prev = Number(searchParams.get('prev'));
+    var prev = Number(searchParams.get('prev'));
+
+    //force constrain us to a week
+    if(prev>0) prev=1;
+    if(prev<0) prev=-1;
     
     //query info building
     const period = getPeriod(prev);
