@@ -13,11 +13,11 @@
 
     --background-item-rgba: 170, 170, 170, 0;
     --background-item-rgba-fade: 170, 170, 170, 1;
-    --background-item-rgba-select: 170, 170, 170, .7;
+    --background-item-rgba-select: 170, 170, 170, 0.7;
 
     /*comment here not next, just make sure this matches background color.
     transparent background causes us to not have select arrows on mobile...*/
-    --select: 255, 255, 255, .01;
+    --select: 255, 255, 255, 0.01;
     --icon: 0%;
 }
 
@@ -33,9 +33,9 @@
 
         --background-item-rgba: 48, 48, 48, 0;
         --background-item-rgba-fade: 48, 48, 48, 1;
-        --background-item-rgba-select: 48, 48, 48, .7;
+        --background-item-rgba-select: 48, 48, 48, 0.7;
 
-        --select: 0, 0, 0, .01;
+        --select: 0, 0, 0, 0.01;
         --icon: 100%;
     }
 }
@@ -43,22 +43,23 @@
 body {
     color: rgb(var(--foreground-rgb));
     background: linear-gradient(
-        to bottom,
-        transparent,
-        rgb(var(--background-end-rgb))
+            to bottom,
+            transparent,
+            rgb(var(--background-end-rgb))
         )
-    rgb(var(--background-start-rgb));
-    overflow-x:hidden;
+        rgb(var(--background-start-rgb));
+    overflow-x: hidden;
 }
-.padding{
+.padding {
     /*this just exists to maitain the style without the header*/
-    height:50px;
+    height: 50px;
 }
-.head{
-    width:100vw;
-    display:inline-flex; flex-direction:row;
-    line-height:50px;
-    height:50px;
+.head {
+    width: 100vw;
+    display: inline-flex;
+    flex-direction: row;
+    line-height: 50px;
+    height: 50px;
 }
 
 @layer utilities {
@@ -67,199 +68,208 @@ body {
     }
 }
 
-.tblWrapper{
-    outline-style:solid;
-    outline-color:rgb(var(--forground-rgba));
-    outline-width:2px;
-    padding:10px;
-    padding-bottom:20px;
-    border-radius:20px;
+.tblWrapper {
+    outline-style: solid;
+    outline-color: rgb(var(--forground-rgba));
+    outline-width: 2px;
+    padding: 10px;
+    padding-bottom: 20px;
+    border-radius: 20px;
 }
 
-.tblHeadItm{
+.tblHeadItm {
     text-align: left;
-    padding:10px;
-    width:115px;
+    padding: 10px;
+    width: 115px;
 }
-.tblBodyDate, .tblDD{
-    line-height:30px;
-    height:50px !important;
-    padding-left:10px;
-    padding-right:10px; 
-    width:115px;
+.tblBodyDate,
+.tblDD {
+    line-height: 30px;
+    height: 50px !important;
+    padding-left: 10px;
+    padding-right: 10px;
+    width: 115px;
 }
-.tblBodyDate{
-    display:inline-flex;
-    overflow:hidden;
+.tblBodyDate {
+    display: inline-flex;
+    overflow: hidden;
 }
-.tblDD{
+.tblDD {
     position: relative;
-    display:inline-block;
+    display: inline-block;
 }
-.tblDD::before{
-    position:absolute;
-    top:0px;
-    right:-1px;
+.tblDD::before {
+    position: absolute;
+    top: 0px;
+    right: -1px;
 }
 
-.shipInput, .formInput{
-    padding-left:7px;
-    padding-right:7px;
-    height:30px;
-    width:160px;
+.shipInput,
+.formInput {
+    padding-left: 7px;
+    padding-right: 7px;
+    height: 30px;
+    width: 160px;
     background: transparent;
     border: none;
 }
-.shipValue{
-    color:black;
+.shipValue {
+    color: black;
 }
-.shipInput{
-    width:95px !important;
+.shipInput {
+    width: 95px !important;
     background-color: rgb(var(--select));
 }
-.formIcon{
-    filter:invert(var(--icon));
-    padding-right:10px; /* just gives us padding between this and the input div*/
+.formIcon {
+    filter: invert(var(--icon));
+    padding-right: 10px; /* just gives us padding between this and the input div*/
 }
-.formInput{
-    margin:auto;
-    width:240px !important;
+.formInput {
+    margin: auto;
+    width: 240px !important;
 }
-.errMessage{
-    text-align:center;
-    width:280px
+.errMessage {
+    text-align: center;
+    width: 280px;
 }
-.tblFoot{
+.tblFoot {
     height: 44px;
-    padding:2px;
-    display:inline-flex; flex-direction:row;
-}
-.btn{
-    text-align:center;
-    transition:300ms;
-}
-.btnh{ /*this is just the default widely applied rule*/
-    height:44px;
-    line-height:44px;
-}
-.crewtype{/*work on this later*/
-    text-align:center;
-    line-height:25px;
-    height:60px;
-    width:345px;
-}
-.crew{
-    border-color:rgb(var(--background-item-rgba-select));
-    border-width:2px;
-    width:115px;
-    padding:10px;
-    transition:300ms;
-}
-.formLine{
-    margin:auto;
-    display:flex;
+    padding: 2px;
+    display: inline-flex;
     flex-direction: row;
-    height:50px;
-    line-height:50px;
-    width:280px;
+}
+.btn {
+    text-align: center;
+    transition: 300ms;
+}
+.btnh {
+    /*this is just the default widely applied rule*/
+    height: 44px;
+    line-height: 44px;
+}
+.crewtype {
+    /*work on this later*/
+    text-align: center;
+    line-height: 25px;
+    height: 60px;
+    width: 345px;
+}
+.crew {
+    border-color: rgb(var(--background-item-rgba-select));
+    border-width: 2px;
+    width: 115px;
+    padding: 10px;
+    transition: 300ms;
+}
+.formLine {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    line-height: 50px;
+    width: 280px;
     align-items: center;
     justify-content: center;
 }
 
-.reportLine{
-    height:30px;
+.reportLine {
+    height: 30px;
     line-height: 30px;
-    border-bottom:1px solid;
+    border-bottom: 1px solid;
 }
 
-.reportTxt{
-    width:115px;
+.reportTxt {
+    width: 115px;
     text-align: center;
 }
 
-.prev{ /* only 1 ref but needs color assigned so oop */
-    color:rgb(var(--background-end-rgb));
-    border-radius:10px;
-    border-style:solid;
+.prev {
+    /* only 1 ref but needs color assigned so oop */
+    color: rgb(var(--background-end-rgb));
+    border-radius: 10px;
+    border-style: solid;
     background-color: rgb(var(--forground-rgba));
 }
-.adminRB{
-    height:30px;
-    width:70px;
+.adminRB {
+    height: 30px;
+    width: 70px;
     text-align: center;
-    line-height:30px;
-    transition:300ms;
+    line-height: 30px;
+    transition: 300ms;
 }
-.adminCell{
-    overflow-x:hidden;
-    display:inline-block;
-    width:120px;
-    height:26px;
+.adminCell {
+    overflow-x: hidden;
+    display: inline-block;
+    width: 120px;
+    height: 26px;
     text-align: center;
     border-color: rgb(var(--forground-rgba));
-    border-style:solid;
-    border-width:1px;
+    border-style: solid;
+    border-width: 1px;
 }
-.adminLabelY{
+.adminLabelY {
     font-weight: 600;
 }
-.adminLabelX{
+.adminLabelX {
     font-weight: 600;
-    width:300px;
+    width: 300px;
 }
-.adminCellR{
+.adminCellR {
     background-color: red;
 }
-.adminCellG{
+.adminCellG {
     background-color: green;
 }
 
-.savemsg0, .savemsg1{
-    font-weight:200;
-    color:rgb(var(--forground-rgba));
-    transition:300ms;
-    opacity:0;
+.savemsg0,
+.savemsg1 {
+    font-weight: 200;
+    color: rgb(var(--forground-rgba));
+    transition: 300ms;
+    opacity: 0;
 }
-.savemsg1{
-    opacity:1 !important;
-}
-
-.adminTable{
-    display:block;
-    height:700px;
-    overflow-y:scroll;
+.savemsg1 {
+    opacity: 1 !important;
 }
 
-.exportSettings{
-    width:100px;
+.adminTable {
+    display: block;
+    height: 700px;
+    overflow-y: scroll;
+}
+
+.exportSettings {
+    width: 100px;
     text-align: center;
 }
 
-.exportSetting{
-    padding-left:10px;
-    height:30px;
-    width:100px;
+.exportSetting {
+    padding-left: 10px;
+    height: 30px;
+    width: 100px;
     text-align: center;
-    line-height:30px;
+    line-height: 30px;
 }
 
-.select{
-    background-color:rgb(var(--background-item-rgba-select)) !important;
+.select {
+    background-color: rgb(var(--background-item-rgba-select)) !important;
 }
 
-.hoverbg{
-    background-color:rgb(var(--background-item-rgba));
-    transition:300ms;
+.hoverbg {
+    background-color: rgb(var(--background-item-rgba));
+    transition: 300ms;
 }
-.hoverbg:hover{
-    background-color:rgb(var(--background-item-rgba-fade)) !important;
+.hoverbg:hover {
+    background-color: rgb(var(--background-item-rgba-fade)) !important;
 }
-.hoverLn{
-    border-bottom:1px solid;
-    border-color:rgb(var(--forground-rgba-fade));
-    transition:300ms;
+.hoverLn {
+    border-bottom: 1px solid;
+    border-color: rgb(var(--forground-rgba-fade));
+    transition: 300ms;
 }
-.hoverLn:hover, .hoverLnF:focus{ /*split out bc i dont want everything focusable*/
-    outline:none;
-    border-color:rgb(var(--forground-rgba));
+.hoverLn:hover,
+.hoverLnF:focus {
+    /*split out bc i dont want everything focusable*/
+    outline: none;
+    border-color: rgb(var(--forground-rgba));
 }

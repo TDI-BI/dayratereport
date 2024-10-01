@@ -1,41 +1,45 @@
 //pull a list of all users in database
 
-import { NextRequest } from 'next/server';
-import { getSession } from '@/actions';
-import { connectToDb } from '@/utils/connectToDb'
+import { NextRequest } from "next/server";
+import { getSession } from "@/actions";
+import { connectToDb } from "@/utils/connectToDb";
 
 //this is about as simple as you can get for creating an API route lol
-export const GET = async (request:  NextRequest) => {
-
+export const GET = async (request: NextRequest) => {
     const { searchParams } = request.nextUrl; // getters
 
-    const crew = Boolean(Number(searchParams.get('c')));
-    
+    const crew = Boolean(Number(searchParams.get("c")));
+
     //block non-admins
     const session = await getSession(); // blocks if not admin cookie
-    if(!session.isLoggedIn) return new Response(JSON.stringify({ error: 'not logged in' }), { status: 500});
-
+    if (!session.isLoggedIn)
+        return new Response(JSON.stringify({ error: "not logged in" }), {
+            status: 500,
+        });
 
     //build query
-    
+
     const connection = await connectToDb();
-    try{
+    try {
         //execute query
-        const updateCrewQ = 'UPDATE users SET isDomestic='+crew+" WHERE username='"+session.username+"';";
+        const updateCrewQ =
+            "UPDATE users SET isDomestic=" +
+            crew +
+            " WHERE username='" +
+            session.username +
+            "';";
         //console.log(updateCrewQ)
 
         session.isDomestic = crew;
         await session.save();
-        
 
         connection.end();
-        return new Response(JSON.stringify({ resp: {isDomestic : session.isDomestic}}), {status: 200});
-    }
-    catch(error){
+        return new Response(
+            JSON.stringify({ resp: { isDomestic: session.isDomestic } }),
+            { status: 200 }
+        );
+    } catch (error) {
         connection.end();
-        return new Response(JSON.stringify({ error: error }), { status: 500});
+        return new Response(JSON.stringify({ error: error }), { status: 500 });
     }
-    
-
-    
 };
