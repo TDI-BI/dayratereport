@@ -138,7 +138,7 @@ export default function Home() {
             setJobs(job);
         }
         getPeriodInf();
-    }, [ex]);
+    }, [ex, router]);
 
     return (
         <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">
