@@ -3,22 +3,19 @@ import { getPort } from "@/utils/getPort";
 const por = getPort();
 import { getPeriod } from "@/utils/payperiod";
 import { fetchBoth } from "@/utils/fetchBoth";
-import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
 import { useState, useEffect } from "react";
 import DropDown from "@/components/reportDropDown";
-//we need some helper function to check the bounds of what is legal and what isnt
 
 export default function Home() {
     const router = useRouter();
 
-    //states
+    // i know there is a better way to handle this but like whatever
     const [period, setPeriod] = useState(getPeriod()); // init period
     const [vessels, setVessels] = useState({} as { [key: string]: any });
     const [jobs, setJobs] = useState({} as { [key: string]: any });
     const [crew, setCrew] = useState(true);
-    const [dataResponse, setdataResponse] = useState([]);
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState("");
     const [prev, setprev] = useState(0);
@@ -36,11 +33,10 @@ export default function Home() {
         setsaving(1);
         setUmsg("saving...");
         let strdict = "";
-        let derrors: HTMLElement[] = []; // gonna treat this as a stack for which days i need to flash
+        let derrors: HTMLElement[] = []; // stack of elements to flash
 
         period.map((day) => {
-            if (
-                // one or not hte other
+            if ( // make sure we are properly filled out
                 (!vessels[day] && jobs[day]) ||
                 (vessels[day] && !jobs[day])
             ) {
@@ -50,14 +46,14 @@ export default function Home() {
                 return; //skip the rest of this since it errors anyway
             }
 
-            //read our displayed tabl
+            //read our saved values
             var cship = "";
             var cjob = "";
 
             vessels[day] ? (cship = vessels[day]) : "";
             jobs[day] ? (cjob = jobs[day]) : "";
 
-            //prepare our output
+            //append to output
             strdict += day + ":" + cship + ":" + cjob + ";";
         });
 
@@ -66,16 +62,17 @@ export default function Home() {
             derrors.forEach((itm) => {
                 flashDiv(itm);
             });
+            setUmsg("failure");
+            setsaving(0);
             return false;
         }
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por + "/api/mkday?days=" + strdict + "&" + ex;
-        //console.log(apiUrlEndpoint)
-        await fetchBoth(apiUrlEndpoint);
+        await fetchBoth(apiUrlEndpoint); // fetch query
         setUmsg("saved");
         setsaving(0);
-        return true;
+        return true; // returns true on success
     };
 
     const checkBounds = async (t: boolean) => {
@@ -124,7 +121,9 @@ export default function Home() {
                     ves[item["day"]] = item["ship"];
                     job[item["day"]] = item["type"];
                 });
-            } catch (e) {} // make sure page doesnt crash
+            } catch (e) {
+                router.push("../../")
+            } // make sure page doesnt crash
 
             const perResp = await fetchBoth(por + "/api/verifydate?" + ex);
             const serverPeriod = (await perResp.json()).resp;
@@ -137,17 +136,9 @@ export default function Home() {
             setPeriod(serverPeriod);
             setVessels(ves);
             setJobs(job);
-            setdataResponse(res.resp);
         }
         getPeriodInf();
     }, [ex]);
-
-    try {
-        dataResponse.forEach((item) => {}); // this will throw an error if the user isnt logged in
-    } catch {
-        // redirect if we throw an error
-        redirect("../../");
-    }
 
     return (
         <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">
