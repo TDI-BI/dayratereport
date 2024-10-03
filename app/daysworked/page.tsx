@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
 import { useState, useEffect } from "react";
-
+import DropDown from "@/components/reportDropDown";
 //we need some helper function to check the bounds of what is legal and what isnt
 
 export default function Home() {
@@ -208,108 +208,47 @@ export default function Home() {
                             >
                                 {/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
                                 <div className="tblBodyDate">{day}</div>
-
-                                <div className="tblDD">
-                                    <select
-                                        className="hoverLn shipInput"
-                                        id={day + "_ship"}
-                                        value={
-                                            vessels[day as keyof {}]
-                                                ? vessels[day as keyof {}]
-                                                : ""
-                                        }
-                                        onChange={(e) => {
-                                            //this is extremely ugly but it works, so thats whats important-est imo
-                                            let ndict: {
-                                                [id: string]: string;
-                                            } = structuredClone(vessels);
-                                            ndict[day] = e.target.value;
-                                            setVessels(ndict);
-                                        }}
-                                    >
-                                        <option
-                                            value=""
-                                            id=""
-                                            key=""
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="BMCC"
-                                            label="BMCC"
-                                            key="BMCC"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="EMMA"
-                                            label="EMMA"
-                                            key="EMMA"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="PROT"
-                                            label="PROT"
-                                            key="PROT"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="GYRE"
-                                            label="GYRE"
-                                            key="GYRE"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="NAUT"
-                                            label="NAUT"
-                                            key="NAUT"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="3RD"
-                                            label="3RD"
-                                            key="3RD"
-                                            className="shipValue"
-                                        />
-                                    </select>
-                                </div>
-
-                                <div className="tblDD">
-                                    <select
-                                        className="hoverLn shipInput"
-                                        id={day + "_job"}
-                                        value={
-                                            jobs[day as keyof {}]
-                                                ? jobs[day as keyof {}]
-                                                : ""
-                                        }
-                                        onChange={(e) => {
-                                            //this is extremely ugly but it works, so thats whats important-est imo
-                                            let ndict: {
-                                                [id: string]: string;
-                                            } = structuredClone(jobs);
-                                            ndict[day] = e.target.value;
-                                            setJobs(ndict);
-                                        }}
-                                    >
-                                        <option
-                                            value=""
-                                            id=""
-                                            key=""
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="TECH"
-                                            label="TECH"
-                                            key="TECH"
-                                            className="shipValue"
-                                        />
-                                        <option
-                                            value="MARINE"
-                                            label="MARINE"
-                                            key="MARINE"
-                                            className="shipValue"
-                                        />
-                                    </select>
-                                </div>
+                                {/* shuold popthese into a componnent */}
+                                <DropDown
+                                    val={
+                                        vessels[day as keyof {}]
+                                            ? vessels[day as keyof {}]
+                                            : ""
+                                    }
+                                    inid={day + "_ship"}
+                                    setter={(e: any) => {
+                                        //this is extremely ugly but it works, so thats whats important-est imo
+                                        let ndict: {
+                                            [id: string]: string;
+                                        } = structuredClone(vessels);
+                                        ndict[day] = e.target.value;
+                                        setVessels(ndict);
+                                    }}
+                                    options={["BMCC",
+                                        "EMMA",
+                                        "PROT",
+                                        "GYRE",
+                                        "NAUT",
+                                        "3RD",
+                                    ]}
+                                />
+                                <DropDown
+                                    val={
+                                        jobs[day as keyof {}]
+                                            ? jobs[day as keyof {}]
+                                            : ""
+                                    }
+                                    inid={day + "_job"}
+                                    setter={(e: any) => {
+                                        //this is extremely ugly but it works, so thats whats important-est imo
+                                        let ndict: {
+                                            [id: string]: string;
+                                        } = structuredClone(jobs);
+                                        ndict[day] = e.target.value;
+                                        setJobs(ndict);
+                                    }}
+                                    options={["TECH", "MARINE"]}
+                                />
                             </div>
                         </div>
                     ))}
