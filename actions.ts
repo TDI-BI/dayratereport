@@ -56,6 +56,7 @@ export const login = async(
     session.userEmail= dbAcc.email
     session.isLoggedIn= true
     session.isAdmin= dbAcc.isAdmin=='true';
+    session.isDomestic=dbAcc.isDomestic; //UPDATE THIS LATER
     await session.save();
     
     redirect("/")
@@ -77,6 +78,7 @@ export const mkAccount = async(
     const formEmail = formData.get('email') as string
     const formPassword = formData.get('password1') as string
     const formPasswordRepeat = formData.get('password2') as string
+    const formCrew = formData.get('crew') as string
     if(formPassword!==formPasswordRepeat) return { error : 'passwords do not match' }
 
     //create hashed password
@@ -88,16 +90,18 @@ export const mkAccount = async(
         formLastname=='' || 
         formEmail=='' || 
         formUsername=='' || 
-        formPassword==''
+        formPassword=='' 
     ){
         return { error: 'empty fields' }
     }
+    if(formCrew=='') return {error:'select a crew type'}
+
     if(formUsername.includes(' ')) return  {error : 'username has spaces'}
     if(formEmail.includes(' ')) return  {error : 'email has spaces'}
 
     //query API
     const fullname=formFirstname+'/'+formLastname;
-    const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname;
+    const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname+'&isdomestic='+formCrew;
     const response = await fetchBoth(link);
     const res = await response.json();
     try{
@@ -113,6 +117,7 @@ export const mkAccount = async(
     session.userEmail= formEmail
     session.isLoggedIn= true
     session.isAdmin= false; // should always be false on account creation
+    session.isDomestic=formCrew=='domestic'; //UPDATE THIS LATER
     await session.save();
     redirect("../../")// -> uncomment this out when im done toying with the form
 }

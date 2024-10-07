@@ -1,16 +1,12 @@
-import RecoverForm from '@/components/recoverForm'
-import { getSession } from '@/actions'
-import { redirect } from 'next/navigation'
-const rcvaccountPage = async () =>{
-    const session = await getSession();
-    return(
-        <main className="flex min-h-screen flex-col items-center"> 
+import RecoverForm from "@/components/recoverForm";
+const rcvaccountPage = async () => {
+    return (
+        <main className="flex min-h-screen flex-col items-center">
             {/* we are gonna convert this to a form at some point i thinkge */}
             <p> check spam for emails</p>
-            <RecoverForm/>
-            
+            <RecoverForm />
         </main>
-    )
-}
+    );
+};
 
-export default rcvaccountPage
+export default rcvaccountPage;

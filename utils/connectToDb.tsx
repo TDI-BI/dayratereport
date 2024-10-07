@@ -1,13 +1,13 @@
 //creates a connection to our mysql database
-import mysql from 'mysql2/promise';
+import mysql from "mysql2/promise";
 
 export const connectToDb = async () => {
     try {
         const con = await mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: 'eygwa',
-            database: 'dayratereport',
+            host: "localhost",
+            user: "root",
+            password: "eygwa",
+            database: "dayratereport",
         });
         return con;
     } catch (error) {

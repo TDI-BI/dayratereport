@@ -35,3 +35,7 @@ next-env.d.ts
 
 #getport
 /utils/getPort.tsx
+
+#script files
+/scripts/eow.txt
+/scripts/log.txt

@@ -1,10 +1,12 @@
 //literally just returns our period as json
-import { NextRequest } from "next/server"
+import { NextRequest } from "next/server";
 import { getPeriod } from "@/utils/payperiod";
 
-export const GET = async (request:  NextRequest) => {
+export const GET = async (request: NextRequest) => {
     const { searchParams } = request.nextUrl;
-    const periodEh = Number( searchParams.get('prev') || '0' );
-    
-    return new Response(JSON.stringify({ resp: getPeriod(periodEh) }), {status: 200});
-}
+    const periodEh = Number(searchParams.get("prev"));
+
+    return new Response(JSON.stringify({ resp: getPeriod(periodEh) }), {
+        status: 200,
+    });
+};
