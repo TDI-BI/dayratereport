@@ -71,7 +71,7 @@ const Profile = () => {
             <p className="text-center w-[300px]">
                 <br></br>
                 comments or complaints please email
-                dayratereportdonotrespond@gmail.com or fill out our feedback
+                 parkerseeley@tdi-bi.com or fill out our feedback
                 form:
             </p>
 

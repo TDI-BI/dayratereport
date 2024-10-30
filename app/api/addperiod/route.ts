@@ -11,7 +11,7 @@ export const GET = async (request: NextRequest) => {
     if (passkey != process.env.SERVER_KEY)
         return new Response(JSON.stringify({ error: "incorrect key" }), {
             status: 500,
-        });
+    });
 
     //build query
 
