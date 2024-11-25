@@ -28,14 +28,27 @@ export const GET = async (request: NextRequest) => {
             " WHERE username='" +
             session.username +
             "';";
-        //console.log(updateCrewQ)
+        const r1 = await connection.execute(updateCrewQ)
+
+        const updateCrewDayQ = 
+            "UPDATE days SET ship='" +
+            Number(crew) + 
+            "' WHERE day='-1' AND username='" +
+            session.username +
+            "';";
+        console.log(updateCrewDayQ)
+        const r2 = await connection.execute(updateCrewDayQ)
 
         session.isDomestic = crew;
         await session.save();
 
         connection.end();
         return new Response(
-            JSON.stringify({ resp: { isDomestic: session.isDomestic } }),
+            JSON.stringify({ resp: {
+                updateUser: r1,
+                updateDay: r2, 
+                isDomestic: session.isDomestic
+            } }),
             { status: 200 }
         );
     } catch (error) {

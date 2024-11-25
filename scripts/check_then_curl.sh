@@ -3,7 +3,7 @@
 echo "" >> log.txt
 echo "" >> log.txt
 echo "**********************************************************" >> log.txt
-echo "TASK DATE AND TIME: $(date)" >> log.txt
+echo "PERIOD QUERY DATE AND TIME: $(date)" >> log.txt
 #important to have consistent naming so gitignore works
 filename="eow.txt"
 

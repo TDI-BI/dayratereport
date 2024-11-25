@@ -208,7 +208,6 @@ export default function Home() {
                                     }
                                     inid={day + "_ship"}
                                     setter={(e: any) => {
-                                        //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict: {
                                             [id: string]: string;
                                         } = structuredClone(vessels);
@@ -231,7 +230,6 @@ export default function Home() {
                                     }
                                     inid={day + "_job"}
                                     setter={(e: any) => {
-                                        //this is extremely ugly but it works, so thats whats important-est imo
                                         let ndict: {
                                             [id: string]: string;
                                         } = structuredClone(jobs);
