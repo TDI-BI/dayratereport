@@ -12,15 +12,14 @@ export const GET = async () => {
         //execute query
 
         const existsQuery =
-            "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;"; // this could totally just be a tuesday...
+            "SELECT id, date FROM periodstarts ORDER BY id DESC FOR UPDATE;"; // this could totally just be a tuesday...
         //console.log(existsQuery)
+        
         const dateret = JSON.parse(
-            JSON.stringify(await connection.execute(existsQuery))
+            JSON.stringify(await connection.query(existsQuery, {cache:false}))
         )[0][0]["date"]; // gets the date
-
         let start = 0;
         getPeriod().includes(dateret) ? (start = 0) : (start = 1); // which week is the start of our period
-
         let p1 = [];
         let p2 = [];
 
@@ -37,9 +36,11 @@ export const GET = async () => {
         p2.map((e: any) => retp.push(e));
 
         connection.end();
-        return new Response(JSON.stringify({ resp: retp }), { status: 200 });
+        return new Response(JSON.stringify({ resp: retp, day:dateret }), { status: 200 });
     } catch (error) {
         connection.end();
         return new Response(JSON.stringify({ error: error }), { status: 500 });
     }
 };
+
+export const dynamic = 'force-dynamic'; // another way to try to break the caching

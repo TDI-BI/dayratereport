@@ -4,16 +4,16 @@ import { NextRequest } from "next/server";
 import { getSession } from "@/actions";
 import { connectToDb } from "@/utils/connectToDb";
 import { getPeriod } from "@/utils/payperiod";
-import { error } from "console";
 
 export const GET = async (request: NextRequest) => {
+    
     //block if not logged in
     const session = await getSession();
     if (!session.isLoggedIn)
         return new Response(JSON.stringify({ error: "user not logged in " }), {
             status: 500,
         });
-
+    console.log(session.username);
     //get session information
     const uid = session.userId; // will update this to UID at some point, but not now ig
     const username = session.username;
@@ -30,8 +30,6 @@ export const GET = async (request: NextRequest) => {
     const connection = await connectToDb();
 
     try {
-        // from here below is our homebrew upsert
-
         //i need to set up some protection here to make sure you arent doing illegal stuff
         if (session.isDomestic) {
             const existsQuery =
@@ -39,20 +37,19 @@ export const GET = async (request: NextRequest) => {
             const dateret = JSON.parse(
                 JSON.stringify(await connection.execute(existsQuery))
             )[0][0]["date"]; // gets the date
-            console.log(getPeriod());
             const thingy = getPeriod().includes(dateret)
                 ? (prev = -1 || prev == 0)
                 : prev == 1 || prev == 0;
-            if (!thingy) throw { error: "you are oob ..." };
+            if(!thingy) return {error: 'youre oob'} // domestic seems to work via me not changing literally anything
         } else {
-            const thismonth = new Date().getMonth();
-            const np = period.filter(
-                (e) => new Date(e).getMonth() == thismonth
-            );
-            if (np.length == 0) throw { error: "you are oob ..." };
+            const thism = new Date(getPeriod()[0]).getMonth(); // monday of current foreign pay period
+            const list = period.filter((e)=>{
+                return Number(e.slice(5, 7))-1 == thism
+            })
+            if(!list.length) throw {error: 'youre oob'}
         }
 
-        //build queries
+        // from here below is our homebrew upsert
         let query1 =
             'delete from days where (username="' + username + '") and (';
         let query2 =
