@@ -36,7 +36,6 @@ export const GET = async (request: NextRequest) => {
             "' WHERE day='-1' AND username='" +
             session.username +
             "';";
-        console.log(updateCrewDayQ)
         const r2 = await connection.execute(updateCrewDayQ)
 
         session.isDomestic = crew;

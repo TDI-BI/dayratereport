@@ -19,6 +19,7 @@ export default function Home() {
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState("");
     const [prev, setprev] = useState(0);
+    const [month, setmonth] = useState(0);
 
     const ex = "prev=" + prev;
 
@@ -93,11 +94,9 @@ export default function Home() {
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
         } else {
-            const thismonth = new Date(
-                (await (await fetchBoth(por + "/api/getday")).json()).resp
-            ).getMonth(); // zero indexed so +1 this is really stupid
+            console.log(month);
             const fweek = nweek.filter(
-                (e: any) => Number(e.slice(5, 7)) == thismonth + 1
+                (e: any) => Number(e.slice(5, 7)) == month + 1
             );
             return fweek.length > 0;
         }
@@ -128,12 +127,16 @@ export default function Home() {
             const perResp = await fetchBoth(por + "/api/verifydate?" + ex);
             const serverPeriod = (await perResp.json()).resp;
 
+            const thing = await fetchBoth(por + "/api/verifydate");
+            const thingy = (await thing.json()).resp;
+
             const session = (
                 await (await fetchBoth(por + "/api/sessionforclient")).json()
             ).resp;
 
             setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
+            setmonth(new Date(thingy[0]).getMonth()) // better bound checking sys.
             setVessels(ves);
             setJobs(job);
         }
