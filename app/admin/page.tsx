@@ -178,28 +178,28 @@ const AdminPannel = () => {
 
     return (
         <main className="flex min-h-screen flex-col items-center">
-            <div className="inline-flex flex-row pb-[10px]">
-                <p>
-                    <button
-                        className="w-[180px] btnh btn hoverbg"
-                        key="back"
-                        onClick={() => {
-                            setPeriodEh(periodEh + 1);
-                        }}
-                    >
-                        {"< "} back
-                    </button>
+            <div className="inline-flex flex-row pb-[10px] space-x-[5px]">
+                <button
+                    className="w-[180px] btnh btn hoverbg"
+                    key="back"
+                    onClick={() => {
+                        setPeriodEh(periodEh + 1);
+                    }}
+                >
+                    {"< "} back
+                </button>
+                <p className="leading-[44px]">
                     {period[0]} to {period[6]}
-                    <button
-                        className="w-[180px] btnh btn hoverbg"
-                        key="forward"
-                        onClick={() => {
-                            setPeriodEh(periodEh - 1);
-                        }}
-                    >
-                        forward {" >"}
-                    </button>
                 </p>
+                <button
+                    className="w-[180px] btnh btn hoverbg"
+                    key="forward"
+                    onClick={() => {
+                        setPeriodEh(periodEh - 1);
+                    }}
+                >
+                    forward {" >"}
+                </button>
                 <div className="pt-[7px]">
                     <div className="bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden">
                         <input
@@ -215,81 +215,27 @@ const AdminPannel = () => {
             <div className="inline-flex flex-row">
                 <div className="w-[200px]">
                     <RadioGroup
+                        className='p-[5px] rounded-xl border-[2px] border-solid border-black w-[100px] text-center'
                         key="filter"
                         label="filter: "
                         value={shipEh}
                         onValueChange={(v) => setShipEh(v)}
                     >
-                        <Radio
-                            key="BMCC"
-                            value="BMCC"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "BMCC" ? "select" : "")
-                            }
-                        >
-                            BMCC
-                        </Radio>
-                        <Radio
-                            key="EMMA"
-                            value="EMMA"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "EMMA" ? "select" : "")
-                            }
-                        >
-                            EMMA
-                        </Radio>
-                        <Radio
-                            key="PROT"
-                            value="PROT"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "PROT" ? "select" : "")
-                            }
-                        >
-                            PROT
-                        </Radio>
-                        <Radio
-                            key="GYRE"
-                            value="GYRE"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "GYRE" ? "select" : "")
-                            }
-                        >
-                            GYRE
-                        </Radio>
-                        <Radio
-                            key="NAUT"
-                            value="NAUT"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "NAUT" ? "select" : "")
-                            }
-                        >
-                            NAUT
-                        </Radio>
-                        <Radio
-                            key="3RD"
-                            value="3RD"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "3RD" ? "select" : "")
-                            }
-                        >
-                            3RD
-                        </Radio>
-                        <Radio
-                            key="????"
-                            value="????"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "????" ? "select" : "")
-                            }
-                        >
-                            ????
-                        </Radio>
+                        {
+                            ["BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD", "????"].map((e)=>
+                                <Radio
+                                    key={e}
+                                    value={e}
+                                    className={
+                                        " hoverbg rounded-xl " +
+                                        (shipEh == e ? "select" : "")
+                                    }
+                                >
+                                    <div className='text-center w-[86px] p-[5px]'>{e}</div>
+                                </Radio>
+                            
+                            )
+                        }
                     </RadioGroup>
                 </div>
                 <div className="adminTable">
