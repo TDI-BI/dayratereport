@@ -5,6 +5,7 @@ import { fetchBoth } from "@/utils/fetchBoth";
 import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect, useMemo } from "react";
 import { RadioGroup, Radio } from "@nextui-org/react";
+import { mkConfig, generateCsv, download } from "export-to-csv";
 
 interface User {
     username: string;
@@ -86,6 +87,44 @@ const Admin = () => {
                 };
             });
     }, [inc, users, shipEh, userFilter, period]);
+
+    const expcsv = () => {
+        let experiod: string[] = [];
+
+
+        for (var i = Number(weeks) - 1; i >= 0; i--) {
+            const nperiod = getPeriod(i + periodEh);
+            let day: string[] = [];
+            nperiod.map((p) => {
+                day.push(p);
+            });
+
+            experiod = [ ...experiod, ...day ];
+        }
+
+        const expme:{[key:string]:string}[] = []
+        filteredData.map((user)=>{
+            var pushme:{[key:string]:string} = {}
+            const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[0] 
+            pushme['name'] = name
+            pushme['crew'] = user.isDomestic ? 'DOMESTIC' : 'FOREIGN'
+            var sum=0
+            experiod.map((day)=>{
+                if(user.workerTypes[day]!='-') sum+=1;
+                pushme[day] = user.workerTypes[day];
+            })
+            if(sum) expme.push(pushme);
+        })
+
+        const csvConfig = mkConfig({
+            useKeysAsHeaders: true,
+            filename:
+                shipEh + "_" + period[0] + "_TO_" + period[6] + "_" + crewEh,
+        });
+        const csv = generateCsv(csvConfig)(expme);
+        download(csvConfig)(csv);
+        
+    }
 
     return (
         <main className="flex min-h-screen flex-col items-center">
@@ -271,7 +310,7 @@ const Admin = () => {
 
                 <button
                     className="w-[180px] h-[115px] btn hoverbg"
-                    onClick={()=>{}}
+                    onClick={()=>expcsv()}
                 >
                     export
                 </button>
