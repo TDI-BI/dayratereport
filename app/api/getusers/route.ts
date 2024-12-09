@@ -14,7 +14,7 @@ export const GET = async (request: NextRequest) => {
         });
 
     //build query
-    const query = "SELECT * FROM users";
+    const query = "SELECT username, uid, email, isDomestic, lastConfirm FROM users;"; // just omit passwod
     const connection = await connectToDb();
     try {
         //execute query
