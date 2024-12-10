@@ -21,7 +21,7 @@ const Admin = () => {
     const [inc, setInc] = useState<{ [key: string]: string }[]>([]);
     const [users, setUsers] = useState<User[]>([]);
     const [crewEh, setCrewEh] = useState("all");
-    const [weeks, setWeeks] = useState("1");
+    const [weeks, setWeeks] = useState(1);
 
     useEffect(() => {
         const getDays = async () => {
@@ -103,6 +103,8 @@ const Admin = () => {
         }
 
         const expme:{[key:string]:string}[] = []
+
+        //something annoying happening here, i only flags for users within the last 6 days because of how i have this set up rn...
         filteredData.map((user)=>{
             var pushme:{[key:string]:string} = {}
             const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[0] 
@@ -229,87 +231,57 @@ const Admin = () => {
 
 
                 <div>
-                <div className="pt-[10px] inline-flex">
-                <RadioGroup
-                    className="exportSettings"
-                    key="weeks"
-                    label="Weeks: "
-                    value={weeks}
-                    onValueChange={(v) => setWeeks(v)}
-                >
-                    <Radio
-                        key="1"
-                        value="1"
-                        className={
-                            (weeks == "1" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        1
-                    </Radio>
-                    <Radio
-                        key="2"
-                        value="2"
-                        className={
-                            (weeks == "2" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        2
-                    </Radio>
-                    <Radio
-                        key="6"
-                        value="6"
-                        className={
-                            (weeks == "6" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        6
-                    </Radio>
-                </RadioGroup>
+                <div className="rounded-xl border-black border-[2px] border-solid p-[10px] space-y-[5px]">
+                    <div className='inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out'>
+                        <p className='leading-[50px] px-[10px] text-center'>last</p>
+                        <button
+                                className="w-[50px] h-[50px] hoverbg rounded-xl"
+                                key="forward"
+                                onClick={() => {
+                                    if(weeks>1) setWeeks(weeks-1);
+                                }}
+                            >
+                                {"-"}
+                        </button>
+                        <p className='leading-[50px] px-[10px] text-center'>{weeks}</p>
+                        <button
+                                className="w-[50px] h-[50px] hoverbg rounded-xl"
+                                key="forward"
+                                onClick={() => {
+                                    if(weeks<100)setWeeks(weeks+1);
+                                }}
+                            >
+                                {"+"}
+                        </button>
+                        <p className='leading-[50px] px-[10px] text-center'>weeks</p>
+                    </div>
+                    <div/>
 
-                <RadioGroup
-                    className="exportSettings"
-                    key="crews"
-                    label="Crews: "
-                    value={crewEh}
-                    onValueChange={(v) => setCrewEh(v)}
-                >
-                    <Radio
-                        key="all"
-                        value="all"
-                        className={
-                            (crewEh == "all" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        all
-                    </Radio>
-                    <Radio
-                        key="domestic"
-                        value="domestic"
-                        className={
-                            (crewEh == "domestic" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        domestic
-                    </Radio>
-                    <Radio
-                        key="foreign"
-                        value="foreign"
-                        className={
-                            (crewEh == "foreign" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        foreign
-                    </Radio>
-                </RadioGroup>
+                    <div className='inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out'>
+                        <p className='leading-[50px] px-[10px] text-center'>for</p>
+                        <select
+                            className="bg-black/0 focus:outline-none border-b-black/0 border-b-2 hover:border-b-black/100 ease-in-out transition-all select-none text-center w-[120px] leading-[50px]"
+                            value={crewEh}
+                            onChange={(e) => {
+                                setCrewEh(e.target.value);
+                            }}
+                        >
+                            {[
+                                "all",
+                                "domestic",
+                                "foreign",
+                            ].map((e) => (
+                                <option value={e} label={(e=='all' ? '' : 'the ') + e} key={e} />
+                            ))}
 
+                        </select>
+                        <p className='leading-[50px] px-[10px] text-center transition-all ease-in-out'>crew{crewEh=='all' ? 's' : ''}</p>
+
+
+                    </div>
+                    <div/>
                 <button
-                    className="w-[180px] h-[115px] btn hoverbg"
+                    className="w-[245px] h-[50px] btn hoverbg"
                     onClick={()=>expcsv()}
                 >
                     export
