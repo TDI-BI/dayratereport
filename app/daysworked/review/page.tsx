@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { getPeriod } from "@/utils/payperiod";
 import { flashDiv } from "@/utils/flashDiv";
 import { useSearchParams } from "next/navigation";
-import { fetchBoth } from "@/utils/fetchBoth";
+
 import {
     Table,
     TableHeader,
@@ -65,7 +65,7 @@ export default function Page() {
             type +
             "&" +
             ex;
-        await fetchBoth(apiUrlEndpoint);
+        await fetch(apiUrlEndpoint);
 
         //redirect :p
         setsaving(0);
@@ -76,10 +76,10 @@ export default function Page() {
     useEffect(() => {
         async function getPeriodInf() {
             const apiUrlEndpoint = por + "/api/getperiodinf?" + ex;
-            const response = await fetchBoth(apiUrlEndpoint);
+            const response = await fetch(apiUrlEndpoint);
             const res = await response.json();
 
-            const perResp = await fetchBoth(por + "/api/verifydate?" + ex);
+            const perResp = await fetch(por + "/api/verifydate?" + ex);
             const serverPeriod = (await perResp.json()).resp;
 
             setPeriod(serverPeriod);

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPort } from "@/utils/getPort";
 const port = getPort();
-import { fetchBoth } from "@/utils/fetchBoth";
+
 
 const Profile = () => {
     const [pl, setpl] = useState(0); /// tracks initial page load, useful for redirect
@@ -13,7 +13,7 @@ const Profile = () => {
 
     const setCrew = async (c: number) => {
         const query = port + "/api/updatemycrew?c=" + c;
-        const ret = await (await fetchBoth(query)).json();
+        const ret = await (await fetch(query)).json();
 
         if (ret.resp) {
             //console.log(ret)
@@ -23,7 +23,7 @@ const Profile = () => {
 
     const gsesh = async () => {
         const ret = (
-            await (await fetchBoth(port + "/api/sessionforclient")).json()
+            await (await fetch(port + "/api/sessionforclient")).json()
         ).resp;
         setSesh(ret);
         setpl(1);

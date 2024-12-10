@@ -1,7 +1,7 @@
 "use client";
 import { getPort } from "@/utils/getPort";
 const port = getPort();
-import { fetchBoth } from "@/utils/fetchBoth";
+
 import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect, useMemo } from "react";
 import { RadioGroup, Radio } from "@nextui-org/react";
@@ -25,12 +25,12 @@ const Admin = () => {
 
     useEffect(() => {
         const getDays = async () => {
-            const response = await fetchBoth(port + "/api/gigaquery");
+            const response = await fetch(port + "/api/gigaquery");
             const res = await response.json();
             setInc(res.resp);
         };
         const getUsers = async () => {
-            let resp = await fetchBoth(port + "/api/getusers");
+            let resp = await fetch(port + "/api/getusers");
             const users = (await resp.json()).resp;
             setUsers(users);
         };
@@ -260,7 +260,6 @@ const Admin = () => {
                         <p className='leading-[50px] px-[10px] text-center'>last</p>
                         <button
                                 className="w-[50px] h-[50px] hoverbg rounded-xl"
-                                key="forward"
                                 onClick={() => {
                                     if(weeks>1) setWeeks(weeks-1);
                                 }}
@@ -270,7 +269,6 @@ const Admin = () => {
                         <p className='leading-[50px] px-[10px] text-center'>{weeks}</p>
                         <button
                                 className="w-[50px] h-[50px] hoverbg rounded-xl"
-                                key="forward"
                                 onClick={() => {
                                     if(weeks<100)setWeeks(weeks+1);
                                 }}

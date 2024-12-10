@@ -12,7 +12,7 @@ INITIAL SETUP
     -   npm install
 5)  if neccecary, follow instructions in your command line to audit and repair vaunerabilities
 6)  if neccecary, set up your mysql database (see later item)
-7)  modify @/utils/getPort.tsx @/utils/connectToDb.tsx @/utils/fetchboth.tsx to reflect your local development enviorment
+7)  modify @/utils/getPort.tsx @/utils/connectToDb.tsx @/utils/fetch.tsx to reflect your local development enviorment
 
 DEVELOPMENT
 -    npm run dev -> localhost:3000

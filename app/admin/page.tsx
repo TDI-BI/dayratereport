@@ -1,7 +1,7 @@
 "use client";
 import { getPort } from "@/utils/getPort";
 const port = getPort();
-import { fetchBoth } from "@/utils/fetchBoth";
+
 import { redirect } from "next/navigation";
 import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect } from "react";
@@ -33,7 +33,7 @@ const AdminPannel = () => {
     useEffect(() => {
         const getEveryting = async () => {
             //fetch from database
-            const response = await fetchBoth(port + "/api/gigaquery");
+            const response = await fetch(port + "/api/gigaquery");
             const res = await response.json();
 
             //type declarations
