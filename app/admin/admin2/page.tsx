@@ -89,35 +89,58 @@ const Admin = () => {
     }, [inc, users, shipEh, userFilter, period]);
 
     const expcsv = () => {
+        // Generate periods for the specified number of weeks
         let experiod: string[] = [];
-
-
         for (var i = Number(weeks) - 1; i >= 0; i--) {
             const nperiod = getPeriod(i + periodEh);
             let day: string[] = [];
             nperiod.map((p) => {
                 day.push(p);
             });
-
             experiod = [ ...experiod, ...day ];
         }
 
+
         const expme:{[key:string]:string}[] = []
 
-        //something annoying happening here, i only flags for users within the last 6 days because of how i have this set up rn...
-        filteredData.map((user)=>{
-            var pushme:{[key:string]:string} = {}
-            const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[0] 
+   
+        // Process users
+        users.forEach((user) => {
+            // Crew filter
+            if (crewEh !== 'ALL') {
+                const isUserDomestic = user.isDomestic;
+                if (
+                    (crewEh === 'DOMESTIC' && !isUserDomestic) ||
+                    (crewEh === 'FOREIGN' && isUserDomestic)
+                ) {
+                    return; // Skip this user
+                }
+            }
+   
+            var pushme: {[key:string]:string} = {}
+            const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[1]
             pushme['name'] = name
             pushme['crew'] = user.isDomestic ? 'DOMESTIC' : 'FOREIGN'
-            var sum=0
-            experiod.map((day)=>{
-                if(user.workerTypes[day]!='-') sum+=1;
-                pushme[day] = user.workerTypes[day];
+           
+            var sum = 0
+            experiod.forEach((day) => {
+                // Check inc (days) array for this user's work on this day
+                const dayWork = inc.find(
+                    d => d.username === user.username && d.day === day
+                );
+               
+                const workerType = dayWork ? dayWork.type : '';
+                pushme[day] = workerType;
+               
+                if (workerType !== '-') sum += 1;
             })
-            if(sum) expme.push(pushme);
+   
+            // Push user if they have any work days or if you want to include all users
+            if (sum > 0) {
+                expme.push(pushme);
+            }
         })
-
+   
         const csvConfig = mkConfig({
             useKeysAsHeaders: true,
             filename:
@@ -125,8 +148,9 @@ const Admin = () => {
         });
         const csv = generateCsv(csvConfig)(expme);
         download(csvConfig)(csv);
-        
     }
+
+
 
     return (
         <main className="flex min-h-screen flex-col items-center">
