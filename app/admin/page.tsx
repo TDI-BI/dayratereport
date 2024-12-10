@@ -164,7 +164,7 @@ const Admin = () => {
                         <div>
                             <input
                                 type="text"
-                                className="bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden text-accent focus:outline-none"
+                                className="bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden text-black focus:outline-none"
                                 value={userFilter}
                                 onChange={(e) => setUserFilter(e.target.value)}
                                 placeholder="search users..."
@@ -210,7 +210,7 @@ const Admin = () => {
                                 "3RD",
                                 "????",
                             ].map((e) => (
-                                <option value={e} label={e} key={e} />
+                                <option className='text-black bg-white' value={e} label={e} key={e} />
                             ))}
                         </select>
                     </div>
@@ -297,7 +297,7 @@ const Admin = () => {
                                 "domestic",
                                 "foreign",
                             ].map((e) => (
-                                <option value={e} label={(e=='all' ? '' : 'the ') + e} key={e} />
+                                <option className='text-black bg-white' value={e} label={(e=='all' ? '' : 'the ') + e} key={e} />
                             ))}
 
                         </select>
@@ -307,7 +307,7 @@ const Admin = () => {
                     </div>
                     <div/>
                 <button
-                    className="w-[245px] h-[50px] btn hoverbg"
+                    className="w-[245px] h-[50px] btn hoverbg rounded-xl"
                     onClick={()=>expcsv()}
                 >
                     export
