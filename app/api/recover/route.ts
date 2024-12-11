@@ -44,7 +44,7 @@ export const GET = async (request: NextRequest) => {
                     'your username is "' +
                     e.username +
                     '"\n' +
-                    "to recover your account please follow the link: https://" +
+                    "to recover your account please follow the link: " +
                     por +
                     "/login/resetpassword?acc=" +
                     e.password +
