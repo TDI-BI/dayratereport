@@ -190,13 +190,6 @@ body {
     border-style: solid;
     background-color: rgb(var(--forground-rgba));
 }
-.adminRB {
-    height: 30px;
-    width: 70px;
-    text-align: center;
-    line-height: 30px;
-    transition: 300ms;
-}
 .adminCell {
     overflow-x: hidden;
     display: inline-block;

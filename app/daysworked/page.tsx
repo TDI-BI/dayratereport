@@ -2,7 +2,7 @@
 import { getPort } from "@/utils/getPort";
 const por = getPort();
 import { getPeriod } from "@/utils/payperiod";
-import { fetchBoth } from "@/utils/fetchBoth";
+
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
 import { useState, useEffect } from "react";
@@ -19,6 +19,7 @@ export default function Home() {
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState("");
     const [prev, setprev] = useState(0);
+    const [month, setmonth] = useState(0);
 
     const ex = "prev=" + prev;
 
@@ -69,7 +70,7 @@ export default function Home() {
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
         const apiUrlEndpoint = por + "/api/mkday?days=" + strdict + "&" + ex;
-        await fetchBoth(apiUrlEndpoint); // fetch query
+        await fetch(apiUrlEndpoint); // fetch query
         setUmsg("saved");
         setsaving(0);
         return true; // returns true on success
@@ -79,7 +80,7 @@ export default function Home() {
         // incoming 1 for next 0 for last, also needs to be async for verification
         const nweek = (
             await (
-                await fetchBoth(
+                await fetch(
                     por + "/api/verifydate?prev=" + (t ? prev - 1 : prev + 1)
                 )
             ).json()
@@ -87,17 +88,15 @@ export default function Home() {
         if (crew) {
             const thisp = (
                 await (
-                    await fetchBoth(por + "/api/getlatestdomesticperiod")
+                    await fetch(por + "/api/getlatestdomesticperiod")
                 ).json()
             ).resp;
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
         } else {
-            const thismonth = new Date(
-                (await (await fetchBoth(por + "/api/getday")).json()).resp
-            ).getMonth(); // zero indexed so +1 this is really stupid
+            console.log(month);
             const fweek = nweek.filter(
-                (e: any) => Number(e.slice(5, 7)) == thismonth + 1
+                (e: any) => Number(e.slice(5, 7)) == month + 1
             );
             return fweek.length > 0;
         }
@@ -107,7 +106,7 @@ export default function Home() {
         //query database
         async function getPeriodInf() {
             const apiUrlEndpoint = por + "/api/getperiodinf?" + ex;
-            const response = await fetchBoth(apiUrlEndpoint);
+            const response = await fetch(apiUrlEndpoint);
             const res = await response.json();
 
             let ves: { [id: string]: string } = {};
@@ -125,15 +124,19 @@ export default function Home() {
                 router.push("../../")
             } // make sure page doesnt crash
 
-            const perResp = await fetchBoth(por + "/api/verifydate?" + ex);
+            const perResp = await fetch(por + "/api/verifydate?" + ex);
             const serverPeriod = (await perResp.json()).resp;
 
+            const thing = await fetch(por + "/api/verifydate");
+            const thingy = (await thing.json()).resp;
+
             const session = (
-                await (await fetchBoth(por + "/api/sessionforclient")).json()
+                await (await fetch(por + "/api/sessionforclient")).json()
             ).resp;
 
             setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
+            setmonth(new Date(thingy[0]).getMonth()) // better bound checking sys.
             setVessels(ves);
             setJobs(job);
         }

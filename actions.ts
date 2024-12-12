@@ -4,7 +4,7 @@ import { getPort } from '@/utils/getPort'; const por = getPort();
 import {getIronSession} from 'iron-session'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
-import { fetchBoth } from "./utils/fetchBoth";
+
 import {
     sessionOptions, 
     sessionData, 
@@ -36,7 +36,7 @@ export const login = async(
     
     //query API
     const link = por+'/api/login?&username='+formUsername;
-    const response = await fetchBoth(link);
+    const response = await fetch(link);
     const res = await response.json();
     const dbAcc= res.resp[0];
     
@@ -102,7 +102,7 @@ export const mkAccount = async(
     //query API
     const fullname=formFirstname+'/'+formLastname;
     const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname+'&isdomestic='+formCrew;
-    const response = await fetchBoth(link);
+    const response = await fetch(link);
     const res = await response.json();
     try{
         if(res.error) return res // catch error in account creation
@@ -134,7 +134,7 @@ export const recover = async (
 
     //query api
     const link = por+'/api/recover?&email='+formEmail;
-    const response = await fetchBoth(link);
+    const response = await fetch(link);
     
     // check query response
     try{
@@ -165,7 +165,7 @@ export const resetPassword = async(
 
     //query API
     const link = por+'/api/resetpassword?password='+hashword+'&oldhash='+oldhash;
-    const response = await fetchBoth(link);
+    const response = await fetch(link);
     const res = await response.json();
 
     //check results

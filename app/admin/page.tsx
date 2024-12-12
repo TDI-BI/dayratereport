@@ -1,471 +1,322 @@
 "use client";
 import { getPort } from "@/utils/getPort";
 const port = getPort();
-import { fetchBoth } from "@/utils/fetchBoth";
-import { redirect } from "next/navigation";
+
 import { getPeriod } from "@/utils/payperiod";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 
-const AdminPannel = () => {
-    //datatype declarations
-    let bweh: { [key: string]: string } = {};
-    let jtype: {
-        [ship: string]: { [user: string]: { [day: string]: string } };
-    } = {};
-    const tblData: any[] = [];
+interface User {
+    username: string;
+    uid: string;
+    isDomestic: boolean;
+}
 
-    //states
-    const [shipEh, setShipEh] = useState("BMCC"); // ship filter
-    const [periodEh, setPeriodEh] = useState(0); // 0 for curr -/+ for rest (we invert)
-    const [crewDict, setcrewDict] = useState(bweh); // domestic v foreign
-    const [userDict, setuserDict] = useState(bweh);
-    const [dataResponse, setdataResponse] = useState([]);
-    const [json, setjson] = useState(jtype);
-
-    const [crewEh, setCrewEh] = useState("all");
-    const [weeks, setWeeks] = useState("1");
-
+const Admin = () => {
+    const [shipEh, setShipEh] = useState("ALL");
+    const [periodEh, setPeriodEh] = useState(0);
     const period = getPeriod(periodEh);
+    const [userFilter, setUserFilter] = useState("");
+    const [inc, setInc] = useState<{ [key: string]: string }[]>([]);
+    const [users, setUsers] = useState<User[]>([]);
+    const [crewEh, setCrewEh] = useState("all");
+    const [weeks, setWeeks] = useState(1);
 
-    //database queries
     useEffect(() => {
-        const getEveryting = async () => {
-            //fetch from database
-            const response = await fetchBoth(port + "/api/gigaquery");
+        const getDays = async () => {
+            const response = await fetch(port + "/api/gigaquery");
             const res = await response.json();
-
-            //type declarations
-            let crewDict: { [id: string]: string } = {};
-            let userDict: { [id: string]: string } = {};
-            let masterJson: {
-                [ship: string]: { [user: string]: { [day: string]: string } };
-            } = {}; // a mess really, but whatever works
-
-            try {
-                //build responses
-                res.resp.forEach((day: any) => {
-                    if (day["day"] == "-1") {
-                        crewDict[day["username"]] =
-                            day["ship"] == "1" ? "domestic" : "foreign"; // log crew type
-                        return;
-                    }
-                    if (!userDict[day["uid"]])
-                        userDict[day["uid"]] = day["username"]; // match UID to username
-                    if (!masterJson[day["ship"]]) masterJson[day["ship"]] = {};
-                    if (!masterJson[day["ship"]][day["uid"]])
-                        masterJson[day["ship"]][day["uid"]] = {};
-                    masterJson[day["ship"]][day["uid"]][day["day"]] =
-                        day["type"];
-                });
-            } catch (e) {} // just so page doesnt crash for non-admin users
-
-            //set states
-            setuserDict(userDict);
-            setcrewDict(crewDict);
-            setdataResponse(res);
-            setjson(masterJson);
+            setInc(res.resp);
         };
-        getEveryting();
+        const getUsers = async () => {
+            let resp = await fetch(port + "/api/getusers");
+            const users = (await resp.json()).resp;
+            setUsers(users);
+        };
+        getDays();
+        getUsers();
     }, []);
 
-    //block non-admins & redirect
-    if (dataResponse["error" as any]) {
-        //console.log('you do not have administrator access :c');
-        redirect("../../");
-    }
+    // Memoized filtered data processing
+    const filteredData = useMemo(() => {
+        // Group days by username and filter by period
+        const daysByUser = inc.reduce<Record<string, any[]>>((acc, day) => {
+            // Check if the day is within the current period
+            if (!period.includes(day["day"])) return acc;
 
-    //build our table
-    if (json[shipEh]) {
-        Object.keys(json[shipEh]).map((name) => {
-            let sum = 0;
-            period.map((e) => {
-                if (json[shipEh][name][e]) sum++;
+            // Ship filter
+            if (shipEh !== "ALL" && day["ship"] !== shipEh) return acc;
+
+            if (!acc[day["username"]]) {
+                acc[day["username"]] = [];
+            }
+            acc[day["username"]].push(day);
+            return acc;
+        }, {});
+
+        // Process and filter users
+        return users
+            .filter((user) => {
+                // Username filter
+                const usernameMatched =
+                    !userFilter ||
+                    String(user["uid"])
+                        .replace("/", " ")
+                        .toLowerCase()
+                        .includes(userFilter.toLowerCase());
+
+                // Check if user has days in the filtered set
+                const userDays = daysByUser[user["username"]] || [];
+
+                return usernameMatched && userDays.length > 0;
+            })
+            .map((user) => {
+                // Get user's days
+                const userDays = daysByUser[user["username"]] || [];
+
+                // Create a map of worker types by date
+                const workerTypeByDate: Record<string, string> = {};
+                userDays.forEach((day) => {
+                    workerTypeByDate[day.day] = day.type;
+                });
+
+                return {
+                    ...user,
+                    workerTypes: workerTypeByDate,
+                };
             });
-            let row = {
-                cre: crewDict[userDict[name]],
-                nam: name.split("/")[0] + " " + name.split("/")[1],
-                fna: name.split("/")[0],
-                lna: name.split("/")[1],
-                mon: json[shipEh][name][period[0]]
-                    ? json[shipEh][name][period[0]]
-                    : "",
-                tue: json[shipEh][name][period[1]]
-                    ? json[shipEh][name][period[1]]
-                    : "",
-                wed: json[shipEh][name][period[2]]
-                    ? json[shipEh][name][period[2]]
-                    : "",
-                thu: json[shipEh][name][period[3]]
-                    ? json[shipEh][name][period[3]]
-                    : "",
-                fri: json[shipEh][name][period[4]]
-                    ? json[shipEh][name][period[4]]
-                    : "",
-                sat: json[shipEh][name][period[5]]
-                    ? json[shipEh][name][period[5]]
-                    : "",
-                sun: json[shipEh][name][period[6]]
-                    ? json[shipEh][name][period[6]]
-                    : "",
-                sum: sum.toString(),
-            };
-            if (sum != 0) tblData.push(row);
-        });
-    }
+    }, [inc, users, shipEh, userFilter, period]);
 
-    //export csv
-    const exportCsv = () => {
-        //setup label columns
-        const expTableData: any[] = [];
-
-        let tday: { [id: string]: string } = {};
-        tday["cre"] = "crew";
-        tday["fna"] = "first name";
-        tday["lna"] = "last name";
-        tday["sum"] = "total";
-
+    const expcsv = () => {
+        // Generate periods for the specified number of weeks
+        let experiod: string[] = [];
         for (var i = Number(weeks) - 1; i >= 0; i--) {
             const nperiod = getPeriod(i + periodEh);
-            let day: { [id: string]: string } = {};
+            let day: string[] = [];
             nperiod.map((p) => {
-                day[p] = p;
+                day.push(p);
             });
-
-            tday = { ...tday, ...day };
+            experiod = [ ...experiod, ...day ];
         }
 
-        Object.keys(json[shipEh]).map((name) => {
-            let usr: { [id: string]: string } = {};
-            let sum = 0;
-            for (const [id, value] of Object.entries(tday)) {
-                if (json[shipEh][name][id]) {
-                    sum += 1;
-                    usr[id] = json[shipEh][name][id];
-                } else usr[id] = "";
-            }
-            usr["cre"] = crewDict[userDict[name]];
-            usr["lna"] = name.split("/")[0];
-            usr["fna"] = name.split("/")[1];
-            usr["sum"] = String(sum);
 
-            if (sum != 0 && (usr["cre"] == crewEh || crewEh == "all")) {
-                expTableData.push(usr);
-                //console.log(usr)
-            }
-        });
-        //console.log(expTableData)
+        const expme:{[key:string]:string}[] = []
 
-        // generate from CSV, basically just copied from export-to-csv documentation
+   
+        // Process users
+        users.forEach((user) => {
+            // Crew filter
+            if (crewEh !== 'ALL') {
+                const isUserDomestic = user.isDomestic;
+                if (
+                    (crewEh === 'DOMESTIC' && !isUserDomestic) ||
+                    (crewEh === 'FOREIGN' && isUserDomestic)
+                ) {
+                    return; // Skip this user
+                }
+            }
+   
+            var pushme: {[key:string]:string} = {}
+            const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[1]
+            pushme['name'] = name
+            pushme['crew'] = user.isDomestic ? 'DOMESTIC' : 'FOREIGN'
+           
+            var sum = 0
+            experiod.forEach((day) => {
+                // Check inc (days) array for this user's work on this day
+                const dayWork = inc.filter((e)=>{
+                    if(shipEh=='all') return true;
+                    return e.ship==shipEh;
+                }).find(
+                    d => d.username === user.username && d.day === day
+                );
+
+                console.log(dayWork);
+               
+                const workerType = dayWork ? dayWork.type : '';
+                pushme[day] = workerType;
+               
+                if ((workerType != '')) sum += 1;
+            })
+            // Push user if they have any work days or if you want to include all users
+            if (sum > 0) {
+                expme.push(pushme);
+            }
+        })
+   
         const csvConfig = mkConfig({
             useKeysAsHeaders: true,
             filename:
                 shipEh + "_" + period[0] + "_TO_" + period[6] + "_" + crewEh,
         });
-        const csv = generateCsv(csvConfig)(expTableData);
+        const csv = generateCsv(csvConfig)(expme);
         download(csvConfig)(csv);
-    };
+    }
 
-    const [userfilter, setuserFilter] = useState("");
-    const searchFilteru = (array: any) => {
-        return array.filter((el: any) =>
-            el["nam"].toLowerCase().includes(userfilter.toLowerCase())
-        );
-    };
 
-    const userlist = searchFilteru(tblData);
 
     return (
-        <main className="flex min-h-screen flex-col items-center">
-            <div className="inline-flex flex-row pb-[10px]">
-                <p>
-                    <button
-                        className="w-[180px] btnh btn hoverbg"
-                        key="back"
-                        onClick={() => {
-                            setPeriodEh(periodEh + 1);
-                        }}
-                    >
-                        {"< "} back
-                    </button>
-                    {period[0]} to {period[6]}
-                    <button
-                        className="w-[180px] btnh btn hoverbg"
-                        key="forward"
-                        onClick={() => {
-                            setPeriodEh(periodEh - 1);
-                        }}
-                    >
-                        forward {" >"}
-                    </button>
-                </p>
-                <div className="pt-[7px]">
-                    <div className="bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden">
-                        <input
-                            type="text"
-                            className="text-black h-[24px] focus:outline-none"
-                            value={userfilter}
-                            onChange={(e) => setuserFilter(e.target.value)}
-                            placeholder="search users..."
-                        ></input>
+        <main className="flex min-h-screen flex-col items-center pt-[20px]">
+            <div className="inline-flex flex-wrap justify-center gap-4 pb-[10px]">
+                <div className="rounded-xl border-accent border-[2px] border-solid p-[10px] w-[822px] overflow-x-hidden">
+                    <div className="inline-flex h-[50px] space-x-[10px] leading-[50px] align-middle w-[802px] justify-between">
+                        <div>
+                            <input
+                                type="text"
+                                className="bg-white h-[30px] w-[240px] rounded-xl p-[2px] pl-[10px] pr-[10px] overflow-hidden text-black focus:outline-none"
+                                value={userFilter}
+                                onChange={(e) => setUserFilter(e.target.value)}
+                                placeholder="search users..."
+                            ></input>
+                        </div>
+
+                        <button
+                            className="px-[10px] h-[50px] hoverbg rounded-xl"
+                            key="back"
+                            onClick={() => {
+                                setPeriodEh(periodEh + 1);
+                            }}
+                        >
+                            {"< "} back
+                        </button>
+                        <p className="">
+                            {period[0]} to {period[6]}
+                        </p>
+                        <button
+                            className="px-[10px] h-[50px] hoverbg rounded-xl"
+                            key="forward"
+                            onClick={() => {
+                                setPeriodEh(periodEh - 1);
+                            }}
+                        >
+                            forward {" >"}
+                        </button>
+
+                        <select
+                            className="bg-accent/0 focus:outline-none border-b-accent/0 border-b-2 hover:border-b-accent/100 ease-in-out transition-all select-none text-center w-[70px] leading-[50px]"
+                            value={shipEh}
+                            onChange={(e) => {
+                                setShipEh(e.target.value);
+                            }}
+                        >
+                            {[
+                                "ALL",
+                                "BMCC",
+                                "EMMA",
+                                "PROT",
+                                "GYRE",
+                                "NAUT",
+                                "3RD",
+                                "????",
+                            ].map((e) => (
+                                <option className='text-black bg-white' value={e} label={e} key={e} />
+                            ))}
+                        </select>
                     </div>
-                </div>
-            </div>
-            <div className="inline-flex flex-row">
-                <div className="w-[200px]">
-                    <RadioGroup
-                        key="filter"
-                        label="filter: "
-                        value={shipEh}
-                        onValueChange={(v) => setShipEh(v)}
-                    >
-                        <Radio
-                            key="BMCC"
-                            value="BMCC"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "BMCC" ? "select" : "")
-                            }
-                        >
-                            BMCC
-                        </Radio>
-                        <Radio
-                            key="EMMA"
-                            value="EMMA"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "EMMA" ? "select" : "")
-                            }
-                        >
-                            EMMA
-                        </Radio>
-                        <Radio
-                            key="PROT"
-                            value="PROT"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "PROT" ? "select" : "")
-                            }
-                        >
-                            PROT
-                        </Radio>
-                        <Radio
-                            key="GYRE"
-                            value="GYRE"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "GYRE" ? "select" : "")
-                            }
-                        >
-                            GYRE
-                        </Radio>
-                        <Radio
-                            key="NAUT"
-                            value="NAUT"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "NAUT" ? "select" : "")
-                            }
-                        >
-                            NAUT
-                        </Radio>
-                        <Radio
-                            key="3RD"
-                            value="3RD"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "3RD" ? "select" : "")
-                            }
-                        >
-                            3RD
-                        </Radio>
-                        <Radio
-                            key="????"
-                            value="????"
-                            className={
-                                "hoverbg adminRB " +
-                                (shipEh == "????" ? "select" : "")
-                            }
-                        >
-                            ????
-                        </Radio>
-                    </RadioGroup>
-                </div>
-                <div className="adminTable">
-                    <div className="h-[26px]" key="headrow">
-                        <div
-                            className="adminCell adminLabelX"
-                            key="headnamelblx"
-                        >
-                            <strong>NAME</strong>
+                    <div className='h-[10px]'/>
+                    <div className="inline-flex">
+                        <div className="inline-flex">
+                            <p className="w-[140px] text-center">name</p>
+                            <p className="w-[46px] text-center">crew</p>
                         </div>
-                        <div
-                            className="adminCell adminLabelY"
-                            key="headnamelbly"
-                        >
-                            CREW
-                        </div>
-                        {period.map((day) => (
-                            <div
-                                className="adminCell adminLabelY"
-                                key={day + "label"}
-                            >
-                                <p>{day}</p>
-                            </div>
+                        {period.map((e) => (
+                            <p key={e} className="w-[88px] text-center">
+                                {e.slice(5, 10)}
+                            </p>
                         ))}
                     </div>
-                    {json[shipEh] &&
-                        userlist.map((el: any) => (
-                            <div
-                                className="h-[26px] bghover"
-                                key={el.fna + el.lna}
-                            >
+                    <div className="h-[2px] w-[802px] bg-gray-500" />
+                    <div className="flex-col pt-[5px] space-x-[5px] w-[819px] h-[600px] overflow-y-auto overflow-x-hidden">
+                        <div>
+                            {filteredData.map((user) => (
                                 <div
-                                    className="adminCell adminLabelX"
-                                    key={el.fna + el.lna + "name"}
+                                    key={user.username}
+                                    className="inline-flex h-[50px] hoverbg rounded-xl"
                                 >
-                                    {el.fna + " " + el.lna}
+                                    <div className="inline-flex">
+                                        <div className="w-[140px] text-center">
+                                            <div>{user.uid.split("/")[0]}</div>
+                                            <div>{user.uid.split("/")[1]}</div>
+                                        </div>
+                                        <p className="w-[46px] text-center leading-[50px]">
+                                            {user.isDomestic ? "DOM" : "FOR"}
+                                        </p>
+                                    </div>
+                                    {period.map((date) => (
+                                        <p
+                                            key={date}
+                                            className="w-[88px] text-center leading-[50px]"
+                                        >
+                                            {user.workerTypes[date] || "-"}
+                                        </p>
+                                    ))}
                                 </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "dom"}
-                                >
-                                    {el.cre}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "mon"}
-                                >
-                                    {el.mon}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "tue"}
-                                >
-                                    {el.tue}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "wed"}
-                                >
-                                    {el.wed}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "thu"}
-                                >
-                                    {el.thu}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "fri"}
-                                >
-                                    {el.fri}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "sat"}
-                                >
-                                    {el.sat}
-                                </div>
-                                <div
-                                    className="adminCell"
-                                    key={el.fna + el.lna + "sun"}
-                                >
-                                    {el.sun}
-                                </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div className="pt-[10px] inline-flex">
-                <RadioGroup
-                    className="exportSettings"
-                    key="weeks"
-                    label="Weeks: "
-                    value={weeks}
-                    onValueChange={(v) => setWeeks(v)}
-                >
-                    <Radio
-                        key="1"
-                        value="1"
-                        className={
-                            (weeks == "1" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        1
-                    </Radio>
-                    <Radio
-                        key="2"
-                        value="2"
-                        className={
-                            (weeks == "2" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        2
-                    </Radio>
-                    <Radio
-                        key="6"
-                        value="6"
-                        className={
-                            (weeks == "6" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        6
-                    </Radio>
-                </RadioGroup>
 
-                <RadioGroup
-                    className="exportSettings"
-                    key="crews"
-                    label="Crews: "
-                    value={crewEh}
-                    onValueChange={(v) => setCrewEh(v)}
-                >
-                    <Radio
-                        key="all"
-                        value="all"
-                        className={
-                            (crewEh == "all" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        all
-                    </Radio>
-                    <Radio
-                        key="domestic"
-                        value="domestic"
-                        className={
-                            (crewEh == "domestic" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        domestic
-                    </Radio>
-                    <Radio
-                        key="foreign"
-                        value="foreign"
-                        className={
-                            (crewEh == "foreign" ? "select" : "") +
-                            " exportSetting hoverbg"
-                        }
-                    >
-                        foreign
-                    </Radio>
-                </RadioGroup>
 
+                <div>
+                <div className="rounded-xl border-accent border-[2px] border-solid p-[10px] space-y-[5px]">
+                    <div className='inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out'>
+                        <p className='leading-[50px] px-[10px] text-center'>last</p>
+                        <button
+                                className="w-[50px] h-[50px] hoverbg rounded-xl"
+                                onClick={() => {
+                                    if(weeks>1) setWeeks(weeks-1);
+                                }}
+                            >
+                                {"-"}
+                        </button>
+                        <p className='leading-[50px] px-[10px] text-center'>{weeks}</p>
+                        <button
+                                className="w-[50px] h-[50px] hoverbg rounded-xl"
+                                onClick={() => {
+                                    if(weeks<100)setWeeks(weeks+1);
+                                }}
+                            >
+                                {"+"}
+                        </button>
+                        <p className='leading-[50px] px-[10px] text-center'>weeks</p>
+                    </div>
+                    <div/>
+
+                    <div className='inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out'>
+                        <p className='leading-[50px] px-[10px] text-center'>for</p>
+                        <select
+                            className="bg-accent/0 focus:outline-none border-b-accent/0 border-b-2 hover:border-b-accent/100 ease-in-out transition-all select-none text-center w-[120px] leading-[50px]"
+                            value={crewEh}
+                            onChange={(e) => {
+                                setCrewEh(e.target.value);
+                            }}
+                        >
+                            {[
+                                "all",
+                                "domestic",
+                                "foreign",
+                            ].map((e) => (
+                                <option className='text-black bg-white' value={e} label={(e=='all' ? '' : 'the ') + e} key={e} />
+                            ))}
+
+                        </select>
+                        <p className='leading-[50px] px-[10px] text-center transition-all ease-in-out'>crew{crewEh=='all' ? 's' : ''}</p>
+
+
+                    </div>
+                    <div/>
                 <button
-                    className="w-[180px] h-[115px] btn hoverbg"
-                    onClick={exportCsv}
+                    className="w-[245px] h-[50px] btn hoverbg rounded-xl"
+                    onClick={()=>expcsv()}
                 >
                     export
                 </button>
+                </div>
+                </div>
             </div>
         </main>
     );
 };
-export default AdminPannel;
+
+export default Admin;
