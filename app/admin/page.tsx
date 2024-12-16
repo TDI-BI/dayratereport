@@ -132,7 +132,7 @@ const Admin = () => {
                     d => d.username === user.username && d.day === day
                 );
 
-                console.log(dayWork);
+                ////console.log(dayWork);
                
                 const workerType = dayWork ? dayWork.type : '';
                 pushme[day] = workerType;
@@ -302,8 +302,6 @@ const Admin = () => {
 
                         </select>
                         <p className='leading-[50px] px-[10px] text-center transition-all ease-in-out'>crew{crewEh=='all' ? 's' : ''}</p>
-
-
                     </div>
                     <div/>
                 <button

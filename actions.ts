@@ -15,14 +15,13 @@ const bcrypt = require('bcrypt')
 
 
 export const getSession = async()=>{
-    const session = await getIronSession<sessionData>(cookies(), sessionOptions)
-    return session;
-}
 
-//client friendly, doesnt require the passing of illegal data types
-export const clientGetSession = async () => {
+    console.log('cookies: ', cookies())
+
     const session = await getIronSession<sessionData>(cookies(), sessionOptions)
-    return session.isLoggedIn ? true : false;
+    console.log('from actions: ', session)
+    
+    return session;
 }
 
 export const login = async(
@@ -43,7 +42,7 @@ export const login = async(
     try{ // compare our password with the hash using bcrypt
         const auth= await bcrypt.compare(formPassword, dbAcc.password)
         if(!auth){
-            //console.log(formPassword + " " + password);
+            ////console.log(formPassword + " " + password);
             return {error: 'wrong password for account'}
         }
     }

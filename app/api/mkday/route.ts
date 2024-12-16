@@ -13,7 +13,7 @@ export const GET = async (request: NextRequest) => {
             	status: 500,
         	});
    	 
-    	console.log(session.username);
+    	////console.log(session.username);
     	//get session information
     	const uid = session.userId;
     	const username = session.username;

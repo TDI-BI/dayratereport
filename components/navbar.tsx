@@ -5,8 +5,8 @@ import { getSession } from "@/actions";
 const Navbar = async () => {
     const session = await getSession();
 
-    //console.log(session)
-    //console.log(session.isLoggedIn)
+    ////console.log(session)
+    ////console.log(session.isLoggedIn)
     if (!session.isLoggedIn) return <div className="padding" />;
     return (
         <nav className="head">

@@ -13,7 +13,7 @@ export const GET = async () => {
 
         const existsQuery =
             "SELECT id, date FROM periodstarts ORDER BY id DESC FOR UPDATE;"; // this could totally just be a tuesday...
-        //console.log(existsQuery)
+        ////console.log(existsQuery)
         
         const dateret = JSON.parse(
             JSON.stringify(await connection.query(existsQuery, {cache:false}))

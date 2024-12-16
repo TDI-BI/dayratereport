@@ -94,7 +94,7 @@ export default function Home() {
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
         } else {
-            console.log(month);
+            ////console.log(month);
             const fweek = nweek.filter(
                 (e: any) => Number(e.slice(5, 7)) == month + 1
             );
@@ -106,6 +106,8 @@ export default function Home() {
         //query database
         async function getPeriodInf() {
             const apiUrlEndpoint = por + "/api/getperiodinf?" + ex;
+
+            ////console.log(apiUrlEndpoint);
             const response = await fetch(apiUrlEndpoint);
             const res = await response.json();
 
