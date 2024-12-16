@@ -4,6 +4,7 @@ import { getPort } from '@/utils/getPort'; const por = getPort();
 import {getIronSession} from 'iron-session'
 import {cookies} from 'next/headers'
 import {redirect} from 'next/navigation'
+import { fetchBoth } from '@/utils/fetchboth'
 
 import {
     sessionOptions, 
@@ -16,10 +17,7 @@ const bcrypt = require('bcrypt')
 
 export const getSession = async()=>{
 
-    console.log('cookies: ', cookies())
-
     const session = await getIronSession<sessionData>(cookies(), sessionOptions)
-    console.log('from actions: ', session)
     
     return session;
 }
@@ -34,15 +32,13 @@ export const login = async(
     const formPassword = formData.get('password') as string
     
     //query API
-    const link = por+'/api/login?&username='+formUsername;
-    const response = await fetch(link);
+    const response = await fetchBoth(`/api/login?&username=${formUsername}`);
     const res = await response.json();
     const dbAcc= res.resp[0];
     
     try{ // compare our password with the hash using bcrypt
         const auth= await bcrypt.compare(formPassword, dbAcc.password)
         if(!auth){
-            ////console.log(formPassword + " " + password);
             return {error: 'wrong password for account'}
         }
     }
@@ -100,8 +96,7 @@ export const mkAccount = async(
 
     //query API
     const fullname=formFirstname+'/'+formLastname;
-    const link = por+'/api/mkaccount?username='+formUsername+'&password='+hashword+'&email='+formEmail+'&fullname='+fullname+'&isdomestic='+formCrew;
-    const response = await fetch(link);
+    const response = await fetchBoth(`/api/mkaccount?username=${formUsername}&password=${hashword}&email=${formEmail}&fullname=${fullname}&isdomestic=${formCrew}`);
     const res = await response.json();
     try{
         if(res.error) return res // catch error in account creation
@@ -132,8 +127,7 @@ export const recover = async (
     if(!formEmail) return {error: 'no email'}
 
     //query api
-    const link = por+'/api/recover?&email='+formEmail;
-    const response = await fetch(link);
+    const response = await fetchBoth(`/api/recover?&email=${formEmail}`);
     
     // check query response
     try{
@@ -163,8 +157,7 @@ export const resetPassword = async(
     const hashword = await bcrypt.hash(formPassword, 10)
 
     //query API
-    const link = por+'/api/resetpassword?password='+hashword+'&oldhash='+oldhash;
-    const response = await fetch(link);
+    const response = await fetchBoth(`/api/resetpassword?password=${hashword}&oldhash=${oldhash}`);
     const res = await response.json();
 
     //check results

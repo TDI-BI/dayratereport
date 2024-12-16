@@ -7,6 +7,7 @@ import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect } from "react";
 import { RadioGroup, Radio } from "@nextui-org/react";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import { fetchBoth } from "@/utils/fetchboth";
 
 const AdminPannel = () => {
     //datatype declarations
@@ -33,7 +34,7 @@ const AdminPannel = () => {
     useEffect(() => {
         const getEveryting = async () => {
             //fetch from database
-            const response = await fetch(port + "/api/gigaquery");
+            const response = await fetchBoth("/api/gigaquery");
             const res = await response.json();
 
             //type declarations
@@ -72,7 +73,6 @@ const AdminPannel = () => {
 
     //block non-admins & redirect
     if (dataResponse["error" as any]) {
-        ////console.log('you do not have administrator access :c');
         redirect("../../");
     }
 
@@ -152,10 +152,9 @@ const AdminPannel = () => {
 
             if (sum != 0 && (usr["cre"] == crewEh || crewEh == "all")) {
                 expTableData.push(usr);
-                ////console.log(usr)
+
             }
         });
-        ////console.log(expTableData)
 
         // generate from CSV, basically just copied from export-to-csv documentation
         const csvConfig = mkConfig({

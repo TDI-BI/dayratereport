@@ -8,9 +8,6 @@ export const GET = async (request: NextRequest) => {
 
     //block if you are already logged in
     const session = await getSession(); // block anyone not logged in
-    //console.log(session); // this line is where the issue is happening :(, when i call it directly I get everything exactly as I want it however otherwise its just being annoying as fuck
-    console.log('from api: ')
-    console.log(session);
     if (!session.isLoggedIn){
         return new Response(JSON.stringify({ error: "not logged in" }), {
             status: 500,
@@ -18,11 +15,9 @@ export const GET = async (request: NextRequest) => {
     }
     //get URL parameters
 
-    //console.log('pre search param read')
     const { searchParams } = request.nextUrl;
     var prev = Number(searchParams.get("prev"));
 
-    //console.log('pre query read')
 
     //query info building
     const period = getPeriod(prev);

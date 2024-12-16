@@ -16,6 +16,7 @@ import {
 } from "@nextui-org/react";
 import { redirect, useRouter } from "next/navigation";
 import Link from "next/link";
+import { fetchBoth } from "@/utils/fetchboth";
 
 export default function Page() {
     //check previous or current
@@ -56,7 +57,6 @@ export default function Page() {
 
         //send email
         const apiUrlEndpoint =
-            por +
             "/api/sendperiodinf?day=" +
             period[0] +
             "&pdf=" +
@@ -65,7 +65,7 @@ export default function Page() {
             type +
             "&" +
             ex;
-        await fetch(apiUrlEndpoint);
+        await fetchBoth(apiUrlEndpoint);
 
         //redirect :p
         setsaving(0);
@@ -75,11 +75,10 @@ export default function Page() {
     //database queries
     useEffect(() => {
         async function getPeriodInf() {
-            const apiUrlEndpoint = por + "/api/getperiodinf?" + ex;
-            const response = await fetch(apiUrlEndpoint);
+            const response = await fetchBoth(`/api/getperiodinf?${ex}`);
             const res = await response.json();
 
-            const perResp = await fetch(por + "/api/verifydate?" + ex);
+            const perResp = await fetchBoth(`/api/verifydate?${ex}`);
             const serverPeriod = (await perResp.json()).resp;
 
             setPeriod(serverPeriod);

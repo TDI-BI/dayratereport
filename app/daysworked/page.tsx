@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
 import { useState, useEffect } from "react";
 import DropDown from "@/components/reportDropDown";
+import { fetchBoth } from "@/utils/fetchboth";
 
 export default function Home() {
     const router = useRouter();
@@ -69,8 +70,7 @@ export default function Home() {
         }
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
-        const apiUrlEndpoint = por + "/api/mkday?days=" + strdict + "&" + ex;
-        await fetch(apiUrlEndpoint); // fetch query
+        await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
         setUmsg("saved");
         setsaving(0);
         return true; // returns true on success
@@ -80,21 +80,20 @@ export default function Home() {
         // incoming 1 for next 0 for last, also needs to be async for verification
         const nweek = (
             await (
-                await fetch(
-                    por + "/api/verifydate?prev=" + (t ? prev - 1 : prev + 1)
+                await fetchBoth(
+                    `/api/verifydate?prev=${t ? prev - 1 : prev + 1}`
                 )
             ).json()
         ).resp; // get next week in intended direction
         if (crew) {
             const thisp = (
                 await (
-                    await fetch(por + "/api/getlatestdomesticperiod")
+                    await fetchBoth("/api/getlatestdomesticperiod")
                 ).json()
             ).resp;
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
         } else {
-            ////console.log(month);
             const fweek = nweek.filter(
                 (e: any) => Number(e.slice(5, 7)) == month + 1
             );
@@ -105,10 +104,8 @@ export default function Home() {
     useEffect(() => {
         //query database
         async function getPeriodInf() {
-            const apiUrlEndpoint = por + "/api/getperiodinf?" + ex;
 
-            ////console.log(apiUrlEndpoint);
-            const response = await fetch(apiUrlEndpoint);
+            const response = await fetchBoth(`/api/getperiodinf?${ex}`);
             const res = await response.json();
 
             let ves: { [id: string]: string } = {};
@@ -126,14 +123,14 @@ export default function Home() {
                 router.push("../../")
             } // make sure page doesnt crash
 
-            const perResp = await fetch(por + "/api/verifydate?" + ex);
+            const perResp = await fetchBoth(`/api/verifydate?${ex}`);
             const serverPeriod = (await perResp.json()).resp;
 
-            const thing = await fetch(por + "/api/verifydate");
+            const thing = await fetchBoth("/api/verifydate");
             const thingy = (await thing.json()).resp;
 
             const session = (
-                await (await fetch(por + "/api/sessionforclient")).json()
+                await (await fetchBoth("/api/sessionforclient")).json()
             ).resp;
 
             setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)

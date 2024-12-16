@@ -4,7 +4,7 @@ const port = getPort();
 
 import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect, useMemo } from "react";
-import { RadioGroup, Radio } from "@nextui-org/react";
+import { fetchBoth } from "@/utils/fetchboth";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 
 interface User {
@@ -25,12 +25,12 @@ const Admin = () => {
 
     useEffect(() => {
         const getDays = async () => {
-            const response = await fetch(port + "/api/gigaquery");
+            const response = await fetchBoth("/api/gigaquery");
             const res = await response.json();
             setInc(res.resp);
         };
         const getUsers = async () => {
-            let resp = await fetch(port + "/api/getusers");
+            let resp = await fetchBoth("/api/getusers");
             const users = (await resp.json()).resp;
             setUsers(users);
         };
@@ -131,8 +131,6 @@ const Admin = () => {
                 }).find(
                     d => d.username === user.username && d.day === day
                 );
-
-                ////console.log(dayWork);
                
                 const workerType = dayWork ? dayWork.type : '';
                 pushme[day] = workerType;

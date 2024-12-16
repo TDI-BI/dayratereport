@@ -1,4 +1,5 @@
 "use client";
+import { fetchBoth } from "@/utils/fetchboth";
 import { getPort } from "@/utils/getPort";
 const por = getPort();
 
@@ -28,7 +29,7 @@ const Confirmations = () => {
     useEffect(() => {
         const getArr = async () => {
             //fetch from database
-            let resp = await fetch(por + "/api/getusers");
+            let resp = await fetchBoth("/api/getusers");
             const users = (await resp.json()).resp;
 
             //set states

@@ -150,9 +150,7 @@ export const GET = async (request: NextRequest) => {
                 },
             ],
         });
-
-        ////console.log(pds)
-
+        
         return Response.json({ data }, { status: 200 });
     } catch (error: any) {
         connection.end();

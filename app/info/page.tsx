@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getPort } from "@/utils/getPort";
+import { fetchBoth } from "@/utils/fetchboth";
 const port = getPort();
 
 
@@ -12,19 +13,19 @@ const Profile = () => {
     const [session, setSesh] = useState({} as { [key: string]: any });
 
     const setCrew = async (c: number) => {
-        const query = port + "/api/updatemycrew?c=" + c;
-        const ret = await (await fetch(query)).json();
+        const getme = await fetchBoth(`/api/updatemycrew?c=${c}`)
+        const ret = await getme.json();
 
         if (ret.resp) {
-            ////console.log(ret)
             gsesh();
         }
     };
 
     const gsesh = async () => {
         const ret = (
-            await (await fetch(port + "/api/sessionforclient")).json()
+            await (await fetchBoth(`/api/sessionforclient`)).json()
         ).resp;
+
         setSesh(ret);
         setpl(1);
     };
@@ -44,8 +45,8 @@ const Profile = () => {
                     full name:
                     {session.userId
                         ? session.userId.split("/")[0] +
-                          " " +
-                          session.userId.split("/")[0]
+                        " " +
+                        session.userId.split("/")[0]
                         : ""}
                 </p>
             </div>
@@ -71,7 +72,7 @@ const Profile = () => {
             <p className="text-center w-[300px]">
                 <br></br>
                 comments or complaints please email
-                 parkerseeley@tdi-bi.com or fill out our feedback
+                parkerseeley@tdi-bi.com or fill out our feedback
                 form:
             </p>
 
