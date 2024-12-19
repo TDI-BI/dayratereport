@@ -3,10 +3,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { getPort } from "@/utils/getPort";
 import { fetchBoth } from "@/utils/fetchboth";
-const port = getPort();
-
 
 const Profile = () => {
     const [pl, setpl] = useState(0); /// tracks initial page load, useful for redirect
