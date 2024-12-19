@@ -49,6 +49,7 @@ describe('Navbar Component', () => {
     	expect(daysWorkedLink).toHaveAttribute('href', '/daysworked');
     	expect(infoLink).toHaveAttribute('href', '/info');
 	});
+    
 });
 
 
