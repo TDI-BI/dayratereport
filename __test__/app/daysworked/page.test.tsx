@@ -6,9 +6,7 @@ import {
     fireEvent,
 } from "@testing-library/react";
 import Home from "@/app/daysworked/page"; // Adjust the import path as per your project structure
-import { useRouter, useSearchParams } from "next/navigation";
-import userEvent from "@testing-library/user-event";
-import * as flashDivModule from "@/utils/flashDiv";
+import { useRouter } from "next/navigation";
 
 // Create the mock before your tests
 jest.mock("@/utils/flashDiv", () => ({
