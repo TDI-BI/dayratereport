@@ -6,6 +6,7 @@ import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchBoth } from "@/utils/fetchboth";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import { useRouter } from "next/navigation";
 
 interface User {
     username: string;
@@ -14,6 +15,9 @@ interface User {
 }
 
 const Admin = () => {
+
+    const router = useRouter();
+
     const [shipEh, setShipEh] = useState("ALL");
     const [periodEh, setPeriodEh] = useState(0);
     const period = getPeriod(periodEh);
@@ -23,6 +27,7 @@ const Admin = () => {
     const [crewEh, setCrewEh] = useState("all");
     const [weeks, setWeeks] = useState(1);
     const [refresh, setRefresh] = useState(true);
+    const [pageErr, setPageErr] = useState(false);
 
     // Split the effects to prevent unnecessary re-renders
 
@@ -33,30 +38,48 @@ const Admin = () => {
         setInc(res.resp);
         setRefresh(false);
     }
-    
-    const getDaysCallBack = useCallback( async () => {
+
+    useEffect(() => {
         const getDays = async () => {
+            try{
+                setRefresh(true);
+                const response = await fetchBoth(`/api/gigaquery2?prev=${periodEh}&tot=${weeks}`);
+                const res = await response.json();
+                if(!res.resp) throw {error: 'no input'};
+                setInc(res.resp);
+                setRefresh(false);
+            } catch(e) {
+                setInc([])
+                setPageErr(true);
+            }
+        }
+        const getUsers = async () => {
+            try{
+                let resp = await fetchBoth("/api/getusers");
+                const users = (await resp.json());
+                if(!users.resp) throw {error: 'no input'};
+                setUsers(users.resp);
+            }
+            catch(e){
+                setUsers([])
+                setPageErr(true);
+            }
+        };
+
+        const getstuff = async () =>{
             setRefresh(true);
-            const response = await fetchBoth(`/api/gigaquery2?prev=${periodEh}&tot=${weeks}`);
-            const res = await response.json();
-            setInc(res.resp);
+
+            await getUsers();
+            await getDays();
+
             setRefresh(false);
         }
-        getDays()
-    },[periodEh, weeks]);
 
-    useEffect(() => {
-        getDaysCallBack();
-    }, [getDaysCallBack]); // Only re-fetch when period changes
+        getstuff();
+        
+    }, [periodEh, weeks]); // Only re-fetch when period changes
 
-    useEffect(() => {
-        const getUsers = async () => {
-            let resp = await fetchBoth("/api/getusers");
-            const users = (await resp.json()).resp;
-            setUsers(users);
-        };
-        getUsers();
-    }, []); // Only fetch users once on mount
+    if(pageErr) router.push('/daysworked')
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
