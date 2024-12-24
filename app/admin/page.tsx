@@ -33,7 +33,7 @@ const Admin = () => {
 
     const getDaysCallable = async () => {
         setRefresh(true);
-        const response = await fetchBoth(`/api/gigaquery2?prev=${periodEh}&tot=${weeks}`);
+        const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
         const res = await response.json();
         setInc(res.resp);
         setRefresh(false);
@@ -43,7 +43,7 @@ const Admin = () => {
         const getDays = async () => {
             try{
                 setRefresh(true);
-                const response = await fetchBoth(`/api/gigaquery2?prev=${periodEh}&tot=${weeks}`);
+                const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
                 const res = await response.json();
                 if(!res.resp) throw {error: 'no input'};
                 setInc(res.resp);
@@ -146,22 +146,9 @@ const Admin = () => {
             experiod = [ ...experiod, ...day ];
         }
         
-        console.log("Starting export with:", {
-            users: users.length,
-            incRecords: inc.length,
-            experiodDays: experiod.length,
-            shipFilter: shipEh,
-            crewFilter: crewEh
-        });
-    
         const expme: {[key:string]:string}[] = []
     
         users.forEach((user) => {
-            // Debug current user
-            console.log(`Processing user: ${user.username}`, {
-                isDomestic: user.isDomestic,
-                crewEh: crewEh
-            });
     
             // Crew filter - note crewEh is lowercase but we're comparing with uppercase
             if (crewEh.toUpperCase() !== 'ALL') {
@@ -170,7 +157,6 @@ const Admin = () => {
                     (crewEh.toUpperCase() === 'DOMESTIC' && !isUserDomestic) ||
                     (crewEh.toUpperCase() === 'FOREIGN' && isUserDomestic)
                 ) {
-                    console.log(`Skipping user due to crew filter: ${user.username}`);
                     return;
                 }
             }
@@ -199,13 +185,15 @@ const Admin = () => {
                 if (workerType !== '') sum += 1;
             });
     
-            // Debug work days found
-            console.log(`Found ${sum} work days for user ${user.username}`);
-    
             if (sum > 0) {
                 expme.push(pushme);
             }
         });
+
+        if(!expme.length) {
+            console.log('no records to export');
+            return;
+        };
        
         console.log(`Exporting ${expme.length} records`);
     
