@@ -3,9 +3,10 @@ import { getPort } from "@/utils/getPort";
 const port = getPort();
 
 import { getPeriod } from "@/utils/payperiod";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchBoth } from "@/utils/fetchboth";
 import { mkConfig, generateCsv, download } from "export-to-csv";
+import { useRouter } from "next/navigation";
 
 interface User {
     username: string;
@@ -14,6 +15,9 @@ interface User {
 }
 
 const Admin = () => {
+
+    const router = useRouter();
+
     const [shipEh, setShipEh] = useState("ALL");
     const [periodEh, setPeriodEh] = useState(0);
     const period = getPeriod(periodEh);
@@ -22,21 +26,60 @@ const Admin = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [crewEh, setCrewEh] = useState("all");
     const [weeks, setWeeks] = useState(1);
+    const [refresh, setRefresh] = useState(true);
+    const [pageErr, setPageErr] = useState(false);
+
+    // Split the effects to prevent unnecessary re-renders
+
+    const getDaysCallable = async () => {
+        setRefresh(true);
+        const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
+        const res = await response.json();
+        setInc(res.resp);
+        setRefresh(false);
+    }
 
     useEffect(() => {
         const getDays = async () => {
-            const response = await fetchBoth("/api/gigaquery");
-            const res = await response.json();
-            setInc(res.resp);
-        };
+            try{
+                setRefresh(true);
+                const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
+                const res = await response.json();
+                if(!res.resp) throw {error: 'no input'};
+                setInc(res.resp);
+                setRefresh(false);
+            } catch(e) {
+                setInc([])
+                setPageErr(true);
+            }
+        }
         const getUsers = async () => {
-            let resp = await fetchBoth("/api/getusers");
-            const users = (await resp.json()).resp;
-            setUsers(users);
+            try{
+                let resp = await fetchBoth("/api/getusers");
+                const users = (await resp.json());
+                if(!users.resp) throw {error: 'no input'};
+                setUsers(users.resp);
+            }
+            catch(e){
+                setUsers([])
+                setPageErr(true);
+            }
         };
-        getDays();
-        getUsers();
-    }, []);
+
+        const getstuff = async () =>{
+            setRefresh(true);
+
+            await getUsers();
+            await getDays();
+
+            setRefresh(false);
+        }
+
+        getstuff();
+        
+    }, [periodEh, weeks]); // Only re-fetch when period changes
+
+    if(pageErr) router.push('/daysworked')
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
@@ -88,7 +131,10 @@ const Admin = () => {
             });
     }, [inc, users, shipEh, userFilter, period]);
 
-    const expcsv = () => {
+    const expcsv = async () => {  // Made async to handle the initial getdays call
+        // First, ensure we have fresh data
+        await getDaysCallable();
+
         // Generate periods for the specified number of weeks
         let experiod: string[] = [];
         for (var i = Number(weeks) - 1; i >= 0; i--) {
@@ -99,54 +145,62 @@ const Admin = () => {
             });
             experiod = [ ...experiod, ...day ];
         }
-
-
-        const expme:{[key:string]:string}[] = []
-
-   
-        // Process users
+        
+        const expme: {[key:string]:string}[] = []
+    
         users.forEach((user) => {
-            // Crew filter
-            if (crewEh !== 'ALL') {
+    
+            // Crew filter - note crewEh is lowercase but we're comparing with uppercase
+            if (crewEh.toUpperCase() !== 'ALL') {
                 const isUserDomestic = user.isDomestic;
                 if (
-                    (crewEh === 'DOMESTIC' && !isUserDomestic) ||
-                    (crewEh === 'FOREIGN' && isUserDomestic)
+                    (crewEh.toUpperCase() === 'DOMESTIC' && !isUserDomestic) ||
+                    (crewEh.toUpperCase() === 'FOREIGN' && isUserDomestic)
                 ) {
-                    return; // Skip this user
+                    return;
                 }
             }
-   
+       
             var pushme: {[key:string]:string} = {}
             const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[1]
             pushme['name'] = name
             pushme['crew'] = user.isDomestic ? 'DOMESTIC' : 'FOREIGN'
-           
+               
             var sum = 0
             experiod.forEach((day) => {
-                // Check inc (days) array for this user's work on this day
-                const dayWork = inc.filter((e)=>{
-                    if(shipEh=='all') return true;
-                    return e.ship==shipEh;
-                }).find(
+                // Pre-filter inc array once for this user and day
+                const filteredInc = inc.filter((e) => {
+                    if(!e.ship) return;
+                    if(shipEh.toLowerCase() === 'all') return true;
+                    return e.ship.toUpperCase() === shipEh.toUpperCase();
+                });
+    
+                const dayWork = filteredInc.find(
                     d => d.username === user.username && d.day === day
                 );
-               
+                   
                 const workerType = dayWork ? dayWork.type : '';
                 pushme[day] = workerType;
-               
-                if ((workerType != '')) sum += 1;
-            })
-            // Push user if they have any work days or if you want to include all users
+                   
+                if (workerType !== '') sum += 1;
+            });
+    
             if (sum > 0) {
                 expme.push(pushme);
             }
-        })
-   
+        });
+
+        if(!expme.length) {
+            console.log('no records to export');
+            return;
+        };
+       
+        console.log(`Exporting ${expme.length} records`);
+    
         const csvConfig = mkConfig({
             useKeysAsHeaders: true,
             filename:
-                shipEh + "_" + period[0] + "_TO_" + period[6] + "_" + crewEh,
+                `${shipEh}_${period[0]}_TO_${period[6]}_${crewEh}`.toUpperCase(),
         });
         const csv = generateCsv(csvConfig)(expme);
         download(csvConfig)(csv);
@@ -303,10 +357,10 @@ const Admin = () => {
                     </div>
                     <div/>
                 <button
-                    className="w-[245px] h-[50px] btn hoverbg rounded-xl"
-                    onClick={()=>expcsv()}
+                    className={`w-[245px] h-[50px] btn rounded-xl ${refresh ? '' : 'hoverbg'}`}
+                    onClick={refresh ? ()=>{} : ()=>expcsv()}
                 >
-                    export
+                    {refresh ? 'loading ...' : 'export'}
                 </button>
                 </div>
                 </div>

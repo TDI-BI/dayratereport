@@ -5,7 +5,6 @@ const nextConfig: NextConfig = {
   output: "standalone",
   reactStrictMode: true,
   redirects: async () => {
-    console.log('here')
     return [
       {
         source: '/:path*',

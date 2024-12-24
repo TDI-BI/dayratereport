@@ -8,6 +8,7 @@ import { connectToDb } from "@/utils/connectToDb";
 export const GET = async (request: NextRequest) => {
     //block non-admins
     const session = await getSession();
+
     if (!session.isAdmin)
         return new Response(JSON.stringify({ error: "not an admin" }), {
             status: 500,

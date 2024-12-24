@@ -126,7 +126,7 @@ export default function Home() {
             const perResp = await fetchBoth(`/api/verifydate?${ex}`);
             const serverPeriod = (await perResp.json()).resp;
 
-            const thing = await fetchBoth("/api/verifydate");
+            const thing = await fetchBoth("/api/verifydate"); // why do i do this...
             const thingy = (await thing.json()).resp;
 
             const session = (

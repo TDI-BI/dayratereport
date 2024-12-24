@@ -5,7 +5,7 @@ import { getSession } from "@/actions";
 const Navbar = async () => {
     const session = await getSession();
 
-    if (!session.isLoggedIn) return <div className="padding" />;
+    if (!session.isLoggedIn) return <div className="padding" data-testid='logout padding'/>;
     return (
         <nav className="head">
             {session.isLoggedIn && <LogoutForm />}
@@ -17,13 +17,13 @@ const Navbar = async () => {
                 </Link>
             )}
 
-            <Link href={session.isLoggedIn ? "/daysworked" : "/login"}>
+            <Link href={"/daysworked"}>
                 <button className="w-[calc(100vw/3)] h-[50px] line-h-[50px] btn hoverbg">
                     Days Worked
                 </button>
             </Link>
 
-            <Link href={session.isLoggedIn ? "/info" : "/login"}>
+            <Link href={"/info"}>
                 <button className="w-[calc(100vw/3)] h-[50px] line-h-[50px] btn hoverbg">
                     info
                 </button>

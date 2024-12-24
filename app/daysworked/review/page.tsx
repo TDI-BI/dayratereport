@@ -4,7 +4,7 @@ const por = getPort();
 import { useEffect, useState } from "react";
 import { getPeriod } from "@/utils/payperiod";
 import { flashDiv } from "@/utils/flashDiv";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation"; 
 
 import {
     Table,
@@ -14,8 +14,7 @@ import {
     TableRow,
     TableCell,
 } from "@nextui-org/react";
-import { redirect, useRouter } from "next/navigation";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { fetchBoth } from "@/utils/fetchboth";
 
 export default function Page() {
@@ -110,7 +109,7 @@ export default function Page() {
         });
     } catch {
         // dataresponse will be null in the case of our user not being logged in
-        redirect("../../");
+        router.push("../../");
     }
     let names: string[] = name.split("/");
 
@@ -182,11 +181,11 @@ export default function Page() {
                     </div>
                 </div>
                 <div className="inline-flex flex-row">
-                    <Link href="../">
-                        <div className=" w-[174px] btnh btn hoverbg">
+                    <button onClick={()=>{router.push('../')}}>
+                        <div className=" w-[174px] btnh btn hoverbg" >
                             back
                         </div>
-                    </Link>
+                    </button>
                     <button onClick={submit}>
                         <div className="w-[174px] btnh btn hoverbg">
                             confirm and submit

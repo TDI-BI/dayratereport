@@ -35,7 +35,7 @@ export const login = async(
     const response = await fetchBoth(`/api/login?&username=${formUsername}`);
     const res = await response.json();
     const dbAcc= res.resp[0];
-    
+
     try{ // compare our password with the hash using bcrypt
         const auth= await bcrypt.compare(formPassword, dbAcc.password)
         if(!auth){
