@@ -15,14 +15,31 @@ const htmlout = `
         <p style="font-size: 16px; font-weight: 600;">Good morning crew,</p>
         <p style="font-size: 16px;">This is a friendly reminder to complete your days worked sheets.</p>
         <p style="font-size: 16px;">These submissions are due every Monday by 10:00 AM CST.</p>
-        <p style="font-size: 16px;">The link to our web page is <a href="https://tdifielddays.com/" style="color: #0066cc; text-decoration: none;">https://tdifielddays.com/</a></p>
         <p style="font-size: 16px;">Thanks!</p>
         <p style="font-size: 16px; margin-bottom: 30px;">- Dayrate team</p>
+        
         <a href="https://tdifielddays.com/" style="color: #0066cc; text-decoration: none;">
             <div style="background-color: #0066cc; padding: 20px; border-radius: 10px; text-align: center; color:white">
-                <p style="font-size: 16px; font-weight:600;">click here to begin reporting</p>
+                <p style="font-size: 16px; font-weight:600;">Report Days Worked</p>
             </div>
         </a>
+
+        <div style="height:10px"></div>
+
+        <a href="mailto:accountspayable@tdi-bi.com" style="color: #0066cc; text-decoration: none;">
+            <div style="background-color: #0066cc; padding: 20px; border-radius: 10px; text-align: center; color:white">
+                <p style="font-size: 16px; font-weight:600;">Report Expenses</p>
+            </div>
+        </a>
+
+        <div style="height:10px"></div>
+
+        <a href="mailto:fieldpay@tdi-bi.com" style="color: #0066cc; text-decoration: none;">
+            <div style="background-color: #0066cc; padding: 20px; border-radius: 10px; text-align: center; color:white">
+                <p style="font-size: 16px; font-weight:600;">Questions Regaurding Pay</p>
+            </div>
+        </a>
+
     </div>
 </body>
 </html>
