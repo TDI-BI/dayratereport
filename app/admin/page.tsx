@@ -162,7 +162,7 @@ const Admin = () => {
             }
        
             var pushme: {[key:string]:string} = {}
-            const name = user.uid.split('/')[0] + ' ' + user.uid.split('/')[1]
+            const name =  user.uid.split('/')[1] + ' ' + user.uid.split('/')[0]
             pushme['name'] = name
             pushme['crew'] = user.isDomestic ? 'DOMESTIC' : 'FOREIGN'
                
@@ -259,6 +259,7 @@ const Admin = () => {
                                 "PROT",
                                 "GYRE",
                                 "NAUT",
+                                "TOOL",
                                 "3RD",
                                 "????",
                             ].map((e) => (

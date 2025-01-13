@@ -216,11 +216,13 @@ export default function Home() {
                                         ndict[day] = e.target.value;
                                         setVessels(ndict);
                                     }}
-                                    options={["BMCC",
+                                    options={[
+                                        "BMCC",
                                         "EMMA",
                                         "PROT",
                                         "GYRE",
                                         "NAUT",
+                                        "TOOL",
                                         "3RD",
                                     ]}
                                 />

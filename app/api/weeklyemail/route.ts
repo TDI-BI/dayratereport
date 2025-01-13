@@ -59,7 +59,7 @@ export const GET = async (request: NextRequest) => {
     try {
         const data = await resend.emails.send({
             from: "reminders@tdifielddays.com", // we will change this probably
-            to: [
+            to: [ // should maybe bounce all this stuff to my .env so i dont accidentally email shit to everyone while testing lol
                 "all@tdi-bi.com", 
                 "mariner@tdi-bi.com", 
                 "proteus@tdi-bi.com", 
