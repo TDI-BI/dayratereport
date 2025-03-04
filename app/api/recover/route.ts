@@ -8,9 +8,6 @@ import { getSession } from "@/actions";
 import { NextRequest } from "next/server";
 import { connectToDb } from "@/utils/connectToDb";
 
-
-
-
 export const GET = async (request: NextRequest) => {
     //block if logged in
     const session = await getSession();
