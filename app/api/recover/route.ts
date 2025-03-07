@@ -60,7 +60,8 @@ export const GET = async (request: NextRequest) => {
 </body>
 </html>
 `
-
+            //console.log(e);//debug line
+            
             const data = await resend.emails.send({
                 from: "recover@tdifielddays.com", // we will change this probably
                 to: e.email, //e.email,
@@ -76,6 +77,7 @@ export const GET = async (request: NextRequest) => {
                     "\ndo not allow others to see/use this link. It can only be used once. do not reply to this email",
                 html:htmlout,
             });
+            
         });
 
         return new Response(JSON.stringify({ resp: "email sent" }), {
