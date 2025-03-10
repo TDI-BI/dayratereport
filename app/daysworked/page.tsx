@@ -5,9 +5,10 @@ import { getPeriod } from "@/utils/payperiod";
 
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
-import { useState, useEffect } from "react";
-import DropDown from "@/components/reportDropDown";
+import { useState, useEffect, useRef } from "react";
 import { fetchBoth } from "@/utils/fetchboth";
+
+import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
@@ -38,7 +39,8 @@ export default function Home() {
         let derrors: HTMLElement[] = []; // stack of elements to flash
 
         period.map((day) => {
-            if ( // make sure we are properly filled out
+            if (
+                // make sure we are properly filled out
                 (!vessels[day] && jobs[day]) ||
                 (vessels[day] && !jobs[day])
             ) {
@@ -87,9 +89,7 @@ export default function Home() {
         ).resp; // get next week in intended direction
         if (crew) {
             const thisp = (
-                await (
-                    await fetchBoth("/api/getlatestdomesticperiod")
-                ).json()
+                await (await fetchBoth("/api/getlatestdomesticperiod")).json()
             ).resp;
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
@@ -104,7 +104,6 @@ export default function Home() {
     useEffect(() => {
         //query database
         async function getPeriodInf() {
-
             const response = await fetchBoth(`/api/getperiodinf?${ex}`);
             const res = await response.json();
 
@@ -120,7 +119,7 @@ export default function Home() {
                     job[item["day"]] = item["type"];
                 });
             } catch (e) {
-                router.push("../../")
+                router.push("../../");
             } // make sure page doesnt crash
 
             const perResp = await fetchBoth(`/api/verifydate?${ex}`);
@@ -135,18 +134,59 @@ export default function Home() {
 
             setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
-            setmonth(new Date(thingy[0]).getMonth()) // better bound checking sys.
+            setmonth(new Date(thingy[0]).getMonth()); // better bound checking sys.
             setVessels(ves);
             setJobs(job);
         }
         getPeriodInf();
     }, [ex, router]);
 
+    interface inputProps {
+        day: string;
+    }
+    const DateLine = (ins: inputProps) => {
+        const day = ins.day;
+        return (
+            <div key={day}>
+                <div
+                    id={day + "_item"}
+                    className="isolate group p-[5px] bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-full max-w-[500px] rounded-md text-white hover:text-black"
+                >
+                    <div onClick={()=>{
+                        //this is going to be our dropdown setter
+                    }}>
+                        <div className="flex py-[10px]">
+                            <div className="py-[5px]">
+                                <MoveDown className="text-inherit transition-all ease-in-out" />
+                            </div>
+                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                {day}
+                            </div>
+
+                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                {vessels[day as keyof {}]
+                                    ? vessels[day as keyof {}]
+                                    : "text"}
+                            </div>
+
+                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                {jobs[day as keyof {}]
+                                    ? jobs[day as keyof {}]
+                                    : "text"}
+                            </div>
+                        </div>
+                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
-        <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">
-            <div className="inline-flex h-[44px]" id="buttons">
+        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px]">
+            <div className="flex gap-10" id="buttons">
                 <button
-                    className="w-[150px] btnh btn hoverbg"
+                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] p-5"
                     onClick={async () => {
                         if (!(await checkBounds(false))) {
                             //need to create some visual indication that we are maximally backed
@@ -159,12 +199,14 @@ export default function Home() {
                         setprev(prev + 1);
                     }}
                 >
-                    {"< back a week"}
+                    <MoveLeft size={24} className="flex-shrink-0" />
+                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        last week
+                    </p>
                 </button>
 
                 <button
-                    id="forbutton"
-                    className="w-[150px] btnh btn hoverbg"
+                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] p-5"
                     onClick={async () => {
                         if (!(await checkBounds(true))) {
                             const flashme = document.getElementById(
@@ -176,77 +218,36 @@ export default function Home() {
                         setprev(prev - 1);
                     }}
                 >
-                    {"forward a week >"}
+                    <MoveRight size={24} className="flex-shrink-0" />
+                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        next week
+                    </p>
                 </button>
             </div>
-            <div className="tblWrapper" id="pgtbl">
-                <div className="pt-[10px] inline-flex">
-                    <div className="tblHeadItm">
-                        <strong>DATE</strong>
+
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+
+            <div className="" id="pgtbl">
+                <div className="p-[10px] inline-flex">
+                    <div className="w-[24px]"></div>
+                    <div className="w-full min-w-[107px] max-w-[200px] text-center ">
+                        <strong className="select-none">DATE</strong>
                     </div>
-                    <div className="tblHeadItm">
-                        <strong>VESSEL</strong>
+                    <div className="w-full min-w-[107px] max-w-[200px] text-center">
+                        <strong className="select-none">VESSEL</strong>
                     </div>
-                    <div className="tblHeadItm">
-                        <strong>DEPT</strong>
+                    <div className="w-full min-w-[107px] max-w-[200px] text-center">
+                        <strong className="select-none">DEPT</strong>
                     </div>
                 </div>
                 <div>
                     {period.map((day: string) => (
-                        <div key={day} id={day + "flash"}>
-                            <div
-                                key={day}
-                                id={day + "_item"}
-                                className="pt-[15px] h-[60px] hoverbg"
-                            >
-                                {/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
-                                <div className="tblBodyDate">{day}</div>
-                                {/* shuold popthese into a componnent */}
-                                <DropDown
-                                    val={
-                                        vessels[day as keyof {}]
-                                            ? vessels[day as keyof {}]
-                                            : ""
-                                    }
-                                    inid={day + "_ship"}
-                                    setter={(e: any) => {
-                                        let ndict: {
-                                            [id: string]: string;
-                                        } = structuredClone(vessels);
-                                        ndict[day] = e.target.value;
-                                        setVessels(ndict);
-                                    }}
-                                    options={[
-                                        "BMCC",
-                                        "EMMA",
-                                        "PROT",
-                                        "GYRE",
-                                        "NAUT",
-                                        "TOOL",
-                                        "3RD",
-                                    ]}
-                                />
-                                <DropDown
-                                    val={
-                                        jobs[day as keyof {}]
-                                            ? jobs[day as keyof {}]
-                                            : ""
-                                    }
-                                    inid={day + "_job"}
-                                    setter={(e: any) => {
-                                        let ndict: {
-                                            [id: string]: string;
-                                        } = structuredClone(jobs);
-                                        ndict[day] = e.target.value;
-                                        setJobs(ndict);
-                                    }}
-                                    options={["TECH", "MARINE"]}
-                                />
-                            </div>
-                        </div>
+                        <DateLine day={day} />
                     ))}
                 </div>
             </div>
+
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
 
             <div className="tblFoot">
                 <button className="w-[185.5px] btnh btn hoverbg" onClick={save}>

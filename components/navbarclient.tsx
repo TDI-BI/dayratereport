@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { logout } from "@/actions";
 import { useState, useEffect, useCallback } from "react";
-import { Menu, X } from "lucide-react"; // shuold read through this, maybe i dont need my icon pack lol
+import { Menu, X } from "lucide-react"; // slowly replacing the icon pack
 
 interface btnProps {
     text: string;
@@ -27,7 +27,7 @@ const MNavbtn = (props: btnProps) => {
         <div 
             className={`transition-all duration-300 ease-in-out ${
                 props.opn
-                    ? "opacity-100"
+                    ? "opacity-100 "
                     : "opacity-0 pointer-events-none"
                 }`}
                 style={{transitionDelay:props.opn ? `${props.delay}ms` : '0ms'}}     
@@ -109,7 +109,7 @@ const NavbarCl = (navprops: navbr) => {
                                 : "opacity-0 pointer-events-none"
                         }`}
                     />
-                    <div className="fixed top-[46px] left-0 right-0 flex flex-col items-center pt-4 z-[75]">
+                    <div className={`fixed top-[46px] left-0 right-0 flex flex-col items-center pt-4 z-[75] ${isOpen ? '' : 'pointer-events-none'}`}>
                             <form action={logout} className="group" onClick={()=>setIsOpen(false)}>
                                 <MNavbtn text={"logout"} opn={isOpen} delay='100' />
                             </form>
