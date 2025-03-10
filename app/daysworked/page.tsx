@@ -145,6 +145,20 @@ export default function Home() {
         day: string;
     }
     const DateLine = (ins: inputProps) => {
+        const [isOpen, setIsOpen] = useState(false);
+        const ships = [
+            "BMCC",
+            "EMMA",
+            "PROT",
+            "GYRE",
+            "NAUT",
+            "TOOL",
+            "3RD",
+        ];
+        const type = [
+            'MARINE',
+            'TECH'
+        ];
         const day = ins.day;
         return (
             <div key={day}>
@@ -154,10 +168,11 @@ export default function Home() {
                 >
                     <div onClick={()=>{
                         //this is going to be our dropdown setter
+                        setIsOpen(!isOpen);
                     }}>
                         <div className="flex py-[10px]">
                             <div className="py-[5px]">
-                                <MoveDown className="text-inherit transition-all ease-in-out" />
+                                <MoveDown className={`transform text-inherit transition-all ease-in-out duration-300 ${isOpen ? '-rotate-180' : 'rotate-0'}`} />
                             </div>
                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {day}
@@ -166,17 +181,22 @@ export default function Home() {
                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {vessels[day as keyof {}]
                                     ? vessels[day as keyof {}]
-                                    : "text"}
+                                    : ""}
                             </div>
 
                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {jobs[day as keyof {}]
                                     ? jobs[day as keyof {}]
-                                    : "text"}
+                                    : ""}
                             </div>
                         </div>
                         <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
                     </div>
+                    <div>
+
+                    </div>
+
+
                 </div>
             </div>
         );
