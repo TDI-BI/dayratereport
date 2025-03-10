@@ -52,17 +52,6 @@ body {
         rgb(var(--background-start-rgb));
     overflow-x: hidden;
 }
-.padding {
-    /*this just exists to maitain the style without the header*/
-    height: 50px;
-}
-.head {
-    width: 100vw;
-    display: inline-flex;
-    flex-direction: row;
-    line-height: 50px;
-    height: 50px;
-}
 
 @layer utilities {
     .text-balance {
