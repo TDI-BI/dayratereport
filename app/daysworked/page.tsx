@@ -192,8 +192,16 @@ export default function Home() {
                         </div>
                         <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
                     </div>
-                    <div>
 
+
+                    <div className={`${isOpen ? 'max-h-[100px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex`}>
+                        <div className={`p-[5px]`}>
+                            {['','TECH','MARINE'].map((e:string)=>(
+                                <div key={e}>
+                                    {e}
+                                </div>)
+                            )}
+                        </div>
                     </div>
 
 
@@ -262,7 +270,7 @@ export default function Home() {
                 </div>
                 <div>
                     {period.map((day: string) => (
-                        <DateLine day={day} />
+                        <DateLine day={day} key={day} />
                     ))}
                 </div>
             </div>
