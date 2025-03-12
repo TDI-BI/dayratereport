@@ -257,7 +257,7 @@ export default function Home() {
         <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px]">
             <div className="flex gap-10" id="buttons">
                 <button
-                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] p-5"
+                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-white bg-white/0 hover:bg-white/100 hover:text-black"
                     onClick={async () => {
                         if (!(await checkBounds(false))) {
                             //need to create some visual indication that we are maximally backed
@@ -271,13 +271,13 @@ export default function Home() {
                     }}
                 >
                     <MoveLeft size={24} className="flex-shrink-0"/>
-                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out text-inherit">
                         last week
                     </p>
                 </button>
 
                 <button
-                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] p-5"
+                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-white bg-white/0 hover:bg-white/100 hover:text-black"
                     onClick={async () => {
                         if (!(await checkBounds(true))) {
                             const flashme = document.getElementById(
@@ -301,7 +301,8 @@ export default function Home() {
             <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden`}
             >
-                <div className={`${saving ? 'max-h-[0px]' : 'max-h-[3000px]'} overflow-hidden ease-in-out duration-300`} id="pgtbl">
+                <div className={`${saving ? 'max-h-[0px]' : 'max-h-[3000px]'} overflow-hidden ease-in-out duration-300`}
+                     id="pgtbl">
                     <div className="p-[10px] inline-flex">
                         <div className="w-[24px] select-none opacity-0">h</div>
                         <div className="w-[107px] text-center ">
@@ -317,28 +318,33 @@ export default function Home() {
                     <div className={'flex-col gap-y-5'}>
                         {period.map((day: string) => (
                             <div key={day}>
-                                <DateLine day={day} />
-                                <div id={day+'flash'} className={'rounded-xl w-[100%] h-[3px]'}/>
+                                <DateLine day={day}/>
+                                <div id={day + 'flash'} className={'rounded-xl w-[100%] h-[3px]'}/>
                             </div>
                         ))}
                     </div>
                 </div>
-                <div className={`${saving ? 'max-h-[100px] duration-300' : 'max-h-[0px] duration-100'} overflow-hidden ease-in-out `}>
+                <div
+                    className={`${saving ? 'max-h-[100px] duration-300' : 'max-h-[0px] duration-100'} overflow-hidden ease-in-out w-[365px] px-[30px]`}>
                     <div className={'text-center py-[5px]'}>
                         {umsg}
                     </div>
-                    <div className={`rounded-md w-full ${saving && umsg ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] ${umsg == 'error' ? 'bg-red-500' : 'bg-gradient-to-tr from-sky-300 to-indigo-500'} overflow-hidden ease-in-out duration-500 delay-300`}/>
+                    <div
+                        className={`rounded-md w-full ${saving && umsg ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] ${umsg == 'error' ? 'bg-red-500' : 'bg-gradient-to-tr from-sky-300 to-indigo-500'} overflow-hidden ease-in-out duration-500 delay-300`}/>
                 </div>
             </div>
 
             <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
 
-            <div className="tblFoot">
-                <button className="w-[185.5px] btnh btn hoverbg" onClick={save}>
+            <div className="flex  gap-[15px] px-[10px]">
+                <button
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px]"
+                    onClick={save}
+                >
                     save
                 </button>
                 <button
-                    className="w-[185.5px] btnh btn hoverbg"
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px]"
                     onClick={review}
                 >
                     next
