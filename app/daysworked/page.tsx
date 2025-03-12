@@ -1,14 +1,15 @@
 "use client";
-import { getPort } from "@/utils/getPort";
+import {getPort} from "@/utils/getPort";
+import {getPeriod} from "@/utils/payperiod";
+
+import {useRouter} from "next/navigation";
+import {flashDiv} from "@/utils/flashDiv";
+import {useEffect, useState} from "react";
+import {fetchBoth} from "@/utils/fetchboth";
+
+import {MoveDown, MoveLeft, MoveRight} from "lucide-react";
+
 const por = getPort();
-import { getPeriod } from "@/utils/payperiod";
-
-import { useRouter } from "next/navigation";
-import { flashDiv } from "@/utils/flashDiv";
-import { useState, useEffect, useRef } from "react";
-import { fetchBoth } from "@/utils/fetchboth";
-
-import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
@@ -61,19 +62,28 @@ export default function Home() {
             strdict += day + ":" + cship + ":" + cjob + ";";
         });
 
+
         //if we have any errors inform the user they need to make changes before they can save
         if (derrors.length != 0) {
-            derrors.forEach((itm) => {
-                flashDiv(itm);
-            });
-            setUmsg("failure");
+
+            await new Promise(resolve => setTimeout(resolve, 500));
             setsaving(0);
+            await new Promise(resolve => setTimeout(resolve, 300)); // wait out animation
+
+
+            for (let itm of derrors) {
+                await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay betwen flash
+                flashDiv(itm);
+            }
+
             return false;
         }
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
         await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
-        setUmsg("saved");
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
         setsaving(0);
         return true; // returns true on success
     };
@@ -132,79 +142,105 @@ export default function Home() {
                 await (await fetchBoth("/api/sessionforclient")).json()
             ).resp;
 
-            setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
+            setCrew(!!session.isDomestic); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
             setmonth(new Date(thingy[0]).getMonth()); // better bound checking sys.
             setVessels(ves);
             setJobs(job);
         }
+
         getPeriodInf();
     }, [ex, router]);
 
     interface inputProps {
         day: string;
     }
+
     const DateLine = (ins: inputProps) => {
         const [isOpen, setIsOpen] = useState(false);
-        const ships = [
-            "BMCC",
-            "EMMA",
-            "PROT",
-            "GYRE",
-            "NAUT",
-            "TOOL",
-            "3RD",
-        ];
-        const type = [
-            'MARINE',
-            'TECH'
-        ];
         const day = ins.day;
         return (
             <div key={day}>
                 <div
                     id={day + "_item"}
-                    className="isolate group p-[5px] bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-full max-w-[500px] rounded-md text-white hover:text-black"
-                >
-                    <div onClick={()=>{
+                    className="group bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-white hover:text-black"
+                    onClick={() => {
                         //this is going to be our dropdown setter
                         setIsOpen(!isOpen);
-                    }}>
+                    }}
+                >
+                    <div>
                         <div className="flex py-[10px]">
                             <div className="py-[5px]">
-                                <MoveDown className={`transform text-inherit transition-all ease-in-out duration-300 ${isOpen ? '-rotate-180' : 'rotate-0'}`} />
+                                <MoveDown
+                                    className={`transform text-inherit transition-all ease-in-out duration-300 ${isOpen ? '-rotate-180' : 'rotate-0'}`}/>
                             </div>
-                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                            <div
+                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {day}
                             </div>
 
-                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                            <div
+                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {vessels[day as keyof {}]
                                     ? vessels[day as keyof {}]
                                     : ""}
                             </div>
 
-                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                            <div
+                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                 {jobs[day as keyof {}]
                                     ? jobs[day as keyof {}]
                                     : ""}
                             </div>
                         </div>
-                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                        <div
+                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
                     </div>
 
 
-                    <div className={`${isOpen ? 'max-h-[100px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex`}>
-                        <div className={`p-[5px]`}>
-                            {['','TECH','MARINE'].map((e:string)=>(
-                                <div key={e}>
-                                    {e}
-                                </div>)
-                            )}
+                    <div
+                        className={`${isOpen ? 'max-h-[350px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}>
+                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                            {['NONE', 'MARINE', 'TECH'].map((e: string) => (
+                                <div
+                                    key={e}
+                                    className="h-[40px] group/item"
+                                    onClick={() => {
+                                        setJobs((prevJobs) => ({
+                                            ...prevJobs,
+                                            [day]: e == 'NONE' ? '' : e
+                                        }));
+                                    }}
+                                >
+                                    <p className="h-[38px] leading-[38px] select-none">{e}</p>
+                                    <div
+                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
+                                </div>
+                            ))}
+                        </div>
+
+                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                            {['NONE', 'BMCC', 'EMMA', 'PROT', 'GYRE', 'NAUT', 'TOOL', '3RD'].map((e: string) => (
+                                <div
+                                    key={e}
+                                    className="h-[40px] group/item"
+                                    onClick={() => {
+                                        setVessels((prevVessels) => ({
+                                            ...prevVessels,
+                                            [day]: e == 'NONE' ? '' : e
+                                        }));
+                                    }}
+                                >
+                                    <p className="h-[38px] leading-[38px] select-none">{e}</p>
+                                    <div
+                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
+                                </div>
+                            ))}
                         </div>
                     </div>
-
-
+                    <div
+                        className={`rounded-md w-[100%] h-[3px] bg-white transition-all ease-in-out duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}/>
                 </div>
             </div>
         );
@@ -227,7 +263,7 @@ export default function Home() {
                         setprev(prev + 1);
                     }}
                 >
-                    <MoveLeft size={24} className="flex-shrink-0" />
+                    <MoveLeft size={24} className="flex-shrink-0"/>
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
                         last week
                     </p>
@@ -246,36 +282,48 @@ export default function Home() {
                         setprev(prev - 1);
                     }}
                 >
-                    <MoveRight size={24} className="flex-shrink-0" />
+                    <MoveRight size={24} className="flex-shrink-0"/>
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
                         next week
                     </p>
                 </button>
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
 
-            <div className="" id="pgtbl">
-                <div className="p-[10px] inline-flex">
-                    <div className="w-[24px]"></div>
-                    <div className="w-full min-w-[107px] max-w-[200px] text-center ">
-                        <strong className="select-none">DATE</strong>
+            <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden`}
+            >
+                <div className={`${saving ? 'max-h-[0px]' : 'max-h-[3000px]'} overflow-hidden ease-in-out duration-300`} id="pgtbl">
+                    <div className="p-[10px] inline-flex">
+                        <div className="w-[24px] select-none opacity-0">h</div>
+                        <div className="w-[107px] text-center ">
+                            <strong className="select-none">DATE</strong>
+                        </div>
+                        <div className="w-[107px] text-center">
+                            <strong className="select-none">VESSEL</strong>
+                        </div>
+                        <div className="min-w-[107px] text-center">
+                            <strong className="select-none">DEPT</strong>
+                        </div>
                     </div>
-                    <div className="w-full min-w-[107px] max-w-[200px] text-center">
-                        <strong className="select-none">VESSEL</strong>
-                    </div>
-                    <div className="w-full min-w-[107px] max-w-[200px] text-center">
-                        <strong className="select-none">DEPT</strong>
+                    <div className={'flex-col gap-y-5'}>
+                        {period.map((day: string) => (
+                            <div key={day} id={day+'flash'} className={'rounded-xl'}>
+                                <DateLine day={day} />
+                            </div>
+                        ))}
                     </div>
                 </div>
-                <div>
-                    {period.map((day: string) => (
-                        <DateLine day={day} key={day} />
-                    ))}
+                <div className={`${saving ? 'max-h-[100px] duration-300' : 'max-h-[0px] duration-100'} overflow-hidden ease-in-out `}>
+                    <div className={'text-center py-[5px]'}>
+                        {umsg}
+                    </div>
+                    <div className={`rounded-md w-full ${saving ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] bg-gradient-to-tr from-sky-300 to-indigo-500 overflow-hidden ease-in-out duration-500 delay-300`}/>
                 </div>
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
 
             <div className="tblFoot">
                 <button className="w-[185.5px] btnh btn hoverbg" onClick={save}>
@@ -287,9 +335,6 @@ export default function Home() {
                 >
                     next
                 </button>
-            </div>
-            <div>
-                <p className={saving ? "savemsg1" : "savemsg0"}>{umsg}</p>
             </div>
         </main>
     );

@@ -93,7 +93,7 @@ const NavbarCl = (navprops: navbr) => {
                             <div
                                 className={`absolute transition-all duration-300 ease-in-out ${
                                     isOpen
-                                        ? "opacity-100 rotate-0 trasnform scale-100"
+                                        ? "opacity-100 rotate-0 transform scale-100"
                                         : "opacity-0 -rotate-90 transform scale-0"
                                 }`}
                             >
