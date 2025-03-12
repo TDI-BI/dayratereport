@@ -34,7 +34,7 @@ const Thanks = () => {
                 {`THANK YOU ${name[0]} ${name[1]}`}
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
             <div className=" w-full max-w-[600px] h-[10px] " />
 
             <p className="text-center"> your time sheet has been submitted! </p>
@@ -61,7 +61,7 @@ const Thanks = () => {
                     router.push("../../../");
                 }}
             >
-                <p className="text-center group w-[160px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                <p className="text-center group w-[160px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                     home
                 </p>
             </button>

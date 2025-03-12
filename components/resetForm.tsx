@@ -46,7 +46,7 @@ const ResetForm = () => {
                     icon={<Lock />}
                 />
 
-                <button className="group w-[280px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                <button className="group w-[280px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                     <div>recover</div>
                 </button>
 

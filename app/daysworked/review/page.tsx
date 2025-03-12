@@ -122,14 +122,14 @@ export default function Page() {
                 CONFIRM YOUR REPORT
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
             <div className=" w-full max-w-[600px] h-[10px] " />
             <div
                 className={`${
                     saving ? "max-h-[0px]" : "max-h-[3000px]"
                 } overflow-hidden ease-in-out duration-300`}
             >
-                <div className="text-center w-[345px] rounded-xl bg-white text-black py-[10px] space-y-[5px]">
+                <div className="text-center w-[345px] rounded-xl bg-primary text-secondary py-[10px] space-y-[5px]">
                     <div className="flex flex-row items-center justify-center gap-[10px] px-[10px]">
                         <User />{" "}
                         <p className="text-wrap">
@@ -213,7 +213,7 @@ export default function Page() {
                 </div>
 
             <div className=" w-full max-w-[600px] h-[10px] " />
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
             <div className="rounded-md w-full max-w-[600px] h-[10px]" />
 
             <div className="inline-flex flex-row gap-[5px]">
@@ -223,7 +223,7 @@ export default function Page() {
                         router.push("../");
                     }}
                 >
-                    <p className="text-center group w-[170px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                    <p className="text-center group w-[170px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                     back
                     </p>
                 </button>
@@ -231,7 +231,7 @@ export default function Page() {
                     className="justify-center"
                     onClick={submit}
                 >
-                    <p className="text-center group w-[170px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                    <p className="text-center group w-[170px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                     confirm & submit
                     </p>
                 </button>

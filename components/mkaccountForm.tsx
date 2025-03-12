@@ -73,7 +73,7 @@ const MkaccountForm = () => {
                         //this is going to be our dropdown setter
                         setIsOpen(!isOpen);
                     }}
-                    className="group bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-[280px] py-[10px] px-[15px] rounded-md text-white hover:text-black"
+                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-[280px] py-[10px] px-[15px] rounded-md text-primary hover:text-secondary"
                 >
                     <input type="hidden" name="crew" value={crew} />
                     <div className="flex flex-row gap-[10px] py-[10px]">
@@ -82,7 +82,7 @@ const MkaccountForm = () => {
                             {crew ? crew : "select a crew"}
                         </div>
                     </div>
-                    <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                    <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
                     <div
                         className={`${isOpen ? 'max-h-[150px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}>
                         <div className="w-[216px] py-[1px]">
@@ -93,7 +93,7 @@ const MkaccountForm = () => {
                                 <p className="h-[38px] leading-[38px] select-none">
                                     domestic
                                 </p>
-                                <div className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                                <div className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
                             </div>
                             <div
                                 className="h-[40px] group/item"
@@ -102,14 +102,14 @@ const MkaccountForm = () => {
                                 <p className="h-[38px] leading-[38px] select-none">
                                     foreign
                                 </p>
-                                <div className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                                <div className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
                             </div>
                         </div>
                     </div>
                 </h1>
 
                 <button className="justify-center">
-                    <p className="text-center group w-[280px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                    <p className="text-center group w-[280px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                         register
                     </p>
                 </button>

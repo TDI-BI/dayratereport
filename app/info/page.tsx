@@ -45,7 +45,7 @@ const Profile = () => {
                     : ""}
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
             <div className=" w-full max-w-[600px] h-[10px] " />
 
             <div className="flex gap-5 ">
@@ -62,7 +62,7 @@ const Profile = () => {
 
             <div className="flex py-[10px] gap-5" id="target">
                 <button
-                    className="group max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
+                    className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
                     onClick={() => setCrew(1)}
                 >
                     <div>domestic</div>
@@ -71,11 +71,11 @@ const Profile = () => {
                             session.isDomestic
                                 ? "w-[100%]"
                                 : "w-[0%] group-hover:w-[100%]"
-                        } h-[3px] bg-white group-hover:bg-black transition-all ease-in-out duration-300 delay-100`}
+                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
                     />
                 </button>
                 <button
-                    className="group max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
+                    className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
                     onClick={() => setCrew(0)}
                 >
                     <div>foreign</div>
@@ -84,7 +84,7 @@ const Profile = () => {
                             !session.isDomestic
                                 ? "w-[100%]"
                                 : "w-[0%] group-hover:w-[100%]"
-                        } h-[3px] bg-white group-hover:bg-black transition-all ease-in-out duration-300 delay-100`}
+                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
                     />
                 </button>
             </div>
@@ -93,7 +93,7 @@ const Profile = () => {
 
             <Link href="https://forms.gle/EKyxpDDTSZknZYpe8">
                 <div
-                    className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[15px] px-[20px] "
+                    className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[15px] px-[20px] "
                     onClick={() => setCrew(1)}
                 >
                     <div>feedback?</div>
@@ -105,7 +105,7 @@ const Profile = () => {
             <div className='space-y-[5px] text-center'>
                 <p>pressing issues, email: </p>
                 <div
-                    className="cursor-pointer text-center group max-w-[300px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[15px] px-[20px] "
+                    className="cursor-pointer text-center group max-w-[300px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[15px] px-[20px] "
                     onClick={async () => {
                         navigator.clipboard.writeText("parkerseeley@tdi-bi.com")
                         setCopied(true)

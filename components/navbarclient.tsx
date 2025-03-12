@@ -17,7 +17,7 @@ const Navbtn = (props: btnProps) => {
             <button className="w-[200px] text-center rounded-xl py-[10px]">
                 <p>{props.text}</p>
             </button>
-            <div className="w-[0%] group-hover:w-[100%] transition-all duration-300 ease-in-out bg-white h-[2px]" />
+            <div className="w-[0%] group-hover:w-[100%] transition-all duration-300 ease-in-out bg-primary h-[2px]" />
         </div>
     );
 };
@@ -36,7 +36,7 @@ const MNavbtn = (props: btnProps) => {
                 <button className="w-[300px] h-[70px] text-center rounded-xl py-[10px]">
                     <p>{props.text}</p>
                 </button>
-                <div className="w-[0%] group-hover:w-[100%] transition-all duration-300 ease-in-out bg-white h-[2px]" />
+                <div className="w-[0%] group-hover:w-[100%] transition-all duration-300 ease-in-out bg-primary h-[2px]" />
             </div>
         </div>
     );
@@ -103,7 +103,7 @@ const NavbarCl = (navprops: navbr) => {
                         </div>
                     </div>
                     <div
-                        className={`fixed inset-0 bg-black/30 backdrop-blur-md transition-all duration-300 ease-in-out z-[30] ${
+                        className={`fixed inset-0 bg-secondary/30 backdrop-blur-md transition-all duration-300 ease-in-out z-[30] ${
                             isOpen
                                 ? "opacity-100"
                                 : "opacity-0 pointer-events-none"
