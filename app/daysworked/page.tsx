@@ -255,7 +255,7 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px]">
-            <div className="flex gap-10" id="buttons">
+            <div className="flex gap-10">
                 <button
                     className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-white bg-white/0 hover:bg-white/100 hover:text-black"
                     onClick={async () => {
@@ -295,6 +295,7 @@ export default function Home() {
                     </p>
                 </button>
             </div>
+            <div id="buttons" className={'rounded-xl w-[250px] h-[3px]'}/>
 
             <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
 

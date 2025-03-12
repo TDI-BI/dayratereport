@@ -1,14 +1,13 @@
 "use client";
 import { login } from "@/actions";
 import { useFormState } from "react-dom";
-import { useEffect } from "react";
+import {  useEffect } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import Link from "next/link";
-import Image from "next/image";
+import { User, Lock } from "lucide-react";
+import { FormLine } from "./formLine";
 
-//icons
-import person from "@/rsrsc/ionicons.designerpack/person-circle-outline.svg";
-import lock from "@/rsrsc/ionicons.designerpack/lock-closed-outline.svg";
+
 
 const LoginForm = () => {
     const [state, formAction] = useFormState<any, FormData>(login, undefined);
@@ -19,50 +18,44 @@ const LoginForm = () => {
         }
     });
     return (
-        <div className="tblWrapper">
-            <form action={formAction}>
-                <h1 className="formLine">
-                    <p className="formIcon">
-                        <Image priority src={person} alt="icon" />
-                    </p>
-                    <input
-                        className="hoverLn hoverLnF formInput"
-                        name="username"
-                        type="text"
-                        placeholder="username"
-                    />
-                </h1>
-                <h1 className="formLine">
-                    <p className="formIcon">
-                        <Image priority src={lock} alt="icon" />
-                    </p>
-                    <input
-                        className="hoverLn hoverLnF formInput "
-                        name="password"
-                        type="password"
-                        placeholder="password"
-                    />
-                </h1>
-                <h1 className="formLine">
-                    <button>
-                        <p className="w-[140px] btnh btn hoverbg">login</p>
+        <div className="flex-col items-center">
+            <form action={formAction} className="space-y-[10px]">
+
+                <FormLine
+                    name="username"
+                    type="text"
+                    placeholder="username"
+                    icon={<User/>}
+                />
+
+                <FormLine 
+                    name="password"
+                    type="password"
+                    placeholder="password"
+                    icon={<Lock />}
+                />
+
+                <h1 className="flex gap-[5px]">
+                    <button className="group max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                        <div>login</div>
                     </button>
                     <Link href="login/mkaccount">
-                        <p className="w-[140px] btnh btn hoverbg">
+                        <p className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                             register
                         </p>
                     </Link>
                 </h1>
 
-                <h1 className="formLine">
-                    <div className="errMessage" id="error">
+                <h1 className="flex-col text-center justify-center h-[40px]">
+                    <div className="py-[10px]">
                         {state?.error && <p>{state.error}</p>}
                     </div>
+                    <div id="error" className={"rounded-xl w-[100%] h-[3px]"} />
                 </h1>
 
-                <h1 className="formLine">
-                    <Link href="login/rcvaccount">
-                        <p className="w-[280px] btnh btn hoverbg">
+                <h1 className="flex-row text-center justify-center">
+                    <Link href="login/rcvaccount " className="justify-center">
+                        <p className="text-center group w-[100%] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
                             recover account
                         </p>
                     </Link>
