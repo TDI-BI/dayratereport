@@ -68,14 +68,24 @@ const MkaccountForm = () => {
                     icon={<Lock />}
                 />
 
-                <h1 className="group bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-[280px] py-[10px] px-[15px] rounded-md text-white hover:text-black">
+                <h1
+                    onClick={() => {
+                        //this is going to be our dropdown setter
+                        setIsOpen(!isOpen);
+                    }}
+                    className="group bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-[280px] py-[10px] px-[15px] rounded-md text-white hover:text-black"
+                >
                     <input type="hidden" name="crew" value={crew} />
-                    <div className="flex flex-row gap-[10px]">
+                    <div className="flex flex-row gap-[10px] py-[10px]">
                         <Ship />
-                        <div className="w-[216px]">{crew ? crew : 'select a crew'}</div>
-                    </div>
-                    <div className="flex flex-row-reverse">
                         <div className="w-[216px]">
+                            {crew ? crew : "select a crew"}
+                        </div>
+                    </div>
+                    <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100" />
+                    <div
+                        className={`${isOpen ? 'max-h-[150px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}>
+                        <div className="w-[216px] py-[1px]">
                             <div
                                 className="h-[40px] group/item"
                                 onClick={() => setCrew("domestic")}
@@ -87,7 +97,7 @@ const MkaccountForm = () => {
                             </div>
                             <div
                                 className="h-[40px] group/item"
-                                onClick={() => setCrew("domestic")}
+                                onClick={() => setCrew("foreign")}
                             >
                                 <p className="h-[38px] leading-[38px] select-none">
                                     foreign
