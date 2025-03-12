@@ -35,7 +35,7 @@ const Profile = () => {
     if (!session.isLoggedIn && pl) redirect("../../../"); // block viewing the page in some cases
 
     return (
-        <main className="flex min-h-screen flex-col items-center pt-[10px] px-5">
+        <main className="flex min-h-screen flex-col items-center pt-[10px] px-5 py-5">
             <div className="text-center font-semibold text-lg py-[10px]">
                 Welcome{" "}
                 {session.userId

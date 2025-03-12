@@ -29,7 +29,7 @@ const Thanks = () => {
 
     let name = `${session["userId"]}`.split("/");
     return (
-        <main className="flex min-h-screen flex-col items-center space-y-[5px] px-5">
+        <main className="flex min-h-screen flex-col items-center space-y-[5px] px-5 py-5">
             <div className="text-center font-semibold text-lg py-[10px]">
                 {`THANK YOU ${name[0]} ${name[1]}`}
             </div>

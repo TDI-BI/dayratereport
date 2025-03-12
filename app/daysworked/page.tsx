@@ -254,7 +254,7 @@ export default function Home() {
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px]">
+        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
             <div className="flex gap-10">
                 <button
                     className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
