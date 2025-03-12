@@ -117,7 +117,7 @@ export default function Page() {
     let names: string[] = name.split("/");
 
     return (
-        <main className="flex min-h-screen flex-col items-center">
+        <main className="flex min-h-screen flex-col items-center px-5">
             <div className="text-center font-semibold text-lg py-[10px]">
                 CONFIRM YOUR REPORT
             </div>
