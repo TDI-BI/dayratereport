@@ -66,7 +66,9 @@ export default function Home() {
         //if we have any errors inform the user they need to make changes before they can save
         if (derrors.length != 0) {
 
-            await new Promise(resolve => setTimeout(resolve, 500));
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            setUmsg('error')
+            await new Promise(resolve => setTimeout(resolve, 1000));
             setsaving(0);
             await new Promise(resolve => setTimeout(resolve, 300)); // wait out animation
 
@@ -76,6 +78,8 @@ export default function Home() {
                 flashDiv(itm);
             }
 
+            setUmsg('')
+
             return false;
         }
 
@@ -83,8 +87,11 @@ export default function Home() {
         await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
 
         await new Promise(resolve => setTimeout(resolve, 1000));
+        setUmsg('success!')
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         setsaving(0);
+        setUmsg('')
         return true; // returns true on success
     };
 
@@ -309,8 +316,9 @@ export default function Home() {
                     </div>
                     <div className={'flex-col gap-y-5'}>
                         {period.map((day: string) => (
-                            <div key={day} id={day+'flash'} className={'rounded-xl'}>
+                            <div key={day}>
                                 <DateLine day={day} />
+                                <div id={day+'flash'} className={'rounded-xl w-[100%] h-[3px]'}/>
                             </div>
                         ))}
                     </div>
@@ -319,7 +327,7 @@ export default function Home() {
                     <div className={'text-center py-[5px]'}>
                         {umsg}
                     </div>
-                    <div className={`rounded-md w-full ${saving ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] bg-gradient-to-tr from-sky-300 to-indigo-500 overflow-hidden ease-in-out duration-500 delay-300`}/>
+                    <div className={`rounded-md w-full ${saving && umsg ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] ${umsg == 'error' ? 'bg-red-500' : 'bg-gradient-to-tr from-sky-300 to-indigo-500'} overflow-hidden ease-in-out duration-500 delay-300`}/>
                 </div>
             </div>
 
