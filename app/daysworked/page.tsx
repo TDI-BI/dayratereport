@@ -1,39 +1,39 @@
 "use client";
-import {getPort} from "@/utils/getPort";
-import {getPeriod} from "@/utils/payperiod";
+import { getPort } from "@/utils/getPort";
+import { getPeriod } from "@/utils/payperiod";
 
-import {useRouter} from "next/navigation";
-import {flashDiv} from "@/utils/flashDiv";
-import {useEffect, useState} from "react";
-import {fetchBoth} from "@/utils/fetchboth";
+import { useRouter } from "next/navigation";
+import { flashDiv } from "@/utils/flashDiv";
+import { useEffect, useState } from "react";
+import { fetchBoth } from "@/utils/fetchboth";
 
-import {MoveDown, MoveLeft, MoveRight} from "lucide-react";
-
-const por = getPort();
+import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
 
     // i know there is a better way to handle this but like whatever
     const [period, setPeriod] = useState(getPeriod()); // init period
-    const [vessels, setVessels] = useState({} as { [key: string]: any });
-    const [jobs, setJobs] = useState({} as { [key: string]: any });
+    const [vessels, setVessels] = useState<Record<string, string>>({});
+    const [jobs, setJobs] = useState<Record<string, string>>({});
     const [crew, setCrew] = useState(true);
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState("");
     const [prev, setprev] = useState(0);
     const [month, setmonth] = useState(0);
+    const [opens, setOpens] = useState<Record<string, boolean>>({});
 
     const ex = "prev=" + prev;
 
     //save then redirect
     const review = async () => {
         const rlink = "/daysworked/review?" + ex;
-        if (await save()) router.push(rlink);
+        if (await save(false)) router.push(rlink);
     };
 
     //save table entrys
-    const save = async () => {
+    const save = async (standalone = true) => {
+        setOpens({});
         setsaving(1);
         setUmsg("saving...");
         let strdict = "";
@@ -62,23 +62,20 @@ export default function Home() {
             strdict += day + ":" + cship + ":" + cjob + ";";
         });
 
-
         //if we have any errors inform the user they need to make changes before they can save
         if (derrors.length != 0) {
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            setUmsg('error')
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setUmsg("error");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setsaving(0);
-            await new Promise(resolve => setTimeout(resolve, 300)); // wait out animation
-
+            await new Promise((resolve) => setTimeout(resolve, 300)); // wait out animation
 
             for (let itm of derrors) {
-                await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay betwen flash
+                await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay betwen flash
                 flashDiv(itm);
             }
 
-            setUmsg('')
+            setUmsg("");
 
             return false;
         }
@@ -86,12 +83,16 @@ export default function Home() {
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
         await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
 
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        setUmsg('success!')
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setUmsg("success!");
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-        setsaving(0);
-        setUmsg('')
+        if (standalone) {
+            setsaving(0);
+            setUmsg("");
+        } else {
+            setUmsg("redirecting...");
+        }
         return true; // returns true on success
     };
 
@@ -159,100 +160,6 @@ export default function Home() {
         getPeriodInf();
     }, [ex, router]);
 
-    interface inputProps {
-        day: string;
-    }
-
-    const DateLine = (ins: inputProps) => {
-        const [isOpen, setIsOpen] = useState(false);
-        const day = ins.day;
-        return (
-            <div key={day}>
-                <div
-                    id={day + "_item"}
-                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
-                    onClick={() => {
-                        //this is going to be our dropdown setter
-                        setIsOpen(!isOpen);
-                    }}
-                >
-                    <div>
-                        <div className="flex py-[10px]">
-                            <div className="py-[5px]">
-                                <MoveDown
-                                    className={`transform text-inherit transition-all ease-in-out duration-300 ${isOpen ? '-rotate-180' : 'rotate-0'}`}/>
-                            </div>
-                            <div
-                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                {day}
-                            </div>
-
-                            <div
-                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                {vessels[day as keyof {}]
-                                    ? vessels[day as keyof {}]
-                                    : ""}
-                            </div>
-
-                            <div
-                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                {jobs[day as keyof {}]
-                                    ? jobs[day as keyof {}]
-                                    : ""}
-                            </div>
-                        </div>
-                        <div
-                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                    </div>
-
-
-                    <div
-                        className={`${isOpen ? 'max-h-[350px]' : 'max-h-[0px]'} overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}>
-                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
-                            {['NONE', 'MARINE', 'TECH'].map((e: string) => (
-                                <div
-                                    key={e}
-                                    className="h-[40px] group/item"
-                                    onClick={() => {
-                                        setJobs((prevJobs) => ({
-                                            ...prevJobs,
-                                            [day]: e == 'NONE' ? '' : e
-                                        }));
-                                    }}
-                                >
-                                    <p className="h-[38px] leading-[38px] select-none">{e}</p>
-                                    <div
-                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                                </div>
-                            ))}
-                        </div>
-
-                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
-                            {['NONE', 'BMCC', 'EMMA', 'PROT', 'GYRE', 'NAUT', 'TOOL', '3RD'].map((e: string) => (
-                                <div
-                                    key={e}
-                                    className="h-[40px] group/item"
-                                    onClick={() => {
-                                        setVessels((prevVessels) => ({
-                                            ...prevVessels,
-                                            [day]: e == 'NONE' ? '' : e
-                                        }));
-                                    }}
-                                >
-                                    <p className="h-[38px] leading-[38px] select-none">{e}</p>
-                                    <div
-                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                    <div
-                        className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}/>
-                </div>
-            </div>
-        );
-    };
-
     return (
         <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
             <div className="flex gap-10">
@@ -270,7 +177,7 @@ export default function Home() {
                         setprev(prev + 1);
                     }}
                 >
-                    <MoveLeft size={24} className="flex-shrink-0"/>
+                    <MoveLeft size={24} className="flex-shrink-0" />
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out text-inherit">
                         last week
                     </p>
@@ -289,21 +196,25 @@ export default function Home() {
                         setprev(prev - 1);
                     }}
                 >
-                    <MoveRight size={24} className="flex-shrink-0"/>
+                    <MoveRight size={24} className="flex-shrink-0" />
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
                         next week
                     </p>
                 </button>
             </div>
-            <div id="buttons" className={'rounded-xl w-[250px] h-[3px]'}/>
+            <div id="buttons" className={"rounded-xl w-[250px] h-[3px]"} />
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
 
             <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden`}
             >
-                <div className={`${saving ? 'max-h-[0px]' : 'max-h-[3000px]'} overflow-hidden ease-in-out duration-300`}
-                     id="pgtbl">
+                <div
+                    className={`${
+                        saving ? "max-h-[0px]" : "max-h-[3000px]"
+                    } overflow-hidden ease-in-out duration-300`}
+                    id="pgtbl"
+                >
                     <div className="p-[10px] inline-flex">
                         <div className="w-[24px] select-none opacity-0">h</div>
                         <div className="w-[107px] text-center ">
@@ -316,30 +227,180 @@ export default function Home() {
                             <strong className="select-none">DEPT</strong>
                         </div>
                     </div>
-                    <div className={'flex-col gap-y-5'}>
+                    <div className={"flex-col gap-y-5"}>
                         {period.map((day: string) => (
+                            // THIS WAS ORIGINALLY A COMPONNENT BUT THERE WERE STATE REFRESH ISSUES WITH OPEN & ANIMATIONS. IM SORRY TO WHOEVER HAS TO MAINTAIN THIS -PARKER
                             <div key={day}>
-                                <DateLine day={day}/>
-                                <div id={day + 'flash'} className={'rounded-xl w-[100%] h-[3px]'}/>
+                                <div
+                                    id={day + "_item"}
+                                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
+                                    onClick={() => {
+                                        //this is going to be our dropdown setter
+                                        setOpens((prev) => ({
+                                            ...prev,
+                                            [day]: !opens[day],
+                                        }));
+                                    }}
+                                >
+                                    <div>
+                                        <div className="flex py-[10px]">
+                                            <div className="py-[5px]">
+                                                <MoveDown
+                                                    className={`transform text-inherit transition-all ease-in-out duration-300 ${
+                                                        opens[day]
+                                                            ? "-rotate-180"
+                                                            : "rotate-0"
+                                                    }`}
+                                                />
+                                            </div>
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {day}
+                                            </div>
+
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {vessels[day] || ""}
+                                            </div>
+
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {jobs[day] || ""}
+                                            </div>
+                                        </div>
+                                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
+                                    </div>
+
+                                    <div
+                                        className={`${
+                                            opens[day]
+                                                ? "max-h-[350px]"
+                                                : "max-h-[0px]"
+                                        } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
+                                    >
+                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                            {["NONE", "MARINE", "TECH"].map(
+                                                (e: string) => (
+                                                    <div
+                                                        key={e}
+                                                        className="h-[40px] group/item"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            setJobs(
+                                                                (prevJobs) => ({
+                                                                    ...prevJobs,
+                                                                    [day]:
+                                                                        e ==
+                                                                        "NONE"
+                                                                            ? ""
+                                                                            : e,
+                                                                })
+                                                            );
+                                                        }}
+                                                    >
+                                                        <p className="h-[38px] leading-[38px] select-none">
+                                                            {e}
+                                                        </p>
+                                                        <div
+                                                            className={`rounded-md ${
+                                                                (e == "NONE" &&
+                                                                    !jobs[
+                                                                        day
+                                                                    ]) ||
+                                                                e == jobs[day]
+                                                                    ? "w-100%"
+                                                                    : "w-[0%] group-hover/item:w-[100%]"
+                                                            } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
+                                                        />
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+
+                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                            {[
+                                                "NONE",
+                                                "BMCC",
+                                                "EMMA",
+                                                "PROT",
+                                                "GYRE",
+                                                "NAUT",
+                                                "TOOL",
+                                                "3RD",
+                                            ].map((e: string) => (
+                                                <div
+                                                    key={e}
+                                                    className="h-[40px] group/item"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        setVessels(
+                                                            (prevVessels) => ({
+                                                                ...prevVessels,
+                                                                [day]:
+                                                                    e == "NONE"
+                                                                        ? ""
+                                                                        : e,
+                                                            })
+                                                        );
+                                                    }}
+                                                >
+                                                    <p className="h-[38px] leading-[38px] select-none">
+                                                        {e}
+                                                    </p>
+                                                    <div
+                                                        className={`rounded-md ${
+                                                            (e == "NONE" &&
+                                                                !vessels[
+                                                                    day
+                                                                ]) ||
+                                                            e == vessels[day]
+                                                                ? "w-100%"
+                                                                : "w-[0%] group-hover/item:w-[100%]"
+                                                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${
+                                            opens[day]
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                        }`}
+                                    />
+                                </div>
+                                <div
+                                    id={day + "flash"}
+                                    className={"rounded-xl w-[100%] h-[3px]"}
+                                />
                             </div>
                         ))}
                     </div>
                 </div>
                 <div
-                    className={`${saving ? 'max-h-[100px] duration-300' : 'max-h-[0px] duration-100'} overflow-hidden ease-in-out w-[365px] px-[30px]`}>
-                    <div className={'text-center py-[5px]'}>
-                        {umsg}
-                    </div>
+                    className={`${
+                        saving
+                            ? "max-h-[100px] duration-300"
+                            : "max-h-[0px] duration-100"
+                    } overflow-hidden ease-in-out w-[365px] px-[30px]`}
+                >
+                    <div className={"text-center py-[5px]"}>{umsg}</div>
                     <div
-                        className={`rounded-md w-full ${saving && umsg ? 'max-w-[100%]' : 'max-w-[0%]'} h-[3px] ${umsg == 'error' ? 'bg-red-500' : 'bg-gradient-to-tr from-sky-300 to-indigo-500'} overflow-hidden ease-in-out duration-500 delay-300`}/>
+                        className={`rounded-md w-full ${
+                            saving && umsg ? "max-w-[100%]" : "max-w-[0%]"
+                        } h-[3px] ${
+                            umsg == "error"
+                                ? "bg-red-500"
+                                : "bg-gradient-to-tr from-sky-300 to-indigo-500"
+                        } overflow-hidden ease-in-out duration-500 delay-300`}
+                    />
                 </div>
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
 
             <div className="flex  gap-[15px] px-[10px]">
                 <button
-                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 
+                    text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
                     onClick={save}
                 >
                     save
