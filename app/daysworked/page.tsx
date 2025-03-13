@@ -170,7 +170,7 @@ export default function Home() {
             <div key={day}>
                 <div
                     id={day + "_item"}
-                    className="group bg-white/0 hover:bg-white/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-white hover:text-black"
+                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
                     onClick={() => {
                         //this is going to be our dropdown setter
                         setIsOpen(!isOpen);
@@ -202,7 +202,7 @@ export default function Home() {
                             </div>
                         </div>
                         <div
-                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
+                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                     </div>
 
 
@@ -222,7 +222,7 @@ export default function Home() {
                                 >
                                     <p className="h-[38px] leading-[38px] select-none">{e}</p>
                                     <div
-                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
+                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                                 </div>
                             ))}
                         </div>
@@ -241,23 +241,23 @@ export default function Home() {
                                 >
                                     <p className="h-[38px] leading-[38px] select-none">{e}</p>
                                     <div
-                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-black transition-all ease-in-out duration-300 delay-100"/>
+                                        className="rounded-md w-[0%] group-hover/item:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                                 </div>
                             ))}
                         </div>
                     </div>
                     <div
-                        className={`rounded-md w-[100%] h-[3px] bg-white transition-all ease-in-out duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}/>
+                        className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${isOpen ? 'opacity-100' : 'opacity-0'}`}/>
                 </div>
             </div>
         );
     };
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px]">
-            <div className="flex gap-10" id="buttons">
+        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
+            <div className="flex gap-10">
                 <button
-                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-white bg-white/0 hover:bg-white/100 hover:text-black"
+                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
                         if (!(await checkBounds(false))) {
                             //need to create some visual indication that we are maximally backed
@@ -277,7 +277,7 @@ export default function Home() {
                 </button>
 
                 <button
-                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-white bg-white/0 hover:bg-white/100 hover:text-black"
+                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
                         if (!(await checkBounds(true))) {
                             const flashme = document.getElementById(
@@ -295,8 +295,9 @@ export default function Home() {
                     </p>
                 </button>
             </div>
+            <div id="buttons" className={'rounded-xl w-[250px] h-[3px]'}/>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
 
             <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden`}
@@ -334,17 +335,17 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-white"/>
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
 
             <div className="flex  gap-[15px] px-[10px]">
                 <button
-                    className="max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px]"
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
                     onClick={save}
                 >
                     save
                 </button>
                 <button
-                    className="max-w-[180px] min-w-[150px] rounded-md bg-white/0 hover:bg-white/100 text-white hover:text-black transition-all ease-in-out duration-300 py-[10px]"
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
                     onClick={review}
                 >
                     next
