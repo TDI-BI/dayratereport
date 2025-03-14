@@ -401,7 +401,7 @@ export default function Home() {
                 <button
                     className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 
                     text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
-                    onClick={save}
+                    onClick={()=>save()}
                 >
                     save
                 </button>
