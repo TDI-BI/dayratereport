@@ -1,12 +1,11 @@
 "use client";
-import { getPort } from "@/utils/getPort";
-const port = getPort();
 
 import { getPeriod } from "@/utils/payperiod";
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { fetchBoth } from "@/utils/fetchboth";
 import { mkConfig, generateCsv, download } from "export-to-csv";
 import { useRouter } from "next/navigation";
+
 import {
     Calendar,
     Earth,
@@ -16,9 +15,7 @@ import {
     MoveRight,
     Search,
     Ship,
-    Wrench,
 } from "lucide-react";
-import { Maiden_Orange } from "next/font/google";
 
 interface User {
     username: string;
@@ -97,7 +94,7 @@ const Admin = () => {
         getstuff();
     }, [periodEh, weeks]); // Only re-fetch when period changes
 
-    //if(pageErr) router.push('/daysworked')
+    if(pageErr) router.push('/daysworked')
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
@@ -131,6 +128,10 @@ const Admin = () => {
                 const userDays = daysByUser[user["username"]] || [];
 
                 return usernameMatched && userDays.length > 0;
+            }).filter((user)=>{
+                if (crewEh=='ALL') return true;
+                else if(crewEh=='DOM') return user.isDomestic
+                else return !user.isDomestic
             })
             .map((user) => {
                 // Get user's days
@@ -148,6 +149,9 @@ const Admin = () => {
                 };
             });
     }, [inc, users, shipEh, userFilter, period]);
+
+
+
 
     const expcsv = async () => {
         // Made async to handle the initial getdays call
@@ -182,7 +186,7 @@ const Admin = () => {
             var pushme: { [key: string]: string } = {};
             const name = user.uid.split("/")[1] + " " + user.uid.split("/")[0];
             pushme["name"] = name;
-            pushme["crew"] = user.isDomestic ? "DOMESTIC" : "FOREIGN";
+            pushme["crew"] = user.isDomestic ? "DOM" : "FOR";
 
             var sum = 0;
             experiod.forEach((day) => {
