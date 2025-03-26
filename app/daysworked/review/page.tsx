@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import { fetchBoth } from "@/utils/fetchboth";
 import { Circle, CircleCheckBig, Ship, User } from "lucide-react";
 
-
+// VIBE CODE START - I JUST UPDATED TO NEXT 15.4 FOR SECURITY & JUST WANT TO SHIP FAST
 // handle suspense
 const SearchParamsWrapper = ({ children }: { children: (prev: number) => JSX.Element }) => {
 	const searchParams = useSearchParams();
@@ -35,6 +35,7 @@ export default function Page() {
     	</Suspense>
 	);
 }
+//VIBE CODE END - IM SORRY FOR THIS
 
 const Content = ({ prev }: { prev: number }) => {
     const ex = "prev=" + prev;
