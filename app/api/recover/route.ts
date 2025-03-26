@@ -48,7 +48,7 @@ export const GET = async (request: NextRequest) => {
     </head>
     <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; color: #333;">
         <div style="background-color: #ffffff; padding: 20px; border-radius: 5px;">
-            <p style="font-size: 16px;">your recovery link can be accessed below</p>
+            <p style="font-size: 16px;">A recovery link for '${e.username}' can be accessed below</p>
             <p style="font-size: 16px;">this link is one time use, do not allow others to see this email</p>
     
             <a href="${process.env.NEXT_PUBLIC_TYPE}${por}/login/resetpassword?acc=${e.password}" style="color: #0066cc; text-decoration: none;">
