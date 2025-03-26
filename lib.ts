@@ -14,7 +14,7 @@ export const sessionOptions: SessionOptions ={
     cookieName: 'session',
     cookieOptions:{
         httpOnly:true,
-        secure: false,//process.env.NODE_ENV!=='development',//shuold flag false in dev mode bc its gonna be http
+        secure: process.env.NODE_ENV!=='development',//shuold flag false in dev mode bc its gonna be http
         sameSite:'lax',
         path:'/'
     }
