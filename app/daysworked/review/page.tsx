@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import { useRouter } from "next/navigation";
 import { fetchBoth } from "@/utils/fetchboth";
-import { Ship, User } from "lucide-react";
+import { Circle, CircleCheckBig, Ship, User } from "lucide-react";
 
 export default function Page() {
     //check previous or current
@@ -34,15 +34,15 @@ export default function Page() {
     const [saving, setsaving] = useState(0);
     const [dataResponse, setdataResponse] = useState([]);
     const [umsg, setUmsg] = useState('');
+    const [affirm, setAffirmed] = useState(false);
 
     const submit = async () => {
         // im sure this function is due for a re-write at some point
         //makes logic cleaner
-        const affirm = document.getElementById("affirm") as HTMLInputElement;
         const target = document.getElementById("target") as HTMLElement;
 
         //flashes our confirm if its not clicked
-        if (!affirm.checked) {
+        if (!affirm) {
             flashDiv(target);
             return;
         }
@@ -189,9 +189,33 @@ export default function Page() {
                 <div className=" w-full max-w-[600px] h-[10px] " />
                 {/* i want to make this less ugly later */}
                 <div className="w-[345px] pt-[10px] pb-[10px] rounded-2xl">
-                    <div className="flex gap-[10px]">
-                        <input type="checkbox" id="affirm" />
-                        <p className="select-none py-[5px]">
+                    <div 
+                        className="flex gap-[10px] justify-center items-center space-between cursor-pointer"
+                        onClick={()=>setAffirmed(!affirm)}
+                    >
+                        <div
+                            className="relative w-10 h-10 flex items-center justify-center"
+                        >
+                            <div
+                                className={`absolute transition-all duration-300 ease-in-out ${
+                                    affirm
+                                        ? "opacity-0 rotate-90 transform scale-0"
+                                        : "opacity-100 rotate-0 trasnform scale-100"
+                                }`}
+                            >
+                                <Circle size={24} />
+                            </div>
+                            <div
+                                className={`absolute transition-all duration-300 ease-in-out ${
+                                    affirm
+                                        ? "opacity-100 rotate-0 transform scale-100"
+                                        : "opacity-0 -rotate-90 transform scale-0"
+                                }`}
+                            >
+                                <CircleCheckBig size={24} />
+                            </div>
+                        </div>
+                        <p className="select-none py-[5px] w-[300px]">
                             I acknowledge and certify that the information on
                             this document is true and accurate
                         </p>
