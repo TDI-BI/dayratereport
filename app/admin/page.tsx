@@ -65,7 +65,7 @@ const Admin = () => {
                 setRefresh(false);
             } catch (e) {
                 setInc([]);
-                setPageErr(true);
+                setPageErr(true); // cook up better site protections ?
             }
         };
         const getUsers = async () => {
@@ -79,9 +79,6 @@ const Admin = () => {
                 setPageErr(true);
             }
         };
-
-        
-
         const getstuff = async () => {
             setRefresh(true);
 
@@ -94,7 +91,7 @@ const Admin = () => {
         getstuff();
     }, [periodEh, weeks]); // Only re-fetch when period changes
 
-    if(pageErr) router.push('/daysworked')
+    if(pageErr) router.push('/daysworked') // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
