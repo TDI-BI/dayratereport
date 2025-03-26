@@ -3,7 +3,7 @@ interface lineprops {
     name: string;
     type: string;
     placeholder: string;
-    icon: ReactElement;
+    icon: ReactElement<any>;
 }
 
 export const FormLine = (ins: lineprops) => {

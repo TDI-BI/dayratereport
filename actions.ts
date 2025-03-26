@@ -17,7 +17,7 @@ const bcrypt = require('bcrypt')
 
 export const getSession = async()=>{
 
-    const session = await getIronSession<sessionData>(cookies(), sessionOptions)
+    const session = await getIronSession<sessionData>(await cookies(), sessionOptions)
     
     return session;
 }

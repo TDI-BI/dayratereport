@@ -1,8 +1,7 @@
 "use client";
 import { resetPassword } from "@/actions";
-import { useFormState } from "react-dom";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import { FormLine } from "./formLine";
 
@@ -12,7 +11,7 @@ import { Lock } from "lucide-react";
 const ResetForm = () => {
     const searchParams = useSearchParams();
     const oldHash = searchParams.get("acc") as string;
-    const [state, formAction] = useFormState<any, FormData>(
+    const [state, formAction] = useActionState<any, FormData>(
         resetPassword,
         undefined
     );

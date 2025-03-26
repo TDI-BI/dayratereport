@@ -1,7 +1,6 @@
 "use client";
 import { login } from "@/actions";
-import { useFormState } from "react-dom";
-import {  useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import Link from "next/link";
 import { User, Lock } from "lucide-react";
@@ -10,7 +9,7 @@ import { FormLine } from "./formLine";
 
 
 const LoginForm = () => {
-    const [state, formAction] = useFormState<any, FormData>(login, undefined);
+    const [state, formAction] = useActionState<any, FormData>(login, undefined);
 
     useEffect(() => {
         if (state?.error) {

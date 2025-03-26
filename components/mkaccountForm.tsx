@@ -1,7 +1,6 @@
 "use client";
 import { mkAccount } from "@/actions";
-import { useFormState } from "react-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import Image from "next/image";
 import { FormLine } from "./formLine";
@@ -17,7 +16,7 @@ import { Contact, Lock, Mail, Ship, User } from "lucide-react";
 const MkaccountForm = () => {
     const [crew, setCrew] = useState("");
     const [isOpen, setIsOpen] = useState(false);
-    const [state, formAction] = useFormState<any, FormData>(
+    const [state, formAction] = useActionState<any, FormData>(
         mkAccount,
         undefined
     );

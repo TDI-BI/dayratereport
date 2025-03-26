@@ -1,8 +1,7 @@
 "use client";
 import { recover } from "@/actions";
-import { useFormState } from "react-dom";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import { FormLine } from "./formLine";
 
@@ -10,7 +9,7 @@ import { FormLine } from "./formLine";
 import { Mail } from "lucide-react";
 
 const RecoverForm = () => {
-    const [state, formAction] = useFormState<any, FormData>(recover, undefined);
+    const [state, formAction] = useActionState<any, FormData>(recover, undefined);
 
     useEffect(() => {
         if (state?.error) {

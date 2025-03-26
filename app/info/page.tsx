@@ -107,16 +107,16 @@ const Profile = () => {
                 <div
                     className="cursor-pointer text-center group max-w-[300px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[15px] px-[20px] "
                     onClick={async () => {
-                        navigator.clipboard.writeText("parkerseeley@tdi-bi.com")
                         setCopied(true)
+                        try{navigator.clipboard.writeText("parkerseeley@tdi-bi.com")}catch(e){} //will throw error if insecure mode (https/non-local-host)
+                        window.location.href = `mailto:parkerseeley@tdi-bi.com`;
                         await new Promise(resolve => setTimeout(resolve, 1000));
                         setCopied(false)
-
                     }}
                 >
                     <div className='select-none'>parkerseeley@tdi-bi.com</div> 
                 </div>
-                <p className={`${copied ? 'opacity-100' : 'opacity-0'} duration-300 transition-all ease-in-out `}>copied to clipboard</p>
+                <p className={`${copied ? 'opacity-100' : 'opacity-0'} duration-300 transition-all ease-in-out `}>opening email client</p>
             </div>
         </main>
     );
