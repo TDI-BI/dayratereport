@@ -2,15 +2,9 @@
 import { mkAccount } from "@/actions";
 import { useEffect, useState, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
-import Image from "next/image";
 import { FormLine } from "./formLine";
 
 //icons
-import person from "@/rsrsc/ionicons.designerpack/person-circle-outline.svg";
-import lock from "@/rsrsc/ionicons.designerpack/lock-closed-outline.svg";
-import mail from "@/rsrsc/ionicons.designerpack/mail-open-outline.svg";
-import names from "@/rsrsc/ionicons.designerpack/body-outline.svg";
-import boat from "@/rsrsc/ionicons.designerpack/boat-outline.svg";
 import { Contact, Lock, Mail, Ship, User } from "lucide-react";
 
 const MkaccountForm = () => {

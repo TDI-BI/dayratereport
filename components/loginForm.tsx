@@ -6,8 +6,6 @@ import Link from "next/link";
 import { User, Lock } from "lucide-react";
 import { FormLine } from "./formLine";
 
-
-
 const LoginForm = () => {
     const [state, formAction] = useActionState<any, FormData>(login, undefined);
 

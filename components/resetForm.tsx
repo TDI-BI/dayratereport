@@ -1,7 +1,7 @@
 "use client";
 import { resetPassword } from "@/actions";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useActionState } from "react";
+import { useEffect, useActionState, Suspense } from "react";
 import { flashDiv } from "@/utils/flashDiv";
 import { FormLine } from "./formLine";
 
