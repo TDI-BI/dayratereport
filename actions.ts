@@ -17,7 +17,7 @@ const bcrypt = require('bcrypt')
 
 export const getSession = async()=>{
 
-    const session = await getIronSession<sessionData>(cookies(), sessionOptions)
+    const session = await getIronSession<sessionData>(await cookies(), sessionOptions)
     
     return session;
 }
@@ -133,7 +133,7 @@ export const recover = async (
     try{
         const res = await response.json();
         const rmessage= res.resp;
-        if(rmessage=='email sent') return {error: 'recovery instructions sent'}
+        if(rmessage=='email sent') return {error: 'recovery instructions sent, check your spam box!'}
         throw 'just need to catch this';
     }
     catch(e){ return {error: 'account not found'}}

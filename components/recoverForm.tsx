@@ -1,16 +1,15 @@
 "use client";
 import { recover } from "@/actions";
-import { useFormState } from "react-dom";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useActionState } from "react";
 import { flashDiv } from "@/utils/flashDiv";
-import Image from "next/image";
+import { FormLine } from "./formLine";
 
 //icons
-import mail from "@/rsrsc/ionicons.designerpack/mail-open-outline.svg";
+import { Mail } from "lucide-react";
 
 const RecoverForm = () => {
-    const [state, formAction] = useFormState<any, FormData>(recover, undefined);
+    const [state, formAction] = useActionState<any, FormData>(recover, undefined);
 
     useEffect(() => {
         if (state?.error) {
@@ -19,36 +18,30 @@ const RecoverForm = () => {
     });
 
     return (
-        <div className="tblWrapper">
+        <div className="">
             <form action={formAction}>
-                <h1 className="formLine">
-                    <p className="formIcon">
-                        <Image priority src={mail} alt="icon" />
-                    </p>
-                    <input
-                        className="hoverLn hoverLnF formInput"
-                        name="email"
-                        type="text"
-                        placeholder="email"
-                    />
-                </h1>
-
-                <h1 className="formLine">
-                    <button>
-                        <p className="w-[140px] btnh btn hoverbg">
-                            recover
-                        </p>
+                <FormLine
+                    name="email"
+                    type="text"
+                    placeholder="email"
+                    icon={<Mail/>}
+                />
+                <h1 className="flex gap-[5px]">
+                    <button className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                        <div>recover</div>
                     </button>
                     <Link href="../login">
-                        <p className="w-[140px] btnh btn hoverbg">
-                            back
+                        <p className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                        back
                         </p>
                     </Link>
-                </h1>
-                <h1 className="formLine">
-                    <div className="errMessage" id="error">
-                        {state?.error && <p>{state.error}</p>}
+                </h1> 
+
+                <h1 className="flex-col text-center justify-center h-[40px]">
+                    <div className="py-[10px] w-[305px]">
+                        {state?.error && <p className='text-wrap'>{state.error}</p>}
                     </div>
+                    <div id="error" className={"rounded-xl w-[100%] h-[3px]"} />
                 </h1>
             </form>
         </div>

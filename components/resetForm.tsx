@@ -1,20 +1,17 @@
 "use client";
 import { resetPassword } from "@/actions";
-import { useFormState } from "react-dom";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useActionState, Suspense } from "react";
 import { flashDiv } from "@/utils/flashDiv";
-import Link from "next/link";
-
-import Image from "next/image";
+import { FormLine } from "./formLine";
 
 //icons
-import lock from "@/rsrsc/ionicons.designerpack/lock-closed-outline.svg";
+import { Lock } from "lucide-react";
 
 const ResetForm = () => {
     const searchParams = useSearchParams();
     const oldHash = searchParams.get("acc") as string;
-    const [state, formAction] = useFormState<any, FormData>(
+    const [state, formAction] = useActionState<any, FormData>(
         resetPassword,
         undefined
     );
@@ -26,8 +23,8 @@ const ResetForm = () => {
     });
 
     return (
-        <div className="tblWrapper">
-            <form action={formAction}>
+        <div className="">
+            <form action={formAction} className="space-y-[5px]">
                 <input
                     className="hidden"
                     name="acc"
@@ -35,40 +32,28 @@ const ResetForm = () => {
                     value={oldHash}
                 />
 
-                <h1 className="formLine">
-                    <p className="formIcon">
-                        <Image priority src={lock} alt="icon" />
-                    </p>
-                    <input
-                        className="hoverLn hoverLnF formInput"
-                        name="password1"
-                        type="password"
-                        placeholder="new password"
-                    />
-                </h1>
-                <h1 className="formLine">
-                    <p className="formIcon">
-                        <Image priority src={lock} alt="icon" />
-                    </p>
-                    <input
-                        className="hoverLn hoverLnF formInput"
-                        name="password2"
-                        type="password"
-                        placeholder="repeat password"
-                    />
-                </h1>
-                <h1 className="formLine">
-                    <button>
-                        <p className="w-[280px] btnh btn hoverbg">
-                            reset password
-                        </p>
-                    </button>
-                </h1>
+                <FormLine
+                    name="password1"
+                    type="password"
+                    placeholder="new password"
+                    icon={<Lock />}
+                />
+                <FormLine
+                    name="password2"
+                    type="password"
+                    placeholder="repeat password"
+                    icon={<Lock />}
+                />
 
-                <h1 className="formLine">
-                    <div className="errMessage" id="error">
+                <button className="group w-[280px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
+                    <div>recover</div>
+                </button>
+
+                <h1 className="flex-col text-center justify-center h-[40px]">
+                    <div className="py-[10px]">
                         {state?.error && <p>{state.error}</p>}
                     </div>
+                    <div id="error" className={"rounded-xl w-[100%] h-[3px]"} />
                 </h1>
             </form>
         </div>

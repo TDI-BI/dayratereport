@@ -1,44 +1,47 @@
 "use client";
 import { getPort } from "@/utils/getPort";
-const por = getPort();
 import { getPeriod } from "@/utils/payperiod";
 
 import { useRouter } from "next/navigation";
 import { flashDiv } from "@/utils/flashDiv";
-import { useState, useEffect } from "react";
-import DropDown from "@/components/reportDropDown";
+import { useEffect, useState } from "react";
 import { fetchBoth } from "@/utils/fetchboth";
+
+import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
     const router = useRouter();
 
     // i know there is a better way to handle this but like whatever
     const [period, setPeriod] = useState(getPeriod()); // init period
-    const [vessels, setVessels] = useState({} as { [key: string]: any });
-    const [jobs, setJobs] = useState({} as { [key: string]: any });
+    const [vessels, setVessels] = useState<Record<string, string>>({});
+    const [jobs, setJobs] = useState<Record<string, string>>({});
     const [crew, setCrew] = useState(true);
     const [saving, setsaving] = useState(0);
     const [umsg, setUmsg] = useState("");
     const [prev, setprev] = useState(0);
     const [month, setmonth] = useState(0);
+    const [opens, setOpens] = useState<Record<string, boolean>>({});
 
     const ex = "prev=" + prev;
 
     //save then redirect
     const review = async () => {
         const rlink = "/daysworked/review?" + ex;
-        if (await save()) router.push(rlink);
+        if (await save(false)) router.push(rlink);
     };
 
     //save table entrys
-    const save = async () => {
+    const save = async (standalone = true) => {
+        setOpens({});
         setsaving(1);
         setUmsg("saving...");
         let strdict = "";
         let derrors: HTMLElement[] = []; // stack of elements to flash
 
         period.map((day) => {
-            if ( // make sure we are properly filled out
+            if (
+                // make sure we are properly filled out
                 (!vessels[day] && jobs[day]) ||
                 (vessels[day] && !jobs[day])
             ) {
@@ -61,18 +64,35 @@ export default function Home() {
 
         //if we have any errors inform the user they need to make changes before they can save
         if (derrors.length != 0) {
-            derrors.forEach((itm) => {
-                flashDiv(itm);
-            });
-            setUmsg("failure");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setUmsg("error");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setsaving(0);
+            await new Promise((resolve) => setTimeout(resolve, 300)); // wait out animation
+
+            for (let itm of derrors) {
+                await new Promise((resolve) => setTimeout(resolve, 100)); // 100ms delay betwen flash
+                flashDiv(itm);
+            }
+
+            setUmsg("");
+
             return false;
         }
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
         await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
-        setUmsg("saved");
-        setsaving(0);
+
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setUmsg("success!");
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        if (standalone) {
+            setsaving(0);
+            setUmsg("");
+        } else {
+            setUmsg("redirecting...");
+        }
         return true; // returns true on success
     };
 
@@ -87,9 +107,7 @@ export default function Home() {
         ).resp; // get next week in intended direction
         if (crew) {
             const thisp = (
-                await (
-                    await fetchBoth("/api/getlatestdomesticperiod")
-                ).json()
+                await (await fetchBoth("/api/getlatestdomesticperiod")).json()
             ).resp;
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
@@ -104,7 +122,6 @@ export default function Home() {
     useEffect(() => {
         //query database
         async function getPeriodInf() {
-
             const response = await fetchBoth(`/api/getperiodinf?${ex}`);
             const res = await response.json();
 
@@ -120,7 +137,7 @@ export default function Home() {
                     job[item["day"]] = item["type"];
                 });
             } catch (e) {
-                router.push("../../")
+                router.push("../../");
             } // make sure page doesnt crash
 
             const perResp = await fetchBoth(`/api/verifydate?${ex}`);
@@ -133,20 +150,21 @@ export default function Home() {
                 await (await fetchBoth("/api/sessionforclient")).json()
             ).resp;
 
-            setCrew(session.isDomestic ? true : false); // error thrown bc could maybe be empty (lie)
+            setCrew(!!session.isDomestic); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
-            setmonth(new Date(thingy[0]).getMonth()) // better bound checking sys.
+            setmonth(new Date(thingy[0]).getMonth()); // better bound checking sys.
             setVessels(ves);
             setJobs(job);
         }
+
         getPeriodInf();
     }, [ex, router]);
 
     return (
-        <main className="flex min-h-screen flex-col items-center px-1 space-y-[10px]">
-            <div className="inline-flex h-[44px]" id="buttons">
+        <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
+            <div className="flex gap-10">
                 <button
-                    className="w-[150px] btnh btn hoverbg"
+                    className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
                         if (!(await checkBounds(false))) {
                             //need to create some visual indication that we are maximally backed
@@ -159,12 +177,14 @@ export default function Home() {
                         setprev(prev + 1);
                     }}
                 >
-                    {"< back a week"}
+                    <MoveLeft size={24} className="flex-shrink-0" />
+                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out text-inherit">
+                        last week
+                    </p>
                 </button>
 
                 <button
-                    id="forbutton"
-                    className="w-[150px] btnh btn hoverbg"
+                    className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
                         if (!(await checkBounds(true))) {
                             const flashme = document.getElementById(
@@ -176,91 +196,221 @@ export default function Home() {
                         setprev(prev - 1);
                     }}
                 >
-                    {"forward a week >"}
+                    <MoveRight size={24} className="flex-shrink-0" />
+                    <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
+                        next week
+                    </p>
                 </button>
             </div>
-            <div className="tblWrapper" id="pgtbl">
-                <div className="pt-[10px] inline-flex">
-                    <div className="tblHeadItm">
-                        <strong>DATE</strong>
+            <div id="buttons" className={"rounded-xl w-[250px] h-[3px]"} />
+
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
+
+            <div
+                className={`transition-all duration-300 ease-in-out overflow-hidden`}
+            >
+                <div
+                    className={`${
+                        saving ? "max-h-[0px]" : "max-h-[3000px]"
+                    } overflow-hidden ease-in-out duration-300`}
+                    id="pgtbl"
+                >
+                    <div className="p-[10px] inline-flex">
+                        <div className="w-[24px] select-none opacity-0">h</div>
+                        <div className="w-[107px] text-center ">
+                            <strong className="select-none">DATE</strong>
+                        </div>
+                        <div className="w-[107px] text-center">
+                            <strong className="select-none">VESSEL</strong>
+                        </div>
+                        <div className="min-w-[107px] text-center">
+                            <strong className="select-none">DEPT</strong>
+                        </div>
                     </div>
-                    <div className="tblHeadItm">
-                        <strong>VESSEL</strong>
-                    </div>
-                    <div className="tblHeadItm">
-                        <strong>DEPT</strong>
-                    </div>
-                </div>
-                <div>
-                    {period.map((day: string) => (
-                        <div key={day} id={day + "flash"}>
-                            <div
-                                key={day}
-                                id={day + "_item"}
-                                className="pt-[15px] h-[60px] hoverbg"
-                            >
-                                {/*each of these are 345 wide as its the perfect width for mobile. do everything to maintain that*/}
-                                <div className="tblBodyDate">{day}</div>
-                                {/* shuold popthese into a componnent */}
-                                <DropDown
-                                    val={
-                                        vessels[day as keyof {}]
-                                            ? vessels[day as keyof {}]
-                                            : ""
-                                    }
-                                    inid={day + "_ship"}
-                                    setter={(e: any) => {
-                                        let ndict: {
-                                            [id: string]: string;
-                                        } = structuredClone(vessels);
-                                        ndict[day] = e.target.value;
-                                        setVessels(ndict);
+                    <div className={"flex-col gap-y-5"}>
+                        {period.map((day: string) => (
+                            // THIS WAS ORIGINALLY A COMPONNENT BUT THERE WERE STATE REFRESH ISSUES WITH OPEN & ANIMATIONS. IM SORRY TO WHOEVER HAS TO MAINTAIN THIS -PARKER
+                            <div key={day}>
+                                <div
+                                    id={day + "_item"}
+                                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
+                                    onClick={() => {
+                                        //this is going to be our dropdown setter
+                                        setOpens((prev) => ({
+                                            ...prev,
+                                            [day]: !opens[day],
+                                        }));
                                     }}
-                                    options={[
-                                        "BMCC",
-                                        "EMMA",
-                                        "PROT",
-                                        "GYRE",
-                                        "NAUT",
-                                        "TOOL",
-                                        "3RD",
-                                    ]}
-                                />
-                                <DropDown
-                                    val={
-                                        jobs[day as keyof {}]
-                                            ? jobs[day as keyof {}]
-                                            : ""
-                                    }
-                                    inid={day + "_job"}
-                                    setter={(e: any) => {
-                                        let ndict: {
-                                            [id: string]: string;
-                                        } = structuredClone(jobs);
-                                        ndict[day] = e.target.value;
-                                        setJobs(ndict);
-                                    }}
-                                    options={["TECH", "MARINE"]}
+                                >
+                                    <div>
+                                        <div className="flex py-[10px]">
+                                            <div className="py-[5px]">
+                                                <MoveDown
+                                                    className={`transform text-inherit transition-all ease-in-out duration-300 ${
+                                                        opens[day]
+                                                            ? "-rotate-180"
+                                                            : "rotate-0"
+                                                    }`}
+                                                />
+                                            </div>
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {day}
+                                            </div>
+
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {vessels[day] || ""}
+                                            </div>
+
+                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {jobs[day] || ""}
+                                            </div>
+                                        </div>
+                                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
+                                    </div>
+
+                                    <div
+                                        className={`${
+                                            opens[day]
+                                                ? "max-h-[350px]"
+                                                : "max-h-[0px]"
+                                        } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
+                                    >
+                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                            {["NONE", "MARINE", "TECH"].map(
+                                                (e: string) => (
+                                                    <div
+                                                        key={e}
+                                                        className="h-[40px] group/item"
+                                                        onClick={(event) => {
+                                                            event.stopPropagation();
+                                                            setJobs(
+                                                                (prevJobs) => ({
+                                                                    ...prevJobs,
+                                                                    [day]:
+                                                                        e ==
+                                                                        "NONE"
+                                                                            ? ""
+                                                                            : e,
+                                                                })
+                                                            );
+                                                        }}
+                                                    >
+                                                        <p className="h-[38px] leading-[38px] select-none">
+                                                            {e}
+                                                        </p>
+                                                        <div
+                                                            className={`rounded-md ${
+                                                                (e == "NONE" &&
+                                                                    !jobs[
+                                                                        day
+                                                                    ]) ||
+                                                                e == jobs[day]
+                                                                    ? "w-100%"
+                                                                    : "w-[0%] group-hover/item:w-[100%]"
+                                                            } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
+                                                        />
+                                                    </div>
+                                                )
+                                            )}
+                                        </div>
+
+                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                            {[
+                                                "NONE",
+                                                "BMCC",
+                                                "EMMA",
+                                                "PROT",
+                                                "GYRE",
+                                                "NAUT",
+                                                "TOOL",
+                                                "3RD",
+                                            ].map((e: string) => (
+                                                <div
+                                                    key={e}
+                                                    className="h-[40px] group/item"
+                                                    onClick={(event) => {
+                                                        event.stopPropagation();
+                                                        setVessels(
+                                                            (prevVessels) => ({
+                                                                ...prevVessels,
+                                                                [day]:
+                                                                    e == "NONE"
+                                                                        ? ""
+                                                                        : e,
+                                                            })
+                                                        );
+                                                    }}
+                                                >
+                                                    <p className="h-[38px] leading-[38px] select-none">
+                                                        {e}
+                                                    </p>
+                                                    <div
+                                                        className={`rounded-md ${
+                                                            (e == "NONE" &&
+                                                                !vessels[
+                                                                    day
+                                                                ]) ||
+                                                            e == vessels[day]
+                                                                ? "w-100%"
+                                                                : "w-[0%] group-hover/item:w-[100%]"
+                                                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
+                                                    />
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <div
+                                        className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${
+                                            opens[day]
+                                                ? "opacity-100"
+                                                : "opacity-0"
+                                        }`}
+                                    />
+                                </div>
+                                <div
+                                    id={day + "flash"}
+                                    className={"rounded-xl w-[100%] h-[3px]"}
                                 />
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
+                </div>
+                <div
+                    className={`${
+                        saving
+                            ? "max-h-[100px] duration-300"
+                            : "max-h-[0px] duration-100"
+                    } overflow-hidden ease-in-out w-[365px] px-[30px]`}
+                >
+                    <div className={"text-center py-[5px]"}>{umsg}</div>
+                    <div
+                        className={`rounded-md w-full ${
+                            saving && umsg ? "max-w-[100%]" : "max-w-[0%]"
+                        } h-[3px] ${
+                            umsg == "error"
+                                ? "bg-red-500"
+                                : "bg-gradient-to-tr from-sky-300 to-indigo-500"
+                        } overflow-hidden ease-in-out duration-500 delay-300`}
+                    />
                 </div>
             </div>
 
-            <div className="tblFoot">
-                <button className="w-[185.5px] btnh btn hoverbg" onClick={save}>
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
+
+            <div className="flex  gap-[15px] px-[10px]">
+                <button
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 
+                    text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
+                    onClick={()=>save()}
+                >
                     save
                 </button>
                 <button
-                    className="w-[185.5px] btnh btn hoverbg"
+                    className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
                     onClick={review}
                 >
                     next
                 </button>
-            </div>
-            <div>
-                <p className={saving ? "savemsg1" : "savemsg0"}>{umsg}</p>
             </div>
         </main>
     );
