@@ -1,5 +1,4 @@
 "use client";
-import { getPort } from "@/utils/getPort";
 import { getPeriod } from "@/utils/payperiod";
 
 import { useRouter } from "next/navigation";
@@ -10,6 +9,7 @@ import { fetchBoth } from "@/utils/fetchboth";
 import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
+    const days = ['Sun', 'Mon', 'Tue', 'Wed','Thu','Fri','Sat',]
     const router = useRouter();
 
     // i know there is a better way to handle this but like whatever
@@ -254,7 +254,7 @@ export default function Home() {
                                                 />
                                             </div>
                                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {day}
+                                                {days[(new Date(day)).getDay()]}, {day.slice(5,10)}
                                             </div>
 
                                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
