@@ -9,7 +9,7 @@ import { fetchBoth } from "@/utils/fetchboth";
 import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
 
 export default function Home() {
-    const days = ['Sun', 'Mon', 'Tue', 'Wed','Thu','Fri','Sat',]
+    const days = ['Mon', 'Tue', 'Wed','Thu','Fri','Sat', 'Sun', ]
     const router = useRouter();
 
     // i know there is a better way to handle this but like whatever
