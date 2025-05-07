@@ -254,7 +254,7 @@ export default function Home() {
                                                 />
                                             </div>
                                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {days[(new Date(day)).getDay()]}, {day.slice(5,10)}
+                                                {days[period.indexOf(day)]}, {day.slice(5,10)}
                                             </div>
 
                                             <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
