@@ -224,7 +224,7 @@ const Admin = () => {
         const csv = generateCsv(csvConfig)(expme);
         download(csvConfig)(csv);
     };
-
+    console.log()
     return (
         <main className="flex min-h-screen flex-col items-center pt-[20px]">
             <div className="flex flex-row-reverse flex-wrap justify-center gap-4 pb-[10px]">
