@@ -324,7 +324,6 @@ export default function Home() {
                                                 "NAUT",
                                                 "TOOL",
                                                 "3RD",
-                                                "ADMIN",
                                             ].map((e: string) => (
                                                 <div
                                                     key={e}
