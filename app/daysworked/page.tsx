@@ -276,7 +276,7 @@ export default function Home() {
                                         } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
                                     >
                                         <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
-                                            {["NONE", "MARINE", "TECH"].map(
+                                            {["NONE", "MARINE", "TECH", "ADMIN"].map(
                                                 (e: string) => (
                                                     <div
                                                         key={e}
