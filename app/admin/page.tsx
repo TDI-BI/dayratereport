@@ -64,6 +64,7 @@ const Admin = () => {
                 setInc(res.resp);
                 setRefresh(false);
             } catch (e) {
+                console.error(e);
                 setInc([]);
                 setPageErr(true); // cook up better site protections ?
             }
@@ -75,6 +76,7 @@ const Admin = () => {
                 if (!users.resp) throw { error: "no input" };
                 setUsers(users.resp);
             } catch (e) {
+                console.error(e);
                 setUsers([]);
                 setPageErr(true);
             }
@@ -91,7 +93,7 @@ const Admin = () => {
         getstuff();
     }, [periodEh, weeks]); // Only re-fetch when period changes
 
-    if(pageErr) router.push('/daysworked') // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
+    if(pageErr) {router.push('/daysworked')} // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
@@ -355,6 +357,7 @@ const Admin = () => {
                                     "NAUT",
                                     "TOOL",
                                     "3RD",
+                                    "ADMN",
                                 ].map((e: string) => (
                                     <div
                                         key={e}

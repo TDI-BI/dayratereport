@@ -211,7 +211,7 @@ export default function Home() {
             >
                 <div
                     className={`${
-                        saving ? "max-h-[0px]" : "max-h-[3000px]"
+                        saving ? "max-h-[0px]" : "max-h-[4000px]"
                     } overflow-hidden ease-in-out duration-300`}
                     id="pgtbl"
                 >
@@ -271,7 +271,7 @@ export default function Home() {
                                     <div
                                         className={`${
                                             opens[day]
-                                                ? "max-h-[350px]"
+                                                ? "max-h-[400px]"
                                                 : "max-h-[0px]"
                                         } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
                                     >
@@ -324,6 +324,7 @@ export default function Home() {
                                                 "NAUT",
                                                 "TOOL",
                                                 "3RD",
+                                                "ADMN",
                                             ].map((e: string) => (
                                                 <div
                                                     key={e}
