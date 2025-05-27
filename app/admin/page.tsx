@@ -319,7 +319,7 @@ const Admin = () => {
                         <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
                         <div
                             className={`${
-                                open ? "max-h-[340px]" : "max-h-[0]"
+                                open ? "max-h-[400px]" : "max-h-[0]"
                             } overflow-hidden transition-all ease-in-out duration-300
                             pr-5 flex flex-row-reverse gap-5
                         `}
