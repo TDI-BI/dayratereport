@@ -41,7 +41,7 @@ const Profile = () => {
                 {session.userId
                     ? session.userId.split("/")[0] +
                       " " +
-                      session.userId.split("/")[0]
+                      session.userId.split("/")[1]
                     : ""}
             </div>
 
@@ -55,7 +55,7 @@ const Profile = () => {
 
             <div className="flex gap-5 ">
                 <Mail />
-                <p> {session.username ? session.username : ""} </p>
+                <p> {session.userEmail ? session.userEmail : ""} </p>
             </div>
 
             <div className=" w-full max-w-[600px] h-[10px] " />
