@@ -39,3 +39,5 @@ next-env.d.ts
 #script files
 /scripts/eow.txt
 /scripts/log.txt
+
+/.idea/*
