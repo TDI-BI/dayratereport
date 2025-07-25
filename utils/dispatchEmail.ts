@@ -58,6 +58,7 @@ export const dispatchEmail = async (
         saveToSentItems: "false",
     };
     const connection = await connectToDb();
+
     const addLine = async (status: string) => {
         const q = `INSERT INTO emails
                    SET body=?, sentto=?, status=?, subject=?, date=?`;

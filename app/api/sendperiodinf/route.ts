@@ -1,14 +1,12 @@
 // build a PDF and email it as an attachment to the user and dayrate
 // theres probably a bug somewhere in this script, check logs in teh database for what im trcking to hunt it
-import {Resend} from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 import {getSession} from "@/actions";
 import {NextRequest} from "next/server";
 import {getPeriod} from "@/utils/payperiod";
 import {connectToDb} from "@/utils/connectToDb";
 import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable"; // this is so gas actually
+import autoTable from "jspdf-autotable";
+import {dispatchEmail} from "@/utils/dispatchEmail"; // this is so gas actually
 
 export const GET = async (request: NextRequest) => {
     //URL parameters
@@ -97,42 +95,19 @@ export const GET = async (request: NextRequest) => {
             await connection.execute(query);
         }
 
-        //TODO replace this with some ms graph thingy -> lets make a dispatch email util file
-        const data = await resend.emails.send({
-            from: "reports@tdifielddays.com", // we will change this probably
-            to: [session.userEmail!, "dayrate@tdi-bi.com"],
-            //'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
-            subject:
-                "travel report for " +
-                names[0] +
-                " " +
-                names[1] +
-                " from period starting " +
-                dayL,
-            text:
-                "the following attached file is a travel report for " +
-                names[0] +
-                " " +
-                names[1] +
-                " @ " +
-                session.userEmail +
-                " for pay period starting on " +
-                period[0] +
-                " \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email. ",
-            attachments: [
-                {
-                    filename:
-                        "report_for_" +
-                        session.username +
-                        "_" +
-                        period[0] +
-                        ".pdf",
-                    content: btoa(pds),
-                },
-            ],
-        });
+        const bleh = dispatchEmail(
+            `travel report for ${names[0]} ${names[1]} from period starting ${dayL}`,
+            'Text',
+            `the following attached file is a travel report for ${names[0]} ${names[1]} @ ${session.userEmail} for pay period starting on ${period[0]}. \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email.`,
+            [`${session.userEmail}`, "parkerseeley@tdi-bi.com"],
+            [{
+                name: `report_for_${session.username}_${period[0]}.pdf`,
+                contentType: 'application/pdf',
+                base64content: btoa(pds)
+            }]
+        )
 
-        return Response.json({data}, {status: 200});
+        return Response.json({bleh}, {status: 200});
     } catch (error: any) {
         connection.end();
         return new Response(

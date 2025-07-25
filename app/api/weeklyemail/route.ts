@@ -1,5 +1,4 @@
-import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
+import { dispatchEmail } from "@/utils/dispatchEmail";
 import { NextRequest } from "next/server";
 
 const htmlout = `
@@ -57,9 +56,11 @@ export const GET = async (request: NextRequest) => {
         });
 
     try {
-        const data = await resend.emails.send({
-            from: "reminders@tdifielddays.com", // we will change this probably
-            to: [ // should maybe bounce all this stuff to my .env so i dont accidentally email shit to everyone while testing lol
+        const bleh = dispatchEmail(
+            "Field Days Worked Reminder",
+            'HTML',
+            htmlout,
+            /*[ // should maybe bounce all this stuff to my .env so i dont accidentally email shit to everyone while testing lol
                 "all@tdi-bi.com", 
                 "mariner@tdi-bi.com", 
                 "proteus@tdi-bi.com", 
@@ -68,25 +69,11 @@ export const GET = async (request: NextRequest) => {
                 "emmamccall@tdi-bi.com", 
                 "nautilus@tdi-bi.com", 
                 "fcmariners@tdi-bi.com",
-            ],
-            reply_to: ["reminders@tdifielddays.com", "dayrate@tdi-bi.com"],
-            //'dayratereportdonotrespond@gmail.com', dayrate@tdi-bi.com', // swap for dev/prod
-            subject:
-                "Field Days Worked Reminder",
-            text:
-                `
-Good morning crew,\n
-this is a friendly reminder to complete your days worked sheets.\n
-These submissions are due every monday by 10AM CST.\n
-The link to our web page is https://tdifielddays.com/\n
+            ]*/
+            ['parkerseeley@tdi-bi.com']
+        )
 
-Thanks!\n
-- Dayrate team\n    
-            `,
-            html: htmlout,
-        });
-
-        return Response.json({ data }, { status: 200 });
+        return Response.json({ bleh }, { status: 200 });
     }
 
     catch (e) {
