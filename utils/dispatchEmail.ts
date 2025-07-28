@@ -1,6 +1,31 @@
-import {Client} from "@microsoft/microsoft-graph-client";
-import {ClientSecretCredential} from "@azure/identity";
 import {connectToDb} from "@/utils/connectToDb";
+//got rid of the ms graph packages we were using here -- they were all official but better safe than sorry?
+
+//got rid of microsoft's npm packages
+const getAccessToken = async () => {
+    const params = new URLSearchParams();
+    params.append("grant_type", "client_credentials");
+    params.append("client_id", process.env.CLIENT_ID!);
+    params.append("client_secret", process.env.CLIENT_SECRET!);
+    params.append("scope", "https://graph.microsoft.com/.default");
+    const response = await fetch(
+        `https://login.microsoftonline.com/${process.env.TENANT_ID}/oauth2/v2.0/token`,
+        {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: params.toString(),
+        }
+    );
+
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(`Token request failed: ${JSON.stringify(data)}`);
+    }
+
+    return data.access_token;
+};
 
 interface ourFileProps {
     name: string,
@@ -16,25 +41,9 @@ export const dispatchEmail = async (
     attachments: ourFileProps[] = [],
 ) => {
 
-    //set these in dot env
-    const tenantId: string = process.env.TENANT_ID ?? '';
-    const clientId: string = process.env.CLIENT_ID ?? '';
-    const clientSecret: string = process.env.CLIENT_SECRET ?? ''; // not hitting?
-    console.log({tenID: tenantId, cliId: clientId, cli: clientSecret});
     const sender = 'no-reply@tdi-bi.com'; // u lowkey can send emails on anyone's behalf here so care
+    const accessToken = await getAccessToken();
 
-    const credential = new ClientSecretCredential(
-        tenantId,
-        clientId,
-        clientSecret
-    );
-    const token = await credential.getToken("https://graph.microsoft.com/.default");
-
-    const graphClient = Client.init({
-        authProvider: (done) => {
-            done(null, token.token);
-        },
-    });
 
     const mail = {
         message: {
@@ -57,6 +66,7 @@ export const dispatchEmail = async (
         },
         saveToSentItems: "false",
     };
+
     const connection = await connectToDb();
 
     const addLine = async (status: string) => {
@@ -68,10 +78,18 @@ export const dispatchEmail = async (
         return results;
     }
 
-
     try {
-        await graphClient.api(`/users/${sender}/sendMail`).post(mail);
-        await addLine('Success:');
+        await fetch(`https://graph.microsoft.com/v1.0/users/${sender}/sendMail`,
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(mail),
+            }
+        );
+        await addLine('Success:Email Successfully Dispatched');
         connection.end();
         return 'Success sending email!';
     } catch (error) {

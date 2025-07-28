@@ -2,11 +2,10 @@
 
 import { getPort } from "@/utils/getPort";
 const por = getPort();
-import { Resend } from "resend";
-const resend = new Resend(process.env.RESEND_API_KEY);
 import { getSession } from "@/actions";
 import { NextRequest } from "next/server";
 import { connectToDb } from "@/utils/connectToDb";
+import { dispatchEmail } from "@/utils/dispatchEmail";
 
 export const GET = async (request: NextRequest) => {
     //block if logged in
@@ -61,23 +60,13 @@ export const GET = async (request: NextRequest) => {
 </html>
 `
             //console.log(e);//debug line
-            
-            const data = await resend.emails.send({
-                from: "recover@tdifielddays.com", // we will change this probably
-                to: e.email, //e.email,
-                subject: "recover your account",
-                text:
-                    'your username is "' +
-                    e.username +
-                    '"\n' +
-                    "to recover your account please follow the link: " +
-                    por +
-                    "/login/resetpassword?acc=" +
-                    e.password +
-                    "\ndo not allow others to see/use this link. It can only be used once. do not reply to this email",
-                html:htmlout,
-            });
-            
+
+            const bleh = await dispatchEmail(
+                "recover your account", 
+                'Text',
+                `your username is ${e.username} \n'to recover your account please follow the link: ${por}/login/resetpassword?acc=${e.password} \ndo not allow others to see/use this link. It can only be used once. do not reply to this email`,
+                [e.email],
+            )
         });
 
         return new Response(JSON.stringify({ resp: "email sent" }), {

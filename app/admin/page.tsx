@@ -1,10 +1,11 @@
 "use client";
 
-import { getPeriod } from "@/utils/payperiod";
-import { useState, useEffect, useMemo, useCallback } from "react";
-import { fetchBoth } from "@/utils/fetchboth";
-import { mkConfig, generateCsv, download } from "export-to-csv";
-import { useRouter } from "next/navigation";
+import {getPeriod} from "@/utils/payperiod";
+import {useState, useEffect, useMemo} from "react";
+import {fetchBoth} from "@/utils/fetchboth";
+import {mkConfig, generateCsv, download} from "export-to-csv";
+import {useRouter} from "next/navigation";
+import {Navbtn} from "@/components/navbarclient";
 
 import {
     Calendar,
@@ -16,11 +17,12 @@ import {
     Search,
     Ship,
 } from "lucide-react";
+import Link from "next/link";
 
 interface User {
     username: string;
     uid: string;
-    email:string;
+    email: string;
     isDomestic: boolean;
     lastConfirm: string;
 }
@@ -60,7 +62,7 @@ const Admin = () => {
                     `/api/admingetdays?prev=${periodEh}&tot=${weeks}`
                 );
                 const res = await response.json();
-                if (!res.resp) throw { error: "no input" };
+                if (!res.resp) throw {error: "no input"};
                 setInc(res.resp);
                 setRefresh(false);
             } catch (e) {
@@ -73,7 +75,7 @@ const Admin = () => {
             try {
                 let resp = await fetchBoth("/api/getusers");
                 const users = await resp.json();
-                if (!users.resp) throw { error: "no input" };
+                if (!users.resp) throw {error: "no input"};
                 setUsers(users.resp);
             } catch (e) {
                 console.error(e);
@@ -93,7 +95,9 @@ const Admin = () => {
         getstuff();
     }, [periodEh, weeks]); // Only re-fetch when period changes
 
-    if(pageErr) {router.push('/daysworked')} // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
+    if (pageErr) {
+        router.push('/daysworked')
+    } // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
 
     // Memoized filtered data processing
     const filteredData = useMemo(() => {
@@ -127,9 +131,9 @@ const Admin = () => {
                 const userDays = daysByUser[user["username"]] || [];
 
                 return usernameMatched && userDays.length > 0;
-            }).filter((user)=>{
-                if (crewEh=='ALL') return true;
-                else if(crewEh=='DOM') return user.isDomestic
+            }).filter((user) => {
+                if (crewEh == 'ALL') return true;
+                else if (crewEh == 'DOM') return user.isDomestic
                 else return !user.isDomestic
             })
             .map((user) => {
@@ -148,8 +152,6 @@ const Admin = () => {
                 };
             });
     }, [inc, users, shipEh, userFilter, period]);
-
-
 
 
     const expcsv = async () => {
@@ -228,9 +230,15 @@ const Admin = () => {
     };
     console.log()
     return (
-        <main className="flex min-h-screen flex-col items-center pt-[20px]">
+        <main className="flex min-h-screen flex-col items-center">
+            <nav className="flex gap-5 items-center justify-center">
+                <Link href={"/admin/emails"}>
+                    <Navbtn text={'emails'}/>
+                </Link>
+            </nav>
+            <div className={'h-5'}/>
             <div className="flex flex-row-reverse flex-wrap justify-center gap-4 pb-[10px]">
-            <div>
+                <div>
                     <div className="rounded-xl bg-primary text-secondary p-[10px] space-y-[5px]">
                         <div className="inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out">
                             <p className="leading-[50px] px-[10px] text-center">
@@ -259,14 +267,15 @@ const Admin = () => {
                                 weeks
                             </p>
                         </div>
-                        <div />
+                        <div/>
 
-                        <div />
+                        <div/>
                         <button
                             className={`w-[245px] h-[50px] rounded-xl duration-300 ease-in-out transition-all ${
                                 refresh ? "" : "hover:text-primary hover:bg-secondary"
                             }`}
-                            onClick={refresh ? () => {} : () => expcsv()}
+                            onClick={refresh ? () => {
+                            } : () => expcsv()}
                         >
                             {refresh ? "loading ..." : "export"}
                         </button>
@@ -287,8 +296,9 @@ const Admin = () => {
                                 }`}
                             />
                             {/* Search component */}
-                            <div className="flex justify-center gap-[10px] group/search bg-secondary/0 hover:bg-secondary/100 text-inherit hover:text-primary transition-all ease-in-out duration-300 rounded-lg py-[10px] px-[10px]">
-                                <Search />
+                            <div
+                                className="flex justify-center gap-[10px] group/search bg-secondary/0 hover:bg-secondary/100 text-inherit hover:text-primary transition-all ease-in-out duration-300 rounded-lg py-[10px] px-[10px]">
+                                <Search/>
                                 <div onClick={(e) => e.stopPropagation()}>
                                     <input
                                         className="text-inherit bg-inherit focus:outline-none peer"
@@ -308,15 +318,16 @@ const Admin = () => {
                                 from {period[0]} to {period[6]}
                             </p>
                             <div className="flex gap-5 w-[100px]">
-                                <Ship />
+                                <Ship/>
                                 <p className="select-none">{shipEh}</p>
                             </div>
                             <div className="flex gap-5 w-[100px]">
-                                <Earth />
+                                <Earth/>
                                 <p className="select-none">{crewEh}</p>
                             </div>
                         </div>
-                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
+                        <div
+                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                         <div
                             className={`${
                                 open ? "max-h-[400px]" : "max-h-[0]"
@@ -416,7 +427,7 @@ const Admin = () => {
                         </div>
                     </div>
 
-                    <div className="rounded-md w-[100%] h-[3px] bg-primary" />
+                    <div className="rounded-md w-[100%] h-[3px] bg-primary"/>
                     <div className="flex w-[100%] flex-col items-center">
                         <div className="inline-flex">
                             <div className="inline-flex">
@@ -428,7 +439,7 @@ const Admin = () => {
                                 </p>
                             ))}
                         </div>
-                        <div className="h-[2px] w-[802px] bg-gray-500" />
+                        <div className="h-[2px] w-[802px] bg-gray-500"/>
                         <div className="flex-col pt-[5px] space-x-[5px] ">
                             <div className="flex flex-col space-y-[5px]">
                                 {filteredData.map((user) => (
@@ -457,7 +468,8 @@ const Admin = () => {
                                                 </p>
                                             ))}
                                         </div>
-                                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
+                                        <div
+                                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                                         <div className='flex gap-5 justify-center'>
                                             <div className='flex gap-2'>
                                                 <Mail/>

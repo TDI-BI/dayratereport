@@ -11,7 +11,7 @@ interface btnProps {
     opn?: boolean
 }
 
-const Navbtn = (props: btnProps) => {
+export const Navbtn = (props: btnProps) => {
     return (
         <div className="group">
             <button className="w-[200px] text-center rounded-xl py-[10px]">

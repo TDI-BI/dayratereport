@@ -5,8 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/app/admin/emails/page.tsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/api/getemails/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/sendperiodinf/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/sendperiodinf/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/hello/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/hello/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/recover/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/recover/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/navbarclient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/navbarclient.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/dispatchEmail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dispatchEmail.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -107,6 +114,8 @@
       <workItem from="1753386406172" duration="3309000" />
       <workItem from="1753462521626" duration="7415000" />
       <workItem from="1753475052775" duration="832000" />
+      <workItem from="1753716291639" duration="9260000" />
+      <workItem from="1753726094519" duration="4484000" />
     </task>
     <servers />
   </component>
