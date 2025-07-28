@@ -18,7 +18,7 @@ export const GET = async (request: NextRequest) => {
         const status = searchParams.get("status")?.trim() || null;
         const page = parseInt(searchParams.get("page") || "1");
         console.log(page);
-        const limit = 12; // can flex this
+        const limit = 13; // can flex this
         const offset = (page - 1) * limit;
 
         let q = `SELECT id, body, sentTo, status, subject, date
@@ -40,7 +40,7 @@ export const GET = async (request: NextRequest) => {
             q += ` WHERE ` + where.join(" AND ");
         }
 
-        q += ` ORDER BY id ASC LIMIT ?, ?`;
+        q += ` ORDER BY id DESC LIMIT ?, ?`;
         params.push(String(offset), String(limit));
 
         const db = await connectToDb();

@@ -3,6 +3,7 @@ import {useState, useEffect} from "react";
 import {ChevronLeft, ChevronRight, Mail, MoveLeft, MoveRight, Search} from "lucide-react";
 import {getPort} from "@/utils/getPort";
 import {flashDiv} from "@/utils/flashDiv";
+import {AdminNav} from "@/components/adminNav";
 
 const timeAgo = (isoDate: string) => {
     const now = new Date();
@@ -49,7 +50,9 @@ const ViewEmails = () => {
     }, [filter, page])
 
     return (
-        <main className="flex min-h-screen flex-col items-center pt-[20px]">
+        <main className="flex min-h-screen flex-col items-center">
+            <AdminNav/>
+            <div className={'h-5'}/>
             <div className={'flex gap-5'}>
                 <div id={'table'} className={'w-[700px] p-3'}>
                     <div id={'header'} className={'flex flex-row justify-between pb-1'}>
@@ -135,11 +138,11 @@ const ViewEmails = () => {
                 </div>
                 <div id={'emailArea'}
                      className={'bg-primary text-secondary w-[500px] p-3 flex flex-col gap-1 rounded-2xl h-fit'}>
-                    <div>To: {ourEmail.sentTo}</div>
-                    <div>Subject: {ourEmail.subject}</div>
-                    <div>Dispatch Status: {ourEmail.status}</div>
+                    <div className="break-words">To: {ourEmail.sentTo}</div>
+                    <div className="break-words">Subject: {ourEmail.subject}</div>
+                    <div className="break-words">Dispatch Status: {ourEmail.status}</div>
                     <div className={'w-full bg-secondary rounded-xl h-1'}/>
-                    <div>
+                    <div className="break-words overflow-hidden">
                         <div dangerouslySetInnerHTML={{__html: ourEmail.body}}/>
                     </div>
                 </div>

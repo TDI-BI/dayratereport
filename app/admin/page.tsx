@@ -5,6 +5,7 @@ import {useState, useEffect, useMemo} from "react";
 import {fetchBoth} from "@/utils/fetchboth";
 import {mkConfig, generateCsv, download} from "export-to-csv";
 import {useRouter} from "next/navigation";
+import {AdminNav} from "@/components/adminNav";
 import {Navbtn} from "@/components/navbarclient";
 
 import {
@@ -231,11 +232,7 @@ const Admin = () => {
     console.log()
     return (
         <main className="flex min-h-screen flex-col items-center">
-            <nav className="flex gap-5 items-center justify-center">
-                <Link href={"/admin/emails"}>
-                    <Navbtn text={'emails'}/>
-                </Link>
-            </nav>
+            <AdminNav/>
             <div className={'h-5'}/>
             <div className="flex flex-row-reverse flex-wrap justify-center gap-4 pb-[10px]">
                 <div>

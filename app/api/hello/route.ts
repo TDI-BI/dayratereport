@@ -8,7 +8,8 @@ export const GET = async (request: NextRequest) => {
     //url params
     const {searchParams} = request.nextUrl;
     const msg = searchParams.get("msg") || "hello world";
-    if (process.env.NODE_ENV === "development") {
+    console.log(process.env.NODE_ENV)
+    if (process.env.NODE_ENV !== "development") {
         return new Response(
             JSON.stringify({error: 'you do not have access to this api route'}),
             {status: 500}
