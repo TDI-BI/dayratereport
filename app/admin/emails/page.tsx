@@ -1,9 +1,9 @@
 "use client";
 import {useState, useEffect} from "react";
-import {ChevronLeft, ChevronRight, Mail, MoveLeft, MoveRight, Search} from "lucide-react";
+import {Mail, MoveLeft, MoveRight, Search} from "lucide-react";
 import {getPort} from "@/utils/getPort";
-import {flashDiv} from "@/utils/flashDiv";
 import {AdminNav} from "@/components/adminNav";
+import {fetchBoth} from "@/utils/fetchboth";
 
 const timeAgo = (isoDate: string) => {
     const now = new Date();
@@ -40,8 +40,8 @@ const ViewEmails = () => {
     useEffect(() => {
         const getEmails = async () => {
             const port = getPort();
-            const query = `${process.env.NEXT_PUBLIC_TYPE}${port}/api/getemails?user=${filter}&page=${page}&status=${0}`
-            const resp = await fetch(query);
+            const query = `/api/getemails?user=${filter}&page=${page}&status=${0}`
+            const resp = await fetchBoth(query);
             const json = await resp.json();
             const inemails = json.emails ?? {}
             setEmails(inemails.sort((a: Record<string, string>, b: Record<string, string>) => a.id < b.id)); // descend
@@ -138,13 +138,20 @@ const ViewEmails = () => {
                 </div>
                 <div id={'emailArea'}
                      className={'bg-primary text-secondary w-[500px] p-3 flex flex-col gap-1 rounded-2xl h-fit'}>
-                    <div className="break-words">To: {ourEmail.sentTo}</div>
-                    <div className="break-words">Subject: {ourEmail.subject}</div>
-                    <div className="break-words">Dispatch Status: {ourEmail.status}</div>
-                    <div className={'w-full bg-secondary rounded-xl h-1'}/>
-                    <div className="break-words overflow-hidden">
-                        <div dangerouslySetInnerHTML={{__html: ourEmail.body}}/>
-                    </div>
+                    {emailId !== '' ? <>
+                        <div className="break-words">To: {ourEmail.sentTo}</div>
+                        <div className="break-words">Subject: {ourEmail.subject}</div>
+                        <div className="break-words">Dispatch Status: {ourEmail.status}</div>
+                        <div className={'w-full bg-secondary rounded-xl h-1'}/>
+                        <div className="break-words overflow-hidden">
+                            <div dangerouslySetInnerHTML={{__html: ourEmail.body}}/>
+                        </div>
+                    </> : <>
+                        <div className="text-center py-8 opacity-70">
+                            <Mail size={48} className="mx-auto mb-3 opacity-50"/>
+                            <p>Select an email to view details</p>
+                        </div>
+                    </>}
                 </div>
             </div>
         </main>

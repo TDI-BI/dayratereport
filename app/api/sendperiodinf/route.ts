@@ -99,7 +99,7 @@ export const GET = async (request: NextRequest) => {
             `travel report for ${names[0]} ${names[1]} from period starting ${dayL}`,
             'Text',
             `the following attached file is a travel report for ${names[0]} ${names[1]} @ ${session.userEmail} for pay period starting on ${period[0]}. \nWith issues email parkerseeley@tdi-bi.com. do not reply to this email.`,
-            [`${session.userEmail}`, "parkerseeley@tdi-bi.com"],
+            [`${session.userEmail}`, "parkerseeley@tdi-bi.com"], //TODO make this right again
             [{
                 name: `report_for_${session.username}_${period[0]}.pdf`,
                 contentType: 'application/pdf',
