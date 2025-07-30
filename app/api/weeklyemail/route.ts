@@ -60,7 +60,7 @@ export const GET = async (request: NextRequest) => {
             "Field Days Worked Reminder",
             'HTML',
             htmlout,
-            /*[ // should maybe bounce all this stuff to my .env so i dont accidentally email shit to everyone while testing lol
+            [ // should maybe bounce all this stuff to my .env so i dont accidentally email shit to everyone while testing lol
                 "all@tdi-bi.com", 
                 "mariner@tdi-bi.com", 
                 "proteus@tdi-bi.com", 
@@ -69,10 +69,8 @@ export const GET = async (request: NextRequest) => {
                 "emmamccall@tdi-bi.com", 
                 "nautilus@tdi-bi.com", 
                 "fcmariners@tdi-bi.com",
-            ]*/
-            ['parkerseeley@tdi-bi.com']
-        )
-
+            ]
+        );
         return Response.json({ bleh }, { status: 200 });
     }
 
