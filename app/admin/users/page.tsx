@@ -4,6 +4,7 @@ import {useState, useEffect} from 'react';
 import {Search, User, Shield, Globe, Home, Calendar} from 'lucide-react';
 import {fetchBoth} from "@/utils/fetchboth";
 import {AdminNav} from "@/components/adminNav";
+import {PuffLoader} from "react-spinners";
 
 interface User {
     username: string;
@@ -28,7 +29,9 @@ const timeAgo = (isoString: string) => {
 export default function UserManagementPage() {
     const [users, setUsers] = useState<User[]>([]);
     const [filter, setFilter] = useState('');
-    const [selectedUserId, setSelectedUserId] = useState('');
+    const [selectedUserId, setSelectedUserId] = useState<number>(-1);
+    const [userSpinner, setUserSpinner] = useState(false);
+    const [pwEmail, setPwEmail] = useState(false);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -39,14 +42,12 @@ export default function UserManagementPage() {
 
         fetchUsers();
     }, []);
-    console.log(users);
 
     const filteredUsers = users.filter((user) =>
         user.email.toLowerCase().includes(filter.toLowerCase())
     );
 
-    console.log(users, filter, filteredUsers);
-    const selectedUser: User = users.filter((user) => user.uid === selectedUserId)[0]
+    const selectedUser: User = filteredUsers[selectedUserId] ?? null;
 
     return (
         <main className="flex min-h-screen flex-col items-center">
@@ -84,17 +85,17 @@ export default function UserManagementPage() {
                     </div>
                     <div className="h-[2px] w-[802px] bg-gray-500"/>
 
-                    <div className="flex flex-col gap-1 pt-1" id="users">
+                    <div className="flex flex-col gap-1 pt-2" id="users">
                         {filteredUsers.map((user, index) => {
-                            const isSelected = selectedUserId === user.uid;
+                            const isSelected = selectedUserId === index;
 
                             return (
                                 <div
                                     className="flex flex-row justify-between align-middle p-3 rounded-xl bg-primary/0 hover:bg-primary/100 hover:text-secondary cursor-pointer duration-300 ease-in-out transition-all relative"
                                     key={`user_${user.uid}`}
                                     onClick={() => { // TODO - PASS INDEX TO SELECTED USER
-                                        if (user.uid === selectedUserId) setSelectedUserId('');
-                                        else setSelectedUserId(user.uid);
+                                        if (index === selectedUserId) setSelectedUserId(-1);
+                                        else setSelectedUserId(index);
                                     }}
                                 >
                                     <div
@@ -183,8 +184,14 @@ export default function UserManagementPage() {
                                     <div
                                         className={'rounded-xl px-3 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
                                         onClick={async () => {
-                                            console.log(selectedUser.uid, selectedUser.isAdmin)
-                                            await fetchBoth(`/api/toggleIsAdmin?uid=${selectedUser.uid}&admin=${selectedUser.isAdmin}`)
+                                            setUserSpinner(true);
+                                            const id = selectedUser.uid;
+                                            const ret = await fetchBoth(`/api/toggleIsAdmin?uid=${selectedUser.uid}&admin=${selectedUser.isAdmin}`);
+                                            if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
+                                                ...user,
+                                                isAdmin: selectedUser.isAdmin === 'true' ? '' : 'true'
+                                            } : user))
+                                            setUserSpinner(false);
                                         }}
                                     >
                                         <div className="text-sm opacity-70">Role</div>
@@ -201,6 +208,9 @@ export default function UserManagementPage() {
                                                 </>
                                             )}
                                         </div>
+                                    </div>
+                                    <div className="flex items-center">
+                                        {userSpinner && <PuffLoader size={25} color={"#64748B"}/>}
                                     </div>
                                 </div>
 
@@ -219,6 +229,20 @@ export default function UserManagementPage() {
                                         )}
                                     </div>
                                 </div>
+                                <div className={'flex flex-row items-center justify-center h-[48px]'}>
+                                    {!pwEmail ? <div
+                                        className={'p-3 bg-secondary/0 hover:bg-secondary/100 text-secondary hover:text-primary transition-all ease-in-out duration-300 rounded-xl cursor-pointer'}
+                                        onClick={async () => {
+                                            setPwEmail(true);
+                                            const response = await fetchBoth(`/api/recover?email=${selectedUser.email}`);
+                                            if(response.status === 500) console.error(response);
+                                            setPwEmail(false);
+                                        }}
+                                    >
+
+                                        Send Password Reset
+                                    </div> : <PuffLoader size={25} color={"#64748B"}/>}
+                                </div>
                             </div>
                         </>
                     ) : (
@@ -229,6 +253,7 @@ export default function UserManagementPage() {
                     )}
                 </div>
             </div>
+            {/*??*/}
         </main>
     );
 }

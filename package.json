@@ -25,6 +25,7 @@
     "next": "^15.2.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-spinners": "^0.17.0",
     "sass": "^1.75.0"
   },
   "devDependencies": {

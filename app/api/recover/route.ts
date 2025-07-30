@@ -1,22 +1,22 @@
 //bsaically just our login script, we q the databse to get user info then send a recovery email
 
-import { getPort } from "@/utils/getPort";
+import {getPort} from "@/utils/getPort";
+
 const por = getPort();
-import { getSession } from "@/actions";
-import { NextRequest } from "next/server";
-import { connectToDb } from "@/utils/connectToDb";
-import { dispatchEmail } from "@/utils/dispatchEmail";
+import {getSession} from "@/actions";
+import {NextRequest} from "next/server";
+import {connectToDb} from "@/utils/connectToDb";
+import {dispatchEmail} from "@/utils/dispatchEmail";
 
 export const GET = async (request: NextRequest) => {
     //block if logged in
     const session = await getSession();
-    if (session.isLoggedIn)
-        return new Response(JSON.stringify({ error: "already logged in" }), {
-            status: 500,
-        });
+    if (session.isLoggedIn && !session.isAdmin) return new Response(JSON.stringify({error: "already logged in"}), { // admins get to ball w/ the team
+        status: 500,
+    });
 
     //get URL parameters
-    const { searchParams } = request.nextUrl;
+    const {searchParams} = request.nextUrl;
     const email = searchParams.get("email") || "";
 
     //init DB connection
@@ -29,7 +29,7 @@ export const GET = async (request: NextRequest) => {
         //execute query
         const [results] = await connection.execute(query);
         connection.end();
-        if (JSON.stringify(results) === "[]") throw { error: "no accnt found" };
+        if (JSON.stringify(results) === "[]") throw {error: "no accnt found"};
         const resp = JSON.parse(JSON.stringify(results));
 
 
@@ -62,21 +62,21 @@ export const GET = async (request: NextRequest) => {
             //console.log(e);//debug line
 
             const bleh = await dispatchEmail(
-                "recover your account", 
+                "recover your account",
                 'Text',
                 `your username is ${e.username} \n'to recover your account please follow the link: ${por}/login/resetpassword?acc=${e.password} \ndo not allow others to see/use this link. It can only be used once. do not reply to this email`,
                 [e.email],
             )
         });
 
-        return new Response(JSON.stringify({ resp: "email sent" }), {
+        return new Response(JSON.stringify({resp: "email sent"}), {
             status: 200,
         });
     } catch (error) {
         connection.end();
         return new Response(
-            JSON.stringify({ error: (error as Error).message }),
-            { status: 500 }
+            JSON.stringify({error: (error as Error).message}),
+            {status: 500}
         );
     }
 };

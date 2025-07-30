@@ -66,6 +66,7 @@ const ViewEmails = () => {
                                     placeholder="search users..."
                                     value={filter}
                                     onChange={(e) => {
+                                        setPage(1);
                                         setFilter(e.target.value);
                                     }}
                                 />
@@ -130,7 +131,7 @@ const ViewEmails = () => {
                                     title={e.sentTo}
                                 >{e.sentTo}</div>
                                 <div
-                                    className="h-[40px] px-3 flex items-center"
+                                    className="h-[40px] px-3 flex items-center w-[150px] justify-center"
                                 >{timeAgo(e.date)}</div>
                             </div>
                         })}

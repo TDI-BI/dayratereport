@@ -44,7 +44,6 @@ export const dispatchEmail = async (
     const sender = 'no-reply@tdi-bi.com'; // u lowkey can send emails on anyone's behalf here so care
     const accessToken = await getAccessToken();
 
-
     const mail = {
         message: {
             subject: subject,
@@ -74,26 +73,29 @@ export const dispatchEmail = async (
                    SET body=?, sentto=?, status=?, subject=?, date=?`;
         const vals = [body, JSON.stringify(to), status, subject, new Date().toISOString()];
         const [results] = await connection.execute(q, vals);
-        console.log(results);
         return results;
     }
 
     try {
-        await fetch(`https://graph.microsoft.com/v1.0/users/${sender}/sendMail`,
-            {
-                method: "POST",
-                headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(mail),
-            }
-        );
-        await addLine('Success:Email Successfully Dispatched');
+        const bweh = await fetch(`https://graph.microsoft.com/v1.0/users/${sender}/sendMail`, {
+            method: "POST",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(mail),
+        });
+
+        if (bweh.status !== 202) {
+            const text = await bweh.text(); // helpful for debugging
+            throw new Error(`${bweh.status}: ${bweh.statusText} - ${text}`);
+        }
+
+        await addLine(`Success: ${bweh.statusText}`);
         connection.end();
         return 'Success sending email!';
     } catch (error) {
-        await addLine(`Failure: ${JSON.stringify(error)}`);
+        await addLine(`Failure: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
         connection.end();
         throw error;
     }
