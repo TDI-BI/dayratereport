@@ -1,8 +1,10 @@
 import {NextRequest, NextResponse} from "next/server";
 import {connectToDb} from "@/utils/connectToDb";
+import {getSession} from "@/actions";
 
 export const GET = async (request: NextRequest) => {
-    if (process.env.NODE_ENV !== "development") return new Response(
+    const session = await getSession();
+    if (!session.isAdmin) return new Response(
         JSON.stringify({error: 'cannot run this script outside of dev env'}),
         {status: 500}
     );
