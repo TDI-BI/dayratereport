@@ -5,9 +5,9 @@ export const connectToDb = async () => {
     try {
         const con = await mysql.createConnection({
             host: "localhost",
-            user: process.env.DB_USER,
-            password: process.env.DB_PASS, //<-this is a real password on my system
-            database: process.env.DB_DB,
+            user: 'root',
+            password: 'eygwa', //<-this is a real password on my system
+            database: 'dayratereport',
         });
         return con;
     } catch (error) {
