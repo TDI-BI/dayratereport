@@ -7,19 +7,22 @@ export const GET = async (request: NextRequest) => {
     const session = await getSession();
     const {searchParams} = request.nextUrl;
     const user = searchParams.get("uid") || "";
-    const isAdmin = searchParams.get("admin") === 'true' || false;
+    const isActive = searchParams.get("active") === '1' || false;
 
     if (!session.isAdmin) return new Response(JSON.stringify({error: "not an admin"}), {
         status: 500,
     });
-
+    if (session.userId === user) return new Response(JSON.stringify({error: "cannot modify your own status"}), {
+        status: 500,
+    });
     const connection = await connectToDb();
 
+    console.log((isActive ? '0' : '1'))
     try {
         const query = `UPDATE users
-                       SET isAdmin=?
+                       SET isActive=?
                        WHERE uid = ?`;
-        const extra: string[] = [(isAdmin ? '' : 'true'), user];
+        const extra: string[] = [(isActive ? '0' : '1'), user];
         const [resp] = await connection.execute(query, extra);
         console.log(resp);
 

@@ -1,15 +1,15 @@
 "use client";
-import { getPeriod } from "@/utils/payperiod";
+import {getPeriod} from "@/utils/payperiod";
 
-import { useRouter } from "next/navigation";
-import { flashDiv } from "@/utils/flashDiv";
-import { useEffect, useState } from "react";
-import { fetchBoth } from "@/utils/fetchboth";
+import {useRouter} from "next/navigation";
+import {flashDiv} from "@/utils/flashDiv";
+import {useEffect, useState} from "react";
+import {fetchBoth} from "@/utils/fetchboth";
 
-import { MoveDown, MoveLeft, MoveRight } from "lucide-react";
+import {MoveDown, MoveLeft, MoveRight} from "lucide-react";
 
 export default function Home() {
-    const days = ['Mon', 'Tue', 'Wed','Thu','Fri','Sat', 'Sun', ]
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',]
     const router = useRouter();
 
     // i know there is a better way to handle this but like whatever
@@ -81,19 +81,27 @@ export default function Home() {
         }
 
         crew ? (strdict += "&dom=1") : (strdict += "&dom=0"); // flags if you are a domestic or foreign worker
-        await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
+        const ret = await fetchBoth(`/api/mkday?days=${strdict}&${ex}`); // fetch query
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setUmsg("success!");
-        await new Promise((resolve) => setTimeout(resolve, 500));
+        if (ret.status === 200) {
 
-        if (standalone) {
-            setsaving(0);
-            setUmsg("");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setUmsg("success!");
+            await new Promise((resolve) => setTimeout(resolve, 500));
+
+            if (standalone) {
+                setsaving(0);
+                setUmsg("");
+            } else {
+                setUmsg("redirecting...");
+            }
+            return true; // returns true on success
         } else {
-            setUmsg("redirecting...");
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            const msg = await ret.json();
+            setUmsg(`error: ${msg.error}`);
+            await new Promise((resolve) => setTimeout(resolve, 500));
         }
-        return true; // returns true on success
     };
 
     const checkBounds = async (t: boolean) => {
@@ -162,10 +170,12 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
-            <div className="flex gap-10">
+            <div
+                className={`flex gap-10 transition-all duration-300 ease-in-out ${saving === 0 ? 'opacity-100' : 'opacity-0'}`}>
                 <button
                     className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
+                        if (saving === 1) return;
                         if (!(await checkBounds(false))) {
                             //need to create some visual indication that we are maximally backed
                             const flashme = document.getElementById(
@@ -177,7 +187,7 @@ export default function Home() {
                         setprev(prev + 1);
                     }}
                 >
-                    <MoveLeft size={24} className="flex-shrink-0" />
+                    <MoveLeft size={24} className="flex-shrink-0"/>
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out text-inherit">
                         last week
                     </p>
@@ -186,6 +196,7 @@ export default function Home() {
                 <button
                     className="group flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {
+                        if (saving === 1) return;
                         if (!(await checkBounds(true))) {
                             const flashme = document.getElementById(
                                 "buttons"
@@ -196,15 +207,14 @@ export default function Home() {
                         setprev(prev - 1);
                     }}
                 >
-                    <MoveRight size={24} className="flex-shrink-0" />
+                    <MoveRight size={24} className="flex-shrink-0"/>
                     <p className="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out">
                         next week
                     </p>
                 </button>
             </div>
-            <div id="buttons" className={"rounded-xl w-[250px] h-[3px]"} />
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
 
             <div
                 className={`transition-all duration-300 ease-in-out overflow-hidden`}
@@ -253,19 +263,23 @@ export default function Home() {
                                                     }`}
                                                 />
                                             </div>
-                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {days[period.indexOf(day)]}, {day.slice(5,10)}
+                                            <div
+                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                                {days[period.indexOf(day)]}, {day.slice(5, 10)}
                                             </div>
 
-                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                            <div
+                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                                 {vessels[day] || ""}
                                             </div>
 
-                                            <div className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
+                                            <div
+                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
                                                 {jobs[day] || ""}
                                             </div>
                                         </div>
-                                        <div className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100" />
+                                        <div
+                                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
                                     </div>
 
                                     <div
@@ -303,7 +317,7 @@ export default function Home() {
                                                                 (e == "NONE" &&
                                                                     !jobs[
                                                                         day
-                                                                    ]) ||
+                                                                        ]) ||
                                                                 e == jobs[day]
                                                                     ? "w-100%"
                                                                     : "w-[0%] group-hover/item:w-[100%]"
@@ -350,7 +364,7 @@ export default function Home() {
                                                             (e == "NONE" &&
                                                                 !vessels[
                                                                     day
-                                                                ]) ||
+                                                                    ]) ||
                                                             e == vessels[day]
                                                                 ? "w-100%"
                                                                 : "w-[0%] group-hover/item:w-[100%]"
@@ -396,19 +410,26 @@ export default function Home() {
                 </div>
             </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
+            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
 
-            <div className="flex  gap-[15px] px-[10px]">
+            <div
+                className={`flex gap-10 transition-all duration-300 ease-in-out ${saving === 0 ? 'opacity-100' : 'opacity-0'}`}>
                 <button
                     className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 
                     text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
-                    onClick={()=>save()}
+                    onClick={() => {
+                        if (saving === 1) return;
+                        save();
+                    }}
                 >
                     save
                 </button>
                 <button
                     className="max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px]"
-                    onClick={review}
+                    onClick={() => {
+                        if (saving === 1) return;
+                        review();
+                    }}
                 >
                     next
                 </button>
