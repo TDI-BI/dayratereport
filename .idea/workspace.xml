@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/api/toggleIsActive/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/getusers/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/getusers/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/mkday/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/mkday/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/sendperiodinf/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/sendperiodinf/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/toggleIsAdmin/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/toggleIsAdmin/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/daysworked/review/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/review/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
