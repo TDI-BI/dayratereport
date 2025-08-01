@@ -85,6 +85,7 @@ export const GET = async (request: NextRequest) => {
     const connection = await connectToDb();
     try {
         //COPIED FROM /mkday
+				/*
         const accountQ = `select * from users where email like '%${session.userEmail}%'`
         const ret = await connection.execute(accountQ);
         const ourAcc = (ret[0] as Array<Record<string,string>>)[0] // this can only return 1 item unless something serious breaks in our database
@@ -92,7 +93,7 @@ export const GET = async (request: NextRequest) => {
         if (isActive) return new Response(JSON.stringify({error: "account has been disabled."}), {
             status: 500,
         });
-
+				*/
         if (!prev) {
             //only want to log for current period
             const query =
