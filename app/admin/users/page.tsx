@@ -13,6 +13,7 @@ interface User {
     isDomestic: boolean;
     lastConfirm: string;
     isAdmin: string | null;
+    isActive: number;
 }
 
 const timeAgo = (isoString: string) => {
@@ -31,7 +32,10 @@ export default function UserManagementPage() {
     const [filter, setFilter] = useState('');
     const [selectedUserId, setSelectedUserId] = useState<number>(-1);
     const [userSpinner, setUserSpinner] = useState(false);
+    const [activeSpinner, setActiveSpinner] = useState(false);
     const [pwEmail, setPwEmail] = useState(false);
+
+    console.log(users);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -83,7 +87,7 @@ export default function UserManagementPage() {
                         <div className="w-[80px] text-center">Admin</div>
                         <div className="w-[100px] text-center">Last Confirm</div>
                     </div>
-                    <div className="h-[2px] w-[802px] bg-gray-500"/>
+                    <div className="h-[2px] w-full bg-gray-500"/>
 
                     <div className="flex flex-col gap-1 pt-2" id="users">
                         {filteredUsers.map((user, index) => {
@@ -104,7 +108,10 @@ export default function UserManagementPage() {
                                         className={`absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 ${isSelected ? 'border-primary/100' : 'border-primary/0'} rounded-br-2xl pointer-events-none transition-all duration-100 ease-in-out`}/>
 
                                     <div className="w-[200px] flex items-center gap-2 overflow-hidden">
-                                        <User size={16}/>
+                                        <div
+                                            className={`p-1 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
+                                            <User size={16}/>
+                                        </div>
                                         <span className="truncate" title={user.username}>{user.username}</span>
                                     </div>
 
@@ -159,59 +166,9 @@ export default function UserManagementPage() {
                                 </div>
 
                                 <div>
-                                    <div className="text-sm opacity-70">User ID</div>
-                                    <div className="break-words text-sm">{selectedUser.uid}</div>
-                                </div>
-
-                                <div className="flex gap-4">
-                                    <div>
-                                        <div className="text-sm opacity-70">Account Type</div>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            {selectedUser.isDomestic ? (
-                                                <>
-                                                    <Home size={16}/>
-                                                    <span>Domestic</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <Globe size={16}/>
-                                                    <span>International</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-
+                                    <div className="text-sm opacity-70">{"Full Name"}</div>
                                     <div
-                                        className={'rounded-xl px-3 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
-                                        onClick={async () => {
-                                            setUserSpinner(true);
-                                            const id = selectedUser.uid;
-                                            const ret = await fetchBoth(`/api/toggleIsAdmin?uid=${selectedUser.uid}&admin=${selectedUser.isAdmin}`);
-                                            if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
-                                                ...user,
-                                                isAdmin: selectedUser.isAdmin === 'true' ? '' : 'true'
-                                            } : user))
-                                            setUserSpinner(false);
-                                        }}
-                                    >
-                                        <div className="text-sm opacity-70">Role</div>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            {selectedUser.isAdmin === 'true' ? (
-                                                <>
-                                                    <Shield size={16}/>
-                                                    <span>Admin</span>
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <User size={16}/>
-                                                    <span>User</span>
-                                                </>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center">
-                                        {userSpinner && <PuffLoader size={25} color={"#64748B"}/>}
-                                    </div>
+                                        className="break-words text-sm">{selectedUser.uid.split('/')[0]} {selectedUser.uid.split('/')[1]}</div>
                                 </div>
 
                                 <div>
@@ -229,13 +186,92 @@ export default function UserManagementPage() {
                                         )}
                                     </div>
                                 </div>
+                                <div className="flex flex-row gap-4 w-full">
+                                    <div className={'grow'}>
+                                        {!activeSpinner ?
+                                            <div
+                                                className={'rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer w-full'}
+                                                onClick={async () => {
+                                                    setActiveSpinner(true);
+                                                    const id = selectedUser.uid;
+                                                    const ret = await fetchBoth(`/api/toggleIsActive?uid=${selectedUser.uid}&active=${selectedUser.isActive}`);
+                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
+                                                        ...user,
+                                                        isActive: selectedUser.isActive ? 0 : 1
+                                                    } : user))
+                                                    setActiveSpinner(false);
+                                                }}
+                                            >
+                                                <div className="text-sm opacity-70">Work Status</div>
+                                                <div className="flex items-center gap-2 mt-1">
+
+                                                    <>
+                                                        <div
+                                                            className={`p-1 rounded-full ${selectedUser.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
+                                                            <User size={16}/>
+                                                        </div>
+                                                        {selectedUser.isActive ? (<span>Active</span>) :
+                                                            <span>Inactive</span>}
+                                                    </>
+                                                </div>
+                                            </div> : <div className="flex items-center w-full h-full">
+                                                <PuffLoader size={25} color={"#64748B"}/>
+                                            </div>
+                                        }
+                                    </div>
+
+
+                                    <div className={'grow'}>
+                                        <div
+                                            className={`p-2 w-full${/*FOR NOW I DO NOT PLAN ON LETTING ADMINISTRATORS MODIFY THIS STATUS*/''}`}>
+                                            <div className="text-sm opacity-70">Account Type</div>
+                                            <div className="flex items-center gap-2 mt-1">
+                                                <div
+                                                    className={`p-1 rounded-full ${selectedUser.isDomestic ? 'bg-blue-500' : 'bg-green-500'}`}>
+                                                    {selectedUser.isDomestic ? <Home size={14}/> : <Globe size={14}/>}
+                                                </div>
+                                                <span>{selectedUser.isDomestic ? 'Domestic' : 'International'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={'grow'}>
+                                        {!userSpinner ?
+                                            <div
+                                                className={'w-full rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
+                                                onClick={async () => {
+                                                    setUserSpinner(true);
+                                                    const id = selectedUser.uid;
+                                                    const ret = await fetchBoth(`/api/toggleIsAdmin?uid=${selectedUser.uid}&admin=${selectedUser.isAdmin}`);
+                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
+                                                        ...user,
+                                                        isAdmin: selectedUser.isAdmin === 'true' ? '' : 'true'
+                                                    } : user))
+                                                    setUserSpinner(false);
+                                                }}
+                                            >
+                                                <div className="text-sm opacity-70">Role</div>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <div
+                                                        className={`p-1 rounded-full ${selectedUser.isAdmin === 'true' ? 'bg-purple-500' : 'bg-gray-500'}`}>
+                                                        {selectedUser.isAdmin === 'true' ? <Shield size={14}/> :
+                                                            <User size={14}/>}
+                                                    </div>
+                                                    <span>{selectedUser.isAdmin === 'true' ? 'Admin' : 'User'}</span>
+                                                </div>
+                                            </div> :
+                                            <div className="flex items-center w-full h-full">
+                                                <PuffLoader size={25} color={"#64748B"}/>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
                                 <div className={'flex flex-row items-center justify-center h-[48px]'}>
                                     {!pwEmail ? <div
                                         className={'p-3 bg-secondary/0 hover:bg-secondary/100 text-secondary hover:text-primary transition-all ease-in-out duration-300 rounded-xl cursor-pointer'}
                                         onClick={async () => {
                                             setPwEmail(true);
                                             const response = await fetchBoth(`/api/recover?email=${selectedUser.email}`);
-                                            if(response.status === 500) console.error(response);
+                                            if (response.status === 500) console.error(response);
                                             setPwEmail(false);
                                         }}
                                     >

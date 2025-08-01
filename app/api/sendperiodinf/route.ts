@@ -18,10 +18,13 @@ export const GET = async (request: NextRequest) => {
 
     //block if not logged in
     const session = await getSession();
-    if (session.isLoggedIn == false || pdf == "")
-        return new Response(JSON.stringify({error: "issue with request"}), {
-            status: 500,
-        });
+    if (session.isLoggedIn == false) return new Response(JSON.stringify({error: "user not logged in"}), {
+        status: 500,
+    });
+    if (pdf === "") return new Response(JSON.stringify({error: "No report detected"}), {status: 500})
+    if (!session.isActive) return new Response(JSON.stringify({error: "account has been disabled."}), {
+        status: 500,
+    });
 
     //get session info
     let names: string[] = session.userId!.split("/");
