@@ -22,9 +22,6 @@ export const GET = async (request: NextRequest) => {
         status: 500,
     });
     if (pdf === "") return new Response(JSON.stringify({error: "No report detected"}), {status: 500})
-    if (!session.isActive) return new Response(JSON.stringify({error: "account has been disabled."}), {
-        status: 500,
-    });
 
     //get session info
     let names: string[] = session.userId!.split("/");
@@ -87,6 +84,15 @@ export const GET = async (request: NextRequest) => {
     //init connection
     const connection = await connectToDb();
     try {
+        //COPIED FROM /mkday
+        const accountQ = `select * from users where email like '%${session.userEmail}%'`
+        const ret = await connection.execute(accountQ);
+        const ourAcc = (ret[0] as Array<Record<string,string>>)[0] // this can only return 1 item unless something serious breaks in our database
+        const isActive = Number(ourAcc.isActive) // tinyint 0-1 never null so this always is fine
+        if (isActive) return new Response(JSON.stringify({error: "account has been disabled."}), {
+            status: 500,
+        });
+
         if (!prev) {
             //only want to log for current period
             const query =
