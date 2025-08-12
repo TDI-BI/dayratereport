@@ -1,7 +1,6 @@
 "use client";
 import {useState, useEffect} from "react";
 import {Mail, MoveLeft, MoveRight, Search} from "lucide-react";
-import {getPort} from "@/utils/getPort";
 import {AdminNav} from "@/components/adminNav";
 import {fetchBoth} from "@/utils/fetchboth";
 
@@ -39,9 +38,7 @@ const ViewEmails = () => {
 
     useEffect(() => {
         const getEmails = async () => {
-            const port = getPort();
-            const query = `/api/getemails?user=${filter}&page=${page}&status=${0}`
-            const resp = await fetchBoth(query);
+            const resp = await fetchBoth(`/api/getemails?user=${filter}&page=${page}&status=${0}`);
             const json = await resp.json();
             const inemails = json.emails ?? {}
             setEmails(inemails.sort((a: Record<string, string>, b: Record<string, string>) => a.id < b.id)); // descend

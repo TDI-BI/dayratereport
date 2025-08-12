@@ -28,14 +28,10 @@ export const GET = async (request: NextRequest) => {
     try {
         //build query
         const query =
-            "update users set password='" +
-            password +
-            "' where password='" +
-            oldhash +
-            "';";
+            "update users set password=? where password=?";
 
         //execute query
-        const [results] = await connection.execute(query);
+        const [results] = await connection.execute(query, [password, oldhash]);
         connection.end();
 
         return new Response(JSON.stringify({ resp: results }), { status: 200 });

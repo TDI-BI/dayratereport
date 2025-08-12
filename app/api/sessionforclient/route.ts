@@ -13,6 +13,7 @@ export const GET = async (request: NextRequest) => {
 
         //attempting to dodge issue
         const response = new Response(JSON.stringify({ resp: session }), { status: 200 });
+        //meaningless i think?
         response.headers.set('Access-Control-Allow-Origin', 'https://tdifielddays.com')
         response.headers.set('Access-Control-Allow-Credentials', 'true');
 

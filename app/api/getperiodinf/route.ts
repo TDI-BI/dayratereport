@@ -35,12 +35,11 @@ export const GET = async (request: NextRequest) => {
 
     try {
         //build query
-        const values: string[] = []; // legacy code, scared to delete this but I dont use it i think
         const query =
             "SELECT * FROM days WHERE username='" + uid + "' AND " + dparam;
 
         //execute query
-        const [results] = await connection.execute(query, values);
+        const [results] = await connection.execute(query, []);
         connection.end();
 
         return new Response(JSON.stringify({ resp: results }), { status: 200 });

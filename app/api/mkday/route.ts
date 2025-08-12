@@ -34,11 +34,11 @@ export const GET = async (request: NextRequest) => {
         try {
             const accountQ = `select *
                               from users
-                              where email like '%${session.userEmail}%'`
-            const ret = await connection.execute(accountQ);
+                              where email like ?`
+            const ret = await connection.execute(accountQ, [`%${session.userEmail}%`]); //always unique
             const ourAcc = (ret[0] as Array<Record<string, string>>)[0] // this can only return 1 item unless something serious breaks in our database
-            const isActive= Number(ourAcc.isActive);
-            if (isActive===0) return new Response(JSON.stringify({error: "account has been disabled."}), {
+            const isActive = Number(ourAcc.isActive); // tinyint(0,1) never null so this will always be a safe number cast
+            if (isActive === 0) return new Response(JSON.stringify({error: "account has been disabled."}), {
                 status: 500,
             });
             //i need to set up some protection here to make sure you arent doing illegal stuff

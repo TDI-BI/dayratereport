@@ -72,16 +72,7 @@ const Content = ({prev}: { prev: number }) => {
         );
 
         //send email
-        const apiUrlEndpoint =
-            "/api/sendperiodinf?day=" +
-            period[0] +
-            "&pdf=" +
-            strdict +
-            "&type=" +
-            type +
-            "&" +
-            ex;
-        const bleh = await fetchBoth(apiUrlEndpoint);
+        const bleh = await fetchBoth(`/api/sendperiodinf?day=${period[0]}&pdf=${strdict}&type=${type}&${ex}`);
 
         if (bleh.status === 200) {
             setUmsg("email sent!");

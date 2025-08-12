@@ -87,22 +87,18 @@ export const GET = async (request: NextRequest) => {
         //COPIED FROM /mkday
         const accountQ = `select *
                           from users
-                          where email like '%${session.userEmail}%'`
-        const ret = await connection.execute(accountQ);
+                          where email like ?` //always unique
+        const ret = await connection.execute(accountQ, [`%${session.userEmail}%`]);
         const ourAcc = (ret[0] as Array<Record<string, string>>)[0] // this can only return 1 item unless something serious breaks in our database
-        const isActive = Number(ourAcc.isActive);
+        const isActive = Number(ourAcc.isActive); // tinyint(0,1) never null so this will always be a safe number cast
         if (isActive === 0) return new Response(JSON.stringify({error: "account has been disabled."}), {
             status: 500,
         });
         if (!prev) {
             //only want to log for current period
             const query =
-                'UPDATE users set lastConfirm="' +
-                new Date().toISOString().substring(0, 10) +
-                '" where uid="' +
-                session.userId +
-                '";';
-            await connection.execute(query);
+                'UPDATE users set lastConfirm=? where uid=?';
+            await connection.execute(query, [new Date().toISOString().substring(0, 10), session.userId]);
         }
 
         const bleh = dispatchEmail(
