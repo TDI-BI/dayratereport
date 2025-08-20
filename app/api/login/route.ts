@@ -21,11 +21,10 @@ export const GET = async (request: NextRequest) => {
 
     try {
         //build query
-        const query = "select * from users where username='" + username + "'";
-        const values: string[] = ["another one"];
+        const query = "select * from users where username=?";
 
         //execute query
-        const [results] = await connection.execute(query, values);
+        const [results] = await connection.execute(query, [username]);
         connection.end();
 
         return new Response(JSON.stringify({ resp: results }), { status: 200 });

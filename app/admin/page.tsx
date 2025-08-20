@@ -6,8 +6,6 @@ import {fetchBoth} from "@/utils/fetchboth";
 import {mkConfig, generateCsv, download} from "export-to-csv";
 import {useRouter} from "next/navigation";
 import {AdminNav} from "@/components/adminNav";
-import {Navbtn} from "@/components/navbarclient";
-
 import {
     Calendar,
     Earth,
@@ -18,7 +16,6 @@ import {
     Search,
     Ship,
 } from "lucide-react";
-import Link from "next/link";
 
 interface User {
     username: string;
@@ -47,9 +44,7 @@ const Admin = () => {
 
     const getDaysCallable = async () => {
         setRefresh(true);
-        const response = await fetchBoth(
-            `/api/admingetdays?prev=${periodEh}&tot=${weeks}`
-        );
+        const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
         const res = await response.json();
         setInc(res.resp);
         setRefresh(false);
@@ -59,9 +54,7 @@ const Admin = () => {
         const getDays = async () => {
             try {
                 setRefresh(true);
-                const response = await fetchBoth(
-                    `/api/admingetdays?prev=${periodEh}&tot=${weeks}`
-                );
+                const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
                 const res = await response.json();
                 if (!res.resp) throw {error: "no input"};
                 setInc(res.resp);
@@ -84,7 +77,7 @@ const Admin = () => {
                 setPageErr(true);
             }
         };
-        const getstuff = async () => {
+        const getStuff = async () => {
             setRefresh(true);
 
             await getUsers();
@@ -93,7 +86,7 @@ const Admin = () => {
             setRefresh(false);
         };
 
-        getstuff();
+        getStuff();
     }, [periodEh, weeks]); // Only re-fetch when period changes
 
     if (pageErr) {

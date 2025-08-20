@@ -40,7 +40,7 @@
     &quot;JavaScript Debug.localhost:3000.executor&quot;: &quot;Debug&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;disable__users&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;fixroutes&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -59,6 +59,7 @@
 }</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/__test__" />
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
@@ -110,6 +111,14 @@
       <workItem from="1753811630990" duration="6038000" />
       <workItem from="1753888558297" duration="9944000" />
       <workItem from="1753973792032" duration="3877000" />
+      <workItem from="1754070604702" duration="873000" />
+      <workItem from="1754321169649" duration="3181000" />
+      <workItem from="1754500706788" duration="7486000" />
+      <workItem from="1754586614945" duration="2547000" />
+      <workItem from="1754590572003" duration="681000" />
+      <workItem from="1754958763225" duration="1499000" />
+      <workItem from="1755530634267" duration="325000" />
+      <workItem from="1755531562143" duration="413000" />
     </task>
     <servers />
   </component>

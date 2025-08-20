@@ -5,5 +5,4 @@ export const fetchBoth = async (inc:string) => {
     catch(e){
         return await fetch(`${process.env.NEXT_PUBLIC_TYPE!}www.${process.env.NEXT_PUBLIC_URL!}${inc}`)
     }
-
 }

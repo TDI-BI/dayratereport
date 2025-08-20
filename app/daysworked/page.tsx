@@ -18,7 +18,7 @@ export default function Home() {
     const [jobs, setJobs] = useState<Record<string, string>>({});
     const [crew, setCrew] = useState(true);
     const [saving, setsaving] = useState(0);
-    const [umsg, setUmsg] = useState("");
+    const [umsg, setUmsg] = useState("saving");
     const [prev, setprev] = useState(0);
     const [month, setmonth] = useState(0);
     const [opens, setOpens] = useState<Record<string, boolean>>({});
@@ -27,8 +27,7 @@ export default function Home() {
 
     //save then redirect
     const review = async () => {
-        const rlink = "/daysworked/review?" + ex;
-        if (await save(false)) router.push(rlink);
+        if (await save(false)) router.push(`/daysworked/review?${ex}`);
     };
 
     //save table entrys
@@ -75,8 +74,6 @@ export default function Home() {
                 flashDiv(itm);
             }
 
-            setUmsg("");
-
             return false;
         }
 
@@ -91,7 +88,6 @@ export default function Home() {
 
             if (standalone) {
                 setsaving(0);
-                setUmsg("");
             } else {
                 setUmsg("redirecting...");
             }
@@ -108,9 +104,7 @@ export default function Home() {
         // incoming 1 for next 0 for last, also needs to be async for verification
         const nweek = (
             await (
-                await fetchBoth(
-                    `/api/verifydate?prev=${t ? prev - 1 : prev + 1}`
-                )
+                await fetchBoth(`/api/verifydate?prev=${t ? prev - 1 : prev + 1}`)
             ).json()
         ).resp; // get next week in intended direction
         if (crew) {
@@ -216,197 +210,208 @@ export default function Home() {
 
             <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary"/>
 
-            <div
-                className={`transition-all duration-300 ease-in-out overflow-hidden`}
-            >
+            <div>
                 <div
-                    className={`${
-                        saving ? "max-h-[0px]" : "max-h-[4000px]"
-                    } overflow-hidden ease-in-out duration-300`}
-                    id="pgtbl"
-                >
-                    <div className="p-[10px] inline-flex">
-                        <div className="w-[24px] select-none opacity-0">h</div>
-                        <div className="w-[107px] text-center ">
-                            <strong className="select-none">DATE</strong>
-                        </div>
-                        <div className="w-[107px] text-center">
-                            <strong className="select-none">VESSEL</strong>
-                        </div>
-                        <div className="min-w-[107px] text-center">
-                            <strong className="select-none">DEPT</strong>
-                        </div>
-                    </div>
-                    <div className={"flex-col gap-y-5"}>
-                        {period.map((day: string) => (
-                            // THIS WAS ORIGINALLY A COMPONNENT BUT THERE WERE STATE REFRESH ISSUES WITH OPEN & ANIMATIONS. IM SORRY TO WHOEVER HAS TO MAINTAIN THIS -PARKER
-                            <div key={day}>
-                                <div
-                                    id={day + "_item"}
-                                    className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-500 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
-                                    onClick={() => {
-                                        //this is going to be our dropdown setter
-                                        setOpens((prev) => ({
-                                            ...prev,
-                                            [day]: !opens[day],
-                                        }));
-                                    }}
-                                >
-                                    <div>
-                                        <div className="flex py-[10px]">
-                                            <div className="py-[5px]">
-                                                <MoveDown
-                                                    className={`transform text-inherit transition-all ease-in-out duration-300 ${
-                                                        opens[day]
-                                                            ? "-rotate-180"
-                                                            : "rotate-0"
-                                                    }`}
-                                                />
-                                            </div>
-                                            <div
-                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {days[period.indexOf(day)]}, {day.slice(5, 10)}
-                                            </div>
-
-                                            <div
-                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {vessels[day] || ""}
-                                            </div>
-
-                                            <div
-                                                className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]">
-                                                {jobs[day] || ""}
-                                            </div>
-                                        </div>
+                    className={`relative min-h-[53px] transition-all ease-in-out duration-300`}>
+                    <div
+                        className={`transition-all duration-300 ease-in-out overflow-hidden`}
+                    >
+                        <div
+                            className={`${
+                                saving ? "max-h-[0px] opacity-0" : "max-h-[4000px] opacity-100"
+                            } overflow-hidden ease-in-out duration-300`}
+                            id="pgtbl"
+                        >
+                            <div className="p-[10px] inline-flex">
+                                <div className="w-[24px] select-none opacity-0">h</div>
+                                <div className="w-[107px] text-center ">
+                                    <strong className="select-none">DATE</strong>
+                                </div>
+                                <div className="w-[107px] text-center">
+                                    <strong className="select-none">VESSEL</strong>
+                                </div>
+                                <div className="min-w-[107px] text-center">
+                                    <strong className="select-none">DEPT</strong>
+                                </div>
+                            </div>
+                            <div className={"flex-col gap-y-5"}>
+                                {period.map((day: string) => (
+                                    // THIS WAS ORIGINALLY A COMPONNENT BUT THERE WERE STATE REFRESH ISSUES WITH OPEN & ANIMATIONS. IM SORRY TO WHOEVER HAS TO MAINTAIN THIS -PARKER
+                                    <div key={day} test-id={`${day}_full`}>
                                         <div
-                                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                                    </div>
-
-                                    <div
-                                        className={`${
-                                            opens[day]
-                                                ? "max-h-[400px]"
-                                                : "max-h-[0px]"
-                                        } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
-                                    >
-                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
-                                            {["NONE", "MARINE", "TECH"].map(
-                                                (e: string) => (
-                                                    <div
-                                                        key={e}
-                                                        className="h-[40px] group/item"
-                                                        onClick={(event) => {
-                                                            event.stopPropagation();
-                                                            setJobs(
-                                                                (prevJobs) => ({
-                                                                    ...prevJobs,
-                                                                    [day]:
-                                                                        e ==
-                                                                        "NONE"
-                                                                            ? ""
-                                                                            : e,
-                                                                })
-                                                            );
-                                                        }}
-                                                    >
-                                                        <p className="h-[38px] leading-[38px] select-none">
-                                                            {e}
-                                                        </p>
-                                                        <div
-                                                            className={`rounded-md ${
-                                                                (e == "NONE" &&
-                                                                    !jobs[
-                                                                        day
-                                                                        ]) ||
-                                                                e == jobs[day]
-                                                                    ? "w-100%"
-                                                                    : "w-[0%] group-hover/item:w-[100%]"
-                                                            } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
+                                            id={day + "_item"}
+                                            className="group bg-primary/0 hover:bg-primary/100 transition-all ease-in-out duration-300 overflow-hidden w-full w-365 p-[10px] rounded-md text-primary hover:text-secondary"
+                                            onClick={() => {
+                                                //this is going to be our dropdown setter
+                                                setOpens((prev) => ({
+                                                    ...prev,
+                                                    [day]: !opens[day],
+                                                }));
+                                            }}
+                                        >
+                                            <div>
+                                                <div className="flex py-[10px]">
+                                                    <div className="py-[5px]">
+                                                        <MoveDown
+                                                            className={`transform text-inherit transition-all ease-in-out duration-300 ${
+                                                                opens[day]
+                                                                    ? "-rotate-180"
+                                                                    : "rotate-0"
+                                                            }`}
                                                         />
                                                     </div>
-                                                )
-                                            )}
-                                        </div>
-
-                                        <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
-                                            {[
-                                                "NONE",
-                                                "BMCC",
-                                                "EMMA",
-                                                "PROT",
-                                                "GYRE",
-                                                "NAUT",
-                                                "TOOL",
-                                                "3RD",
-                                                "ADMN",
-                                            ].map((e: string) => (
-                                                <div
-                                                    key={e}
-                                                    className="h-[40px] group/item"
-                                                    onClick={(event) => {
-                                                        event.stopPropagation();
-                                                        setVessels(
-                                                            (prevVessels) => ({
-                                                                ...prevVessels,
-                                                                [day]:
-                                                                    e == "NONE"
-                                                                        ? ""
-                                                                        : e,
-                                                            })
-                                                        );
-                                                    }}
-                                                >
-                                                    <p className="h-[38px] leading-[38px] select-none">
-                                                        {e}
-                                                    </p>
                                                     <div
-                                                        className={`rounded-md ${
-                                                            (e == "NONE" &&
-                                                                !vessels[
-                                                                    day
-                                                                    ]) ||
-                                                            e == vessels[day]
-                                                                ? "w-100%"
-                                                                : "w-[0%] group-hover/item:w-[100%]"
-                                                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                                                    />
+                                                        className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]"
+                                                        test-id={`${day}_day`}
+                                                    >
+                                                        {days[period.indexOf(day)]}, {day.slice(5, 10)}
+                                                    </div>
+
+                                                    <div
+                                                        className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]"
+                                                        test-id={`${day}_ship`}
+                                                    >
+                                                        {vessels[day] || ""}
+                                                    </div>
+
+                                                    <div
+                                                        className=" text-inherit ease-in-out duration-300 transition-all w-[107px] text-center select-none p-[5px]"
+                                                        test-id={`${day}_job`}
+                                                    >
+                                                        {jobs[day] || ""}
+                                                    </div>
                                                 </div>
-                                            ))}
+                                                <div
+                                                    className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
+                                            </div>
+
+                                            <div
+                                                className={`${
+                                                    opens[day]
+                                                        ? "max-h-[400px]"
+                                                        : "max-h-[0px]"
+                                                } overflow-hidden transition-all ease-in-out duration-300 flex-row-reverse flex group/parent`}
+                                            >
+                                                <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                                    {["NONE", "MARINE", "TECH"].map(
+                                                        (e: string) => (
+                                                            <div
+                                                                key={e}
+                                                                className="h-[40px] group/item"
+                                                                onClick={(event) => {
+                                                                    event.stopPropagation();
+                                                                    setJobs(
+                                                                        (prevJobs) => ({
+                                                                            ...prevJobs,
+                                                                            [day]:
+                                                                                e ==
+                                                                                "NONE"
+                                                                                    ? ""
+                                                                                    : e,
+                                                                        })
+                                                                    );
+                                                                }}
+                                                            >
+                                                                <p className="h-[38px] leading-[38px] select-none">
+                                                                    {e}
+                                                                </p>
+                                                                <div
+                                                                    className={`rounded-md ${
+                                                                        (e == "NONE" &&
+                                                                            !jobs[
+                                                                                day
+                                                                                ]) ||
+                                                                        e == jobs[day]
+                                                                            ? "w-100%"
+                                                                            : "w-[0%] group-hover/item:w-[100%]"
+                                                                    } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-200 delay-100`}
+                                                                />
+                                                            </div>
+                                                        )
+                                                    )}
+                                                </div>
+
+                                                <div className="p-[10px] w-[107px] text-center gap-y-[10px]">
+                                                    {[
+                                                        "NONE",
+                                                        "BMCC",
+                                                        "EMMA",
+                                                        "PROT",
+                                                        "GYRE",
+                                                        "NAUT",
+                                                        "TOOL",
+                                                        "3RD",
+                                                        "ADMN",
+                                                    ].map((e: string) => (
+                                                        <div
+                                                            key={e}
+                                                            className="h-[40px] group/item"
+                                                            onClick={(event) => {
+                                                                event.stopPropagation();
+                                                                setVessels(
+                                                                    (prevVessels) => ({
+                                                                        ...prevVessels,
+                                                                        [day]:
+                                                                            e == "NONE"
+                                                                                ? ""
+                                                                                : e,
+                                                                    })
+                                                                );
+                                                            }}
+                                                        >
+                                                            <p className="h-[38px] leading-[38px] select-none">
+                                                                {e}
+                                                            </p>
+                                                            <div
+                                                                className={`rounded-md ${
+                                                                    (e == "NONE" &&
+                                                                        !vessels[
+                                                                            day
+                                                                            ]) ||
+                                                                    e == vessels[day]
+                                                                        ? "w-100%"
+                                                                        : "w-[0%] group-hover/item:w-[100%]"
+                                                                } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-200 delay-100`}
+                                                            />
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <div
+                                                className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${
+                                                    opens[day]
+                                                        ? "opacity-100"
+                                                        : "opacity-0"
+                                                }`}
+                                            />
                                         </div>
+                                        <div
+                                            id={day + "flash"}
+                                            className={"rounded-xl w-[100%] h-[3px]"}
+                                        />
                                     </div>
-                                    <div
-                                        className={`rounded-md w-[100%] h-[3px] bg-primary transition-all ease-in-out duration-300 ${
-                                            opens[day]
-                                                ? "opacity-100"
-                                                : "opacity-0"
-                                        }`}
-                                    />
-                                </div>
-                                <div
-                                    id={day + "flash"}
-                                    className={"rounded-xl w-[100%] h-[3px]"}
-                                />
+                                ))}
                             </div>
-                        ))}
+                        </div>
                     </div>
-                </div>
-                <div
-                    className={`${
-                        saving
-                            ? "max-h-[100px] duration-300"
-                            : "max-h-[0px] duration-100"
-                    } overflow-hidden ease-in-out w-[365px] px-[30px]`}
-                >
-                    <div className={"text-center py-[5px]"}>{umsg}</div>
                     <div
-                        className={`rounded-md w-full ${
-                            saving && umsg ? "max-w-[100%]" : "max-w-[0%]"
-                        } h-[3px] ${
-                            umsg == "error"
-                                ? "bg-red-500"
-                                : "bg-gradient-to-tr from-sky-300 to-indigo-500"
-                        } overflow-hidden ease-in-out duration-500 delay-300`}
-                    />
+                        className={`${
+                            saving
+                                ? "opacity-100"
+                                : "opacity-0"
+                        } ease-in-out w-[365px] px-[30px] absolute top-0 left-0 bg-primary rounded-xl p-2 transition-all duration-300 ease-in-out"`}
+                    >
+                        <div className={"text-center py-[5px] text-secondary"}>{umsg}</div>
+                        <div
+                            className={`rounded-md w-full ${
+                                saving && umsg ? "max-w-[100%]" : "max-w-[0%]"
+                            } h-[3px] ${
+                                umsg == "error"
+                                    ? "bg-red-500"
+                                    : "bg-gradient-to-tr from-sky-300 to-indigo-500"
+                            } overflow-hidden ease-in-out duration-500 delay-300 shadow-black`}
+                        />
+                    </div>
                 </div>
             </div>
 

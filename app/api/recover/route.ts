@@ -24,10 +24,10 @@ export const GET = async (request: NextRequest) => {
 
     try {
         //build query
-        const query = "select * from users where email='" + email + "'";
+        const query = "select * from users where email=?";
 
         //execute query
-        const [results] = await connection.execute(query);
+        const [results] = await connection.execute(query,[email]);
         connection.end();
         if (JSON.stringify(results) === "[]") throw {error: "no accnt found"};
         const resp = JSON.parse(JSON.stringify(results));

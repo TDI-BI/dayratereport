@@ -21,16 +21,16 @@ export const GET = async (request: NextRequest) => {
         const pstart = new Date().toISOString().slice(0, 10);
 
         const existsQuery =
-            "SELECT * FROM periodstarts WHERE date='" + pstart + "';";
+            "SELECT * FROM periodstarts WHERE date=?;";
         const dateret = JSON.parse(
-            JSON.stringify(await connection.execute(existsQuery))
+            JSON.stringify(await connection.execute(existsQuery, [pstart]))
         )[0];
 
         if (dateret.length > 0) throw { error: "period start already exists" };
 
         const addDayQ =
-            "INSERT INTO periodstarts (date) VALUES ('" + pstart + "');"; // make sure to update this to be yesterday at some point
-        const addret = await connection.execute(addDayQ);
+            "INSERT INTO periodstarts (date) VALUES (?);"; // make sure to update this to be yesterday at some point
+        const addret = await connection.execute(addDayQ, [pstart]);
 
         connection.end();
         return new Response(JSON.stringify({ resp: addret }), { status: 200 });

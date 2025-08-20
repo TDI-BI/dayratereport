@@ -23,20 +23,12 @@ export const GET = async (request: NextRequest) => {
     try {
         //execute query
         const updateCrewQ =
-            "UPDATE users SET isDomestic=" +
-            crew +
-            " WHERE username='" +
-            session.username +
-            "';";
-        const r1 = await connection.execute(updateCrewQ)
+            "UPDATE users SET isDomestic=? WHERE username=?;";
+        const r1 = await connection.execute(updateCrewQ, [crew, session.username])
 
         const updateCrewDayQ = 
-            "UPDATE days SET ship='" +
-            Number(crew) + 
-            "' WHERE day='-1' AND username='" +
-            session.username +
-            "';";
-        const r2 = await connection.execute(updateCrewDayQ)
+            "UPDATE days SET ship=? WHERE day='-1' AND username=?;";
+        const r2 = await connection.execute(updateCrewDayQ, [crew, session.username])
 
         session.isDomestic = crew;
         await session.save();

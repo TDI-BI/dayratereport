@@ -1,21 +1,21 @@
 interface inputProps {
     val: string;
-    inid: string;
+    inId: string;
     options: string[];
-    setter: (e:any) => void;
+    setter: (e: any) => void;
 }
 
-const DropDown: React.FC<inputProps> = ({val, inid, options, setter}) => {
+const DropDown = ({val, inId, options, setter}:inputProps) => {
     return (
         <div className="tblDD">
             <select
                 className="hoverLn shipInput"
-                data-testid={inid}
-                id={inid}
+                data-testid={inId}
+                id={inId}
                 value={val}
                 onChange={setter}
             >
-                <option value="" id="" key="" className="shipValue" />
+                <option value="" id="" key="" className="shipValue"/>
                 {
                     options.map((e: any) => (
                         <option
@@ -25,7 +25,7 @@ const DropDown: React.FC<inputProps> = ({val, inid, options, setter}) => {
                         >
                             {e}
                         </option>
-                ))}
+                    ))}
             </select>
         </div>
     );

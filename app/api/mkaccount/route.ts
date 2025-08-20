@@ -27,14 +27,8 @@ export const GET = async (request: NextRequest) => {
     try {
         //check simmilar account exists
         const query =
-            "select * from users where username='" +
-            username +
-            "' or email='" +
-            email +
-            "' or uid='" +
-            fullname +
-            "'";
-        const [results] = await connection.execute(query);
+            "select * from users where username=? or email=? or uid=?";
+        const [results] = await connection.execute(query, [username, email, fullname]);
         //block if we find a result
         if (String(results))
             return new Response(JSON.stringify({ error: "account exists" }), {
@@ -43,19 +37,9 @@ export const GET = async (request: NextRequest) => {
 
         //build query
         const query2 =
-            "insert into users (uid, password, username, email, isDomestic) values ('" +
-            fullname +
-            "','" +
-            password +
-            "','" +
-            username +
-            "','" +
-            email +
-            "', " +
-            isDomesticCheck +
-            ")";
+            "insert into users (uid, password, username, email, isDomestic) values (?, ?, ?, ?, ?)";
         //execute query
-        const [results2] = await connection.execute(query2);
+        const [results2] = await connection.execute(query2, [fullname, password, username, email, isDomesticCheck]);
         connection.end();
 
         return new Response(JSON.stringify({ resp: results2 }), {
