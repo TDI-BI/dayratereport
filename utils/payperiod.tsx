@@ -24,6 +24,5 @@ export const getPeriod = (input = 0) => {
         nextDay.setDate(date.getDate() + i);
         curPeriod.push(new Date(nextDay).toISOString().substring(0, 10));
     }
-    console.log('HEREH', curPeriod);
     return curPeriod;
 };

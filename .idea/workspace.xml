@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/mkday/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/mkday/route.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/payperiod.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/utils/payperiod.tsx" afterDir="false" />
     </list>
@@ -24,12 +23,12 @@
     &quot;assignee&quot;: &quot;eygwa&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/eygwa/dayratereport.git&quot;,
-    &quot;accountId&quot;: &quot;62543d82-81d8-4285-855f-614e5a7e9ef3&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/TDI-BI/dayratereport.git",
+    "accountId": "62543d82-81d8-4285-855f-614e5a7e9ef3"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -122,7 +121,7 @@
       <workItem from="1754958763225" duration="1499000" />
       <workItem from="1755530634267" duration="325000" />
       <workItem from="1755531562143" duration="413000" />
-      <workItem from="1756844066636" duration="1275000" />
+      <workItem from="1756844066636" duration="1373000" />
     </task>
     <servers />
   </component>

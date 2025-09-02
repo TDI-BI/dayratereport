@@ -117,7 +117,6 @@ export default function Home() {
             const fweek = nweek.filter(
                 (e: any) => Number(e.slice(5, 7)) == month+1
             );
-            console.log(fweek);
             return fweek.length > 0;
         }
     };
@@ -155,7 +154,6 @@ export default function Home() {
 
             setCrew(!!session.isDomestic); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
-            console.log('thingy', thingy[0]);
             setmonth(Number(thingy[0].slice(5, 7)) - 1); // keeping us zero indexed
             setVessels(ves);
             setJobs(job);
