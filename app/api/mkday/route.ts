@@ -16,16 +16,13 @@ export const GET = async (request: NextRequest) => {
         const uid = session.userId;
         const username = session.username;
 
-
         //get URL parameters
         const {searchParams} = request.nextUrl;
         const days = searchParams.get("days") || "";
         const domestic = searchParams.get("dom") || "0";
         var prev = Number(searchParams.get("prev"));
 
-
         const period = getPeriod(prev);
-
 
         //estab. connection
         const connection = await connectToDb();
@@ -53,7 +50,7 @@ export const GET = async (request: NextRequest) => {
                     : prev == 1 || prev == 0;
                 if (!thingy) return new Response(JSON.stringify({error: 'youre oob'}), {status: 400});
             } else {
-                const thism = new Date(getPeriod()[0]).getMonth();
+                const thism = Number(getPeriod()[0].slice(5, 7)) - 1; // keeps us zero indexed to mimic getMonth
                 const list = period.filter((e) => {
                     return Number(e.slice(5, 7)) - 1 == thism
                 })

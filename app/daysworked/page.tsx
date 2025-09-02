@@ -115,8 +115,9 @@ export default function Home() {
             return thisp.includes(checkday);
         } else {
             const fweek = nweek.filter(
-                (e: any) => Number(e.slice(5, 7)) == month + 1
+                (e: any) => Number(e.slice(5, 7)) == month+1
             );
+            console.log(fweek);
             return fweek.length > 0;
         }
     };
@@ -145,7 +146,7 @@ export default function Home() {
             const perResp = await fetchBoth(`/api/verifydate?${ex}`);
             const serverPeriod = (await perResp.json()).resp;
 
-            const thing = await fetchBoth("/api/verifydate"); // why do i do this...
+            const thing = await fetchBoth("/api/verifydate"); // why do i do this... // erm
             const thingy = (await thing.json()).resp;
 
             const session = (
@@ -154,7 +155,8 @@ export default function Home() {
 
             setCrew(!!session.isDomestic); // error thrown bc could maybe be empty (lie)
             setPeriod(serverPeriod);
-            setmonth(new Date(thingy[0]).getMonth()); // better bound checking sys.
+            console.log('thingy', thingy[0]);
+            setmonth(Number(thingy[0].slice(5, 7)) - 1); // keeping us zero indexed
             setVessels(ves);
             setJobs(job);
         }
@@ -165,7 +167,8 @@ export default function Home() {
     return (
         <main className="flex min-h-screen flex-col items-center px-5 space-y-[10px] py-5">
             <div
-                className={`flex gap-10 transition-all duration-300 ease-in-out ${saving === 0 ? 'opacity-100' : 'opacity-0'}`}>
+                id={'buttons'}
+                className={`rounded-xl flex gap-10 transition-all duration-300 ease-in-out ${saving === 0 ? 'opacity-100' : 'opacity-0'}`}>
                 <button
                     className="group flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary"
                     onClick={async () => {

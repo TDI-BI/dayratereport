@@ -10,12 +10,12 @@ export const getPeriod = (input = 0) => {
     const curPeriod = [];
 
     let date = new Date(
-        new Date().toLocaleDateString("en-US", { timeZone: "America/Chicago" })
+        new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"})
     );
     let cguy = input * -7; // converts from weeks to days
     date.setDate(
         date.getDate() -
-            ((date.getDay() == 1 ? 7 : (date.getDay() + 6) % 7) - cguy)
+        ((date.getDay() == 1 ? 7 : (date.getDay() + 6) % 7) - cguy)
     );
 
     for (let i = 0; i <= 6; i++) {
@@ -24,5 +24,6 @@ export const getPeriod = (input = 0) => {
         nextDay.setDate(date.getDate() + i);
         curPeriod.push(new Date(nextDay).toISOString().substring(0, 10));
     }
+    console.log('HEREH', curPeriod);
     return curPeriod;
 };
