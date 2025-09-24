@@ -155,7 +155,7 @@ const Admin = () => {
 
         // Generate periods for the specified number of weeks
         let experiod: string[] = [];
-        for (var i = Number(weeks) - 1; i >= 0; i--) {
+        for (let i = Number(weeks) - 1; i >= 0; i--) {
             const nperiod = getPeriod(i + periodEh);
             let day: string[] = [];
             nperiod.map((p) => {
@@ -178,12 +178,13 @@ const Admin = () => {
                 }
             }
 
-            var pushme: { [key: string]: string } = {};
+            let pushme: { [key: string]: string } = {};
             const name = user.uid.split("/")[1] + " " + user.uid.split("/")[0];
             pushme["name"] = name;
             pushme["crew"] = user.isDomestic ? "DOM" : "FOR";
 
-            var sum = 0;
+            let sum = 0;
+            let boatCount: Record<string, number> = {};
             experiod.forEach((day) => {
                 // Pre-filter inc array once for this user and day
                 const filteredInc = inc.filter((e) => {
@@ -197,12 +198,17 @@ const Admin = () => {
                 );
 
                 const workerType = dayWork ? dayWork.type : "";
+                if (dayWork) boatCount[dayWork.ship] = boatCount[dayWork.ship] ? boatCount[dayWork.ship] + 1 : 1;
                 pushme[day] = workerType;
 
                 if (workerType !== "") sum += 1;
             });
 
             if (sum > 0) {
+                const mostBoat = Object.entries(boatCount).reduce((a, b) =>
+                    a[1] > b[1] ? a : b
+                )[0];
+                pushme['location'] = mostBoat;
                 expme.push(pushme);
             }
         });
@@ -213,7 +219,6 @@ const Admin = () => {
         }
 
         console.log(`Exporting ${expme.length} records`);
-
         const csvConfig = mkConfig({
             useKeysAsHeaders: true,
             filename:
