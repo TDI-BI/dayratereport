@@ -34,6 +34,7 @@ export default function UserManagementPage() {
     const [userSpinner, setUserSpinner] = useState(false);
     const [activeSpinner, setActiveSpinner] = useState(false);
     const [pwEmail, setPwEmail] = useState(false);
+    const [typeSpinner, setTypeSpinner] = useState(false);
 
     console.log(users);
 
@@ -222,17 +223,36 @@ export default function UserManagementPage() {
 
 
                                     <div className={'grow'}>
-                                        <div
-                                            className={`p-2 w-full${/*FOR NOW I DO NOT PLAN ON LETTING ADMINISTRATORS MODIFY THIS STATUS*/''}`}>
-                                            <div className="text-sm opacity-70">Account Type</div>
-                                            <div className="flex items-center gap-2 mt-1">
-                                                <div
-                                                    className={`p-1 rounded-full ${selectedUser.isDomestic ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                                    {selectedUser.isDomestic ? <Home size={14}/> : <Globe size={14}/>}
+                                        {!typeSpinner ?
+                                            <div
+                                                className={'w-full rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
+                                                onClick={async () => {
+                                                    console.log('dispatch user type update request')
+                                                    setTypeSpinner(true);
+                                                    const id = selectedUser.uid;
+                                                    const ret = await fetchBoth(`/api/updateTheirCrew?uid=${selectedUser.uid}&crew=${selectedUser.isDomestic}`)
+                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
+                                                        ...user,
+                                                        isDomestic: !selectedUser.isDomestic // why did i properly pass this but nothing else lmfao
+                                                    } : user))
+                                                    setTypeSpinner(false)
+                                                }}
+                                            >
+                                                <div className="text-sm opacity-70">Account Type</div>
+                                                <div className="flex items-center gap-2 mt-1">
+                                                    <div
+                                                        className={`p-1 rounded-full ${selectedUser.isDomestic ? 'bg-blue-500' : 'bg-green-500'}`}>
+                                                        {selectedUser.isDomestic ? <Home size={14}/> :
+                                                            <Globe size={14}/>}
+                                                    </div>
+                                                    <span>{selectedUser.isDomestic ? 'Domestic' : 'International'}</span>
                                                 </div>
-                                                <span>{selectedUser.isDomestic ? 'Domestic' : 'International'}</span>
                                             </div>
-                                        </div>
+                                            :
+                                            <div className="flex items-center w-full h-full">
+                                                <PuffLoader size={25} color={"#64748B"}/>
+                                            </div>
+                                        }
                                     </div>
                                     <div className={'grow'}>
                                         {!userSpinner ?
@@ -258,7 +278,8 @@ export default function UserManagementPage() {
                                                     </div>
                                                     <span>{selectedUser.isAdmin === 'true' ? 'Admin' : 'User'}</span>
                                                 </div>
-                                            </div> :
+                                            </div>
+                                            :
                                             <div className="flex items-center w-full h-full">
                                                 <PuffLoader size={25} color={"#64748B"}/>
                                             </div>
@@ -289,7 +310,9 @@ export default function UserManagementPage() {
                     )}
                 </div>
             </div>
-            {/*??*/}
+            {/*??*/
+            }
         </main>
-    );
+    )
+        ;
 }
