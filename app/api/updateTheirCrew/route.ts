@@ -4,6 +4,7 @@ import {connectToDb} from "@/utils/connectToDb";
 
 export const GET = async (request: NextRequest) => {
     const session = await getSession();
+    if (!session.isAdmin) return;
     const {searchParams} = request.nextUrl;
     const user = searchParams.get("uid") || "";
     const currCrew = searchParams.get("crew") === '1' || searchParams.get("crew") === 'true'; // inputs can vary sometimes
@@ -15,7 +16,7 @@ export const GET = async (request: NextRequest) => {
         const query = `UPDATE users
                        SET isDomestic=?
                        WHERE uid = ?`;
-            const extra: string[] = [(currCrew ? '0' : '1'), user];
+        const extra: string[] = [(currCrew ? '0' : '1'), user];
         const [resp] = await connection.execute(query, extra);
 
         return new Response(JSON.stringify({resp: resp}), {
@@ -23,7 +24,7 @@ export const GET = async (request: NextRequest) => {
         });
     } catch (err) {
         connection.end();
-        return new Response(JSON.stringify({error: e}), {
+        return new Response(JSON.stringify({error: err}), {
             status: 500,
         });
     }
