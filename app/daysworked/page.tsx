@@ -115,7 +115,7 @@ export default function Home() {
             return thisp.includes(checkday);
         } else {
             const fweek = nweek.filter(
-                (e: any) => Number(e.slice(5, 7)) == month+1
+                (e: any) => Number(e.slice(5, 7)) == month + 1
             );
             return fweek.length > 0;
         }
@@ -340,9 +340,9 @@ export default function Home() {
                                                         "PROT",
                                                         "GYRE",
                                                         "NAUT",
-                                                        "TOOL",
+                                                        //"TOOL",
                                                         "3RD",
-                                                        "ADMN",
+                                                        //"ADMN",
                                                     ].map((e: string) => (
                                                         <div
                                                             key={e}
