@@ -1,4 +1,4 @@
-import {ReactElement} from 'react';
+import {ReactElement, useState} from 'react';
 
 interface lineprops {
   name: string;
@@ -9,7 +9,7 @@ interface lineprops {
 
 export const FormLine = (ins: lineprops) => {
   return (
-    <h1 className="flex items-center gap-3 px-4 py-3 text-secondary focus-within:bg-secondary focus-within:text-primary transition-all duration-300 ease-in-out">
+    <h1 className={`flex items-center gap-3 px-4 py-3 text-secondary focus-within:bg-secondary focus-within:text-primary transition-all duration-300 ease-in-out focus-within:shadow `}>
       <div>{ins.icon}</div>
       <div className="w-full">
         <input

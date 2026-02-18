@@ -84,7 +84,7 @@ export const GET = async (request: NextRequest) => {
     //init connection
     const connection = await connectToDb();
     try {
-        //COPIED FROM /mkday
+        //COPIED FROM /create
         const accountQ = `select *
                           from users
                           where email like ?` //always unique

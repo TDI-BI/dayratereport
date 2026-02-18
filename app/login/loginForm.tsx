@@ -1,7 +1,6 @@
 'use client';
 import {login} from '@/actions';
-import {useEffect, useActionState} from 'react';
-import {flashDiv} from '@/utils/flashDiv';
+import {useActionState} from 'react';
 import {useRouter} from 'next/navigation';
 import {User, Lock} from 'lucide-react';
 import {FormLine} from '@/components/formLine';

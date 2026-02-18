@@ -22,6 +22,7 @@ export const getSession = async () => {
 };
 
 export const login = async (
+  prevState: { error: undefined | string },
   formData: FormData
 ) => {
   const session = await getSession();
@@ -43,6 +44,8 @@ export const login = async (
   }
 
   const dbAcc = res.resp[0];
+
+
 
   // Check if account is active
   if (!dbAcc.isActive) {
