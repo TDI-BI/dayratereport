@@ -104,12 +104,12 @@ export default function Home() {
         // incoming 1 for next 0 for last, also needs to be async for verification
         const nweek = (
             await (
-                await fetchBoth(`/api/verifydate?prev=${t ? prev - 1 : prev + 1}`)
+                await fetchBoth(`/api/days/verifydate?prev=${t ? prev - 1 : prev + 1}`)
             ).json()
         ).resp; // get next week in intended direction
         if (crew) {
             const thisp = (
-                await (await fetchBoth("/api/getlatestdomesticperiod")).json()
+                await (await fetchBoth("/api/period/getLatestDomesticPeriod")).json()
             ).resp;
             const checkday = t ? nweek[0] : nweek[6];
             return thisp.includes(checkday);
@@ -145,11 +145,11 @@ export default function Home() {
             const perResp = await fetchBoth(`/api/verifydate?${ex}`);
             const serverPeriod = (await perResp.json()).resp;
 
-            const thing = await fetchBoth("/api/verifydate"); // why do i do this... // erm
+            const thing = await fetchBoth("/api/verifyDate"); // why do i do this... // erm
             const thingy = (await thing.json()).resp;
 
             const session = (
-                await (await fetchBoth("/api/sessionforclient")).json()
+                await (await fetchBoth("/api/myAccountInfo")).json()
             ).resp;
 
             setCrew(!!session.isDomestic); // error thrown bc could maybe be empty (lie)

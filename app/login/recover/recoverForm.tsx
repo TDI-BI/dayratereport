@@ -1,54 +1,44 @@
 'use client';
-import { recover } from '@/actions';
+import {recover} from '@/actions';
 import Link from 'next/link';
-import { useEffect, useActionState } from 'react';
-import { flashDiv } from '@/utils/flashDiv';
-import { FormLine } from '@/components/formLine';
+import {useEffect, useActionState} from 'react';
+import {flashDiv} from '@/utils/flashDiv';
+import {FormLine} from '@/components/formLine';
+import {Button} from '@/components/button';
+import {useRouter} from 'next/navigation';
 
 //icons
-import { Mail } from 'lucide-react';
+import {Mail} from 'lucide-react';
+import {FormWrapper} from "@/components/formwrapper";
 
 const RecoverForm = () => {
-  const [state, formAction] = useActionState<any, FormData>(recover, undefined);
+  const [state, formAction] = useActionState<any, FormData>(recover, {});
+  const router = useRouter();
 
-  useEffect(() => {
-    if (state?.error) {
-      flashDiv(document.getElementById('error') as HTMLElement);
-    }
-  }, [state?.error]);
 
   return (
-    <div className="">
-      <form action={formAction} className="space-y-[10px]">
+    <form action={formAction} className="space-y-4">
+      <FormWrapper errorMessage={state.error}>
         <FormLine
           name="email"
           type="email"
           placeholder="email"
-          icon={<Mail />}
+          icon={<Mail/>}
         />
+      </FormWrapper>
 
-        <div className="flex gap-[5px]">
-          <button
-            type="submit"
-            className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px]"
-          >
-            recover
-          </button>
-          <Link href="/login">
-            <p className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px]">
-              back
-            </p>
-          </Link>
-        </div>
-
-        <div className="flex-col text-center justify-center h-[40px]">
-          <div className="py-[10px] w-[305px]">
-            {state?.error && <p className="text-wrap">{state.error}</p>}
-          </div>
-          <div id="error" className="rounded-xl w-[100%] h-[3px]" />
-        </div>
-      </form>
-    </div>
+      <div className="flex gap-[5px]">
+        <Button
+          className="flex-1"
+          onClick={() => router.push('/login')}
+        >
+          Back
+        </Button>
+        <Button type="submit" className="flex-1">
+          Recover
+        </Button>
+      </div>
+    </form>
   );
 };
 

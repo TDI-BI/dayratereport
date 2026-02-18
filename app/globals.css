@@ -3,19 +3,25 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: 18, 18, 18;
-  --color-secondary: 240, 240, 240;
-  --tdi-blue: 13, 58, 92;
+    --color-primary: 18, 18, 18;
+    --color-secondary: 240, 240, 240;
+    --tdi-blue: 76, 68, 199; /*PLAY WITH THIS*/
 }
 
+.shadow {
+    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 1);
+}
+
+
 body {
-  color: rgb(var(--color-primary));
-  background: rgb(var(--color-secondary));
-  overflow-x: hidden;
+    color: rgb(var(--color-primary));
+    background: rgb(var(--color-secondary));
+    padding-bottom: 20px;
+
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+    .text-balance {
+        text-wrap: balance;
+    }
 }

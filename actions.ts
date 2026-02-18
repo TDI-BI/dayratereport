@@ -1,14 +1,14 @@
 'use server';
 
-import { getPort } from '@/utils/getPort';
+import {getPort} from '@/utils/getPort';
 
 const por = getPort();
-import { getIronSession } from 'iron-session';
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
-import { fetchBoth } from '@/utils/fetchboth';
+import {getIronSession} from 'iron-session';
+import {cookies} from 'next/headers';
+import {redirect} from 'next/navigation';
+import {fetchBoth} from '@/utils/fetchboth';
 
-import { sessionOptions, sessionData, defaultSession } from '@/lib';
+import {sessionOptions, sessionData, defaultSession} from '@/lib';
 
 const bcrypt = require('bcrypt');
 
@@ -22,7 +22,6 @@ export const getSession = async () => {
 };
 
 export const login = async (
-  prevState: { error: undefined | string },
   formData: FormData
 ) => {
   const session = await getSession();
@@ -31,7 +30,7 @@ export const login = async (
 
   // Validate input
   if (!formUsername || !formPassword) {
-    return { error: 'username and password required' };
+    return {error: 'username and password required'};
   }
 
   // Query API - now using upid instead of uid
@@ -39,24 +38,24 @@ export const login = async (
     `/api/account/login?username=${formUsername}`
   );
   const res = await response.json();
-  const dbAcc = res.resp[0];
-
-  if (!dbAcc) {
-    return { error: 'no account for that username' };
+  if (res.error) {
+    return {error: 'account not found'};
   }
+
+  const dbAcc = res.resp[0];
 
   // Check if account is active
   if (!dbAcc.isActive) {
-    return { error: 'account is inactive' };
+    return {error: 'account inactive'};
   }
 
   try {
     const auth = await bcrypt.compare(formPassword, dbAcc.password);
     if (!auth) {
-      return { error: 'wrong password for account' };
+      return {error: 'incorrect password'};
     }
   } catch (error) {
-    return { error: 'authentication failed' };
+    return {error: 'authentication failed'};
   }
 
   // Create minimal session with just upid
@@ -92,7 +91,7 @@ export const mkAccount = async (
 
   // Validation
   if (formPassword !== formPasswordRepeat) {
-    return { error: 'passwords do not match' };
+    return {error: 'passwords do not match'};
   }
 
   if (
@@ -102,25 +101,25 @@ export const mkAccount = async (
     !formUsername ||
     !formPassword
   ) {
-    return { error: 'all fields required' };
+    return {error: 'all fields required'};
   }
 
   // Validate workType is one of the allowed values
   if (!['marine', 'tech', 'admin'].includes(formWorkType)) {
-    return { error: 'select a work type' };
+    return {error: 'select a work type'};
   }
 
   // Validate crew is selected
   if (!['domestic', 'foreign'].includes(formCrew)) {
-    return { error: 'select a crew type' };
+    return {error: 'select a crew type'};
   }
 
   if (formUsername.includes(' ')) {
-    return { error: 'username cannot contain spaces' };
+    return {error: 'username cannot contain spaces'};
   }
 
   if (formEmail.includes(' ')) {
-    return { error: 'email cannot contain spaces' };
+    return {error: 'email cannot contain spaces'};
   }
 
   // Create hashed password
@@ -152,7 +151,7 @@ export const recover = async (
   const formEmail = formData.get('email') as string;
 
   if (!formEmail) {
-    return { error: 'email required' };
+    return {error: 'email required'};
   }
 
   // Query API
@@ -161,11 +160,11 @@ export const recover = async (
   try {
     const res = await response.json();
     if (res.resp === 'email sent') {
-      return { error: 'recovery instructions sent, check your spam box!' };
+      return {error: 'recovery instructions sent, check your spam box!'};
     }
-    return { error: 'account not found' };
+    return {error: 'account not found'};
   } catch (e) {
-    return { error: 'account not found' };
+    return {error: 'account not found'};
   }
 };
 
@@ -178,11 +177,11 @@ export const resetPassword = async (
   const formPasswordRepeat = formData.get('password2') as string;
 
   if (!formPassword || !formPasswordRepeat) {
-    return { error: 'all fields required' };
+    return {error: 'all fields required'};
   }
 
   if (formPassword !== formPasswordRepeat) {
-    return { error: 'passwords do not match' };
+    return {error: 'passwords do not match'};
   }
 
   // Encrypt new password

@@ -1,6 +1,6 @@
 // returns the current payperiod as [YYYY-MM-DD]
 
-// if you are calling this somewhere in a client script you will have to associate it with the 'verifydate' api script
+// if you are calling this somewhere in a client script you will have to associate it with the 'verifyDate' api script
 // js date relys on client information and returns faulty data if the user's timeozone or clock is mis-set
 // this is not compatible with the admin pages I wrote but those are only ever called from the office on a pc anyway so i dont forsee actual issues occuring there
 export const getPeriod = (input = 0) => {

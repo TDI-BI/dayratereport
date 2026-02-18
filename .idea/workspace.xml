@@ -5,22 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/components/formwrapper.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/login/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/mkaccount/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/recover/route.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/resetpassword/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/account/login/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/login/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/addperiod/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/period/addperiod/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/admingetdays/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/admingetdays/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/getday/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/getday/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/getlatestdomesticperiod/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/period/getLatestDomesticPeriod/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/getperiodinf/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/getWorkWeek/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/mkday/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/mkday/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/sendperiodinf/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/sendperiodinf/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/sessionforclient/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/myAccountInfo/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/updateTheirCrew/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/updateTheirCrew/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/updatemycrew/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/updatemycrew/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/verifydate/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/verifyDate/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/mkaccount/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/loginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/loginForm.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/login/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/rcvaccount/page.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/resetpassword/page.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/recover/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/recover/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/recover/recoverForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/recover/recoverForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/register/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/register/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/register/registrationForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/register/registrationForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/reset-password/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/reset-password/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/login/reset-password/resetForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/reset-password/resetForm.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/button.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/formLine.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/formLine.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/loginForm.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tailwind.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/tailwind.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/dispatchEmail.ts" beforeDir="false" afterPath="$PROJECT_DIR$/utils/dispatchEmail.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/payperiod.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/utils/payperiod.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,30 +63,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "JavaScript Debug.localhost:3000.executor": "Debug",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "betterAccountStuff",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "/Users/eygwa/webDev/myApps/dayratereport/node_modules/typescript/lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;JavaScript Debug.localhost:3000.executor&quot;: &quot;Debug&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;betterAccountStuff&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;/Users/eygwa/webDev/myApps/dayratereport/node_modules/typescript/lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/app/api/days" />
+      <recent name="$PROJECT_DIR$/app/api/account" />
+      <recent name="$PROJECT_DIR$/app/api/period" />
       <recent name="$PROJECT_DIR$/__test__" />
       <recent name="$PROJECT_DIR$" />
     </key>
@@ -138,6 +154,8 @@
       <workItem from="1758737958484" duration="2628000" />
       <workItem from="1767641158202" duration="24000" />
       <workItem from="1771280741030" duration="118000" />
+      <workItem from="1771292251274" duration="7360000" />
+      <workItem from="1771438986380" duration="7231000" />
     </task>
     <servers />
   </component>
@@ -148,5 +166,16 @@
         <option value="$PROJECT_DIR$/next.config.mjs" />
       </list>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/app/login/recover/recoverForm.tsx</url>
+          <line>1</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

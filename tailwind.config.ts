@@ -18,6 +18,7 @@ const config: Config = {
         secondary: 'rgba(var(--color-secondary))',
         'tdi-blue': 'rgba(var(--tdi-blue))',
       },
+
     },
   },
   plugins: [],
