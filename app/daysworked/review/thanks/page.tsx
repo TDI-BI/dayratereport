@@ -1,72 +1,55 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { fetchBoth } from "@/utils/fetchboth";
+import {useRouter} from "next/navigation";
+import {useEffect, useState} from "react";
+import {fetchBoth} from "@/utils/fetchboth";
+import {Button} from "@/components/button";
 
 const Thanks = () => {
-    const [session, setSession] = useState<{ [key: string]: string | boolean }>(
-        { userId: "loading/loading" }
-    );
-    const [loaded, setLoaded] = useState<boolean>(false);
-    const router = useRouter();
+  const router = useRouter();
+  const [name, setName] = useState("");
 
-    useEffect(() => {
-        const getsesh = async () => {
-            const getthingy = await (
-                await fetchBoth(`/api/sessionforclient`)
-            ).json();
-            setSession(getthingy.resp);
-            setLoaded(true);
-        };
-
-        getsesh();
-    }, []);
-
-    if (!session["isLoggedIn"] && loaded) {
-        router.push("/login");
+  useEffect(() => {
+    async function load() {
+      const res = await fetchBoth("/api/account/myAccountInfo?fields=firstName,lastName");
+      if (res.status === 401) {
+        router.push("/");
+        return;
+      }
+      const data = await res.json();
+      const {firstName, lastName} = data.resp;
+      setName(`${firstName} ${lastName}`);
     }
 
-    let name = `${session["userId"]}`.split("/");
-    return (
-        <main className="flex min-h-screen flex-col items-center space-y-[5px] px-5 py-5">
-            <div className="text-center font-semibold text-lg py-[10px]">
-                {`THANK YOU ${name[0]} ${name[1]}`}
-            </div>
+    load();
+  }, [router]);
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
-            <div className=" w-full max-w-[600px] h-[10px] " />
+  return (
+    <main className="flex justify-center px-5 bg-secondary min-h-screen">
+      <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
-            <p className="text-center"> your time sheet has been submitted! </p>
-            <p className="text-center">
-                a copy of your report should appear in your inbox within a few
-                minutes.
-            </p>
-            <p className="text-center">
-                {" "}
-                you are only required to submit one report per pay period{" "}
-            </p>
-            <p className="text-center">
-                {" "}
-                you may resubmit if you find any issues within your report{" "}
-            </p>
-            <p className="text-center">
-                {" "}
-                issues/inquiries email parkerseeley@tdi-bi.com{" "}
-            </p>
+        {/* Message card — text flat on blue */}
+        <div className="bg-tdi-blue shadow px-5 py-5 flex flex-col gap-4 text-center">
+          <p className="text-secondary text-sm font-semibold uppercase tracking-tight">
+            {name ? `Thank you, ${name}` : "Thank you"}, Your report has been submitted.
+          </p>
+          <div className="h-[2px] w-full bg-secondary/20"/>
+          <p className="text-secondary text-xs leading-relaxed">
+            A copy will arrive in your inbox within a few minutes. You are only required to submit once per pay period,
+            but you may resubmit at any time if you need to correct an error.
+          </p>
+          <p className="text-secondary text-xs leading-relaxed">
+            Questions or issues — parkerseeley@tdi-bi.com
+          </p>
+        </div>
 
-            <button
-                className="justify-center"
-                onClick={() => {
-                    router.push("../../../");
-                }}
-            >
-                <p className="text-center group w-[160px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]">
-                    home
-                </p>
-            </button>
-        </main>
-    );
+        {/* Home button */}
+        <Button onClick={() => router.push("../../../")} className="w-full justify-center">
+          HOME
+        </Button>
+
+      </div>
+    </main>
+  );
 };
 
 export default Thanks;

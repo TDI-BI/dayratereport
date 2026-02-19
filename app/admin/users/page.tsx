@@ -1,318 +1,340 @@
 'use client';
 
 import {useState, useEffect} from 'react';
-import {Search, User, Shield, Globe, Home, Calendar} from 'lucide-react';
+import {Search, User, Shield, Globe, Home, Calendar, UserPlus} from 'lucide-react';
 import {fetchBoth} from "@/utils/fetchboth";
-import {AdminNav} from "@/components/adminNav";
-import {PuffLoader} from "react-spinners";
+import {Button} from "@/components/button";
 
-interface User {
-    username: string;
-    uid: string;
-    email: string;
-    isDomestic: boolean;
-    lastConfirm: string;
-    isAdmin: string | null;
-    isActive: number;
+interface UserRow {
+  upid: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  isDomestic: boolean;
+  lastConfirm: string | null;
+  isAdmin: boolean;
+  isActive: boolean;
 }
 
 const timeAgo = (isoString: string) => {
-    const date = new Date(isoString);
-    const now = new Date();
-    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
-
-    if (diffInSeconds < 60) return `${diffInSeconds}s ago`;
-    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  const date = new Date(isoString);
+  const now = new Date();
+  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
+  if (diff < 60) return `${diff}s ago`;
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+  return `${Math.floor(diff / 86400)}d ago`;
 };
 
+const HDivider = () => <div className="h-[2px] w-full bg-secondary/20 my-1"/>;
+
+// Reusable action tile for the detail panel
+const ActionTile = ({
+                      label,
+                      active,
+                      activeColor,
+                      icon,
+                      loading,
+                      onClick,
+                    }: {
+  label: string;
+  active: boolean;
+  activeColor: string;
+  icon: React.ReactNode;
+  loading: boolean;
+  onClick: () => void;
+}) => (
+  <div
+    className={`flex-1 px-3 py-2 cursor-pointer transition-all duration-300 ease-in-out border border-secondary/20 hover:bg-secondary/10 ${
+      loading ? "pointer-events-none opacity-50" : ""
+    }`}
+    onClick={onClick}
+  >
+    <div className="text-secondary/50 text-xs uppercase tracking-widest font-semibold mb-1">{label}</div>
+    <div className="flex items-center gap-2">
+      <div className={`w-2 h-2 flex-shrink-0 ${activeColor}`}/>
+      <span className="text-secondary text-xs font-semibold uppercase tracking-tight">
+                {loading ? "..." : active ? "Yes" : "No"}
+            </span>
+    </div>
+  </div>
+);
+
 export default function UserManagementPage() {
-    const [users, setUsers] = useState<User[]>([]);
-    const [filter, setFilter] = useState('');
-    const [selectedUserId, setSelectedUserId] = useState<number>(-1);
-    const [userSpinner, setUserSpinner] = useState(false);
-    const [activeSpinner, setActiveSpinner] = useState(false);
-    const [pwEmail, setPwEmail] = useState(false);
-    const [typeSpinner, setTypeSpinner] = useState(false);
+  const [users, setUsers] = useState<UserRow[]>([]);
+  const [filter, setFilter] = useState('');
+  const [selectedUpid, setSelectedUpid] = useState<string | null>(null);
+  const [activeSpinner, setActiveSpinner] = useState(false);
+  const [typeSpinner, setTypeSpinner] = useState(false);
+  const [adminSpinner, setAdminSpinner] = useState(false);
+  const [pwLoading, setPwLoading] = useState(false);
 
-    console.log(users);
+  // Invite form state
+  const [inviteUpid, setInviteUpid] = useState('');
+  const [inviteFirst, setInviteFirst] = useState('');
+  const [inviteLast, setInviteLast] = useState('');
+  const [inviteEmail, setInviteEmail] = useState('');
 
-    useEffect(() => {
-        const fetchUsers = async () => {
-            const response = await fetchBoth('/api/getusers');
-            const userData = await response.json();
-            setUsers(userData.resp);
-        };
+  useEffect(() => {
+    async function load() {
+      const res = await fetchBoth('/api/admin/getUsers');
+      const data = await res.json();
+      if (data.resp) setUsers(data.resp);
+    }
 
-        fetchUsers();
-    }, []);
+    load();
+  }, []);
 
-    const filteredUsers = users.filter((user) =>
-        user.email.toLowerCase().includes(filter.toLowerCase())
-    );
+  const filteredUsers = users.filter((u) =>
+    `${u.firstName} ${u.lastName} ${u.email}`.toLowerCase().includes(filter.toLowerCase())
+  );
 
-    const selectedUser: User = filteredUsers[selectedUserId] ?? null;
+  const selectedUser = users.find((u) => u.upid === selectedUpid) ?? null;
 
-    return (
-        <main className="flex min-h-screen flex-col items-center">
-            <AdminNav/>
-            <div className="h-5"/>
-            <div className="flex gap-5">
-                <div id="table" className="w-[800px] p-3">
-                    <div id="header" className="flex flex-row justify-between pb-1">
-                        <div
-                            className="flex justify-center gap-[10px] group/search bg-primary/0 hover:bg-primary/100 text-inherit hover:text-secondary transition-all ease-in-out duration-300 rounded-lg py-[10px] px-[10px]">
-                            <Search/>
-                            <div onClick={(e) => e.stopPropagation()}>
-                                <input
-                                    className="text-inherit bg-inherit focus:outline-none peer"
-                                    type="text"
-                                    placeholder="search users..."
-                                    value={filter}
-                                    onChange={(e) => setFilter(e.target.value)}
-                                />
-                                <div
-                                    className="rounded-md w-[0%] peer-focus:w-[100%] group-hover/search:w-[100%] h-[3px] bg-secondary group-hover:bg/primary group-hover/search:bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                            </div>
-                        </div>
-                        <div/>
-                    </div>
-                    <div className="w-full bg-primary rounded-xl h-1"/>
+  const updateUser = (upid: string, patch: Partial<UserRow>) => {
+    setUsers((prev) => prev.map((u) => u.upid === upid ? {...u, ...patch} : u));
+  };
 
-                    <div
-                        className="flex flex-row justify-between align-middle p-3 text-primary/80">
-                        <div className="w-[200px]">Username</div>
-                        <div className="w-[250px]">Email</div>
-                        <div className="w-[80px] text-center">Type</div>
-                        <div className="w-[80px] text-center">Admin</div>
-                        <div className="w-[100px] text-center">Last Confirm</div>
-                    </div>
-                    <div className="h-[2px] w-full bg-gray-500"/>
+  return (
+    <main className="min-h-screen bg-secondary flex gap-6 p-6">
 
-                    <div className="flex flex-col gap-1 pt-2" id="users">
-                        {filteredUsers.map((user, index) => {
-                            const isSelected = selectedUserId === index;
+      {/* ── LEFT: User sheet ──────────────────────────────── */}
+      <div className="flex flex-col gap-4 flex-1 min-w-0">
 
-                            return (
-                                <div
-                                    className="flex flex-row justify-between align-middle p-3 rounded-xl bg-primary/0 hover:bg-primary/100 hover:text-secondary cursor-pointer duration-300 ease-in-out transition-all relative"
-                                    key={`user_${user.uid}`}
-                                    onClick={() => { // TODO - PASS INDEX TO SELECTED USER
-                                        if (index === selectedUserId) setSelectedUserId(-1);
-                                        else setSelectedUserId(index);
-                                    }}
-                                >
-                                    <div
-                                        className={`absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 ${isSelected ? 'border-primary/100' : 'border-primary/0'} rounded-tl-2xl pointer-events-none transition-all duration-100 ease-in-out`}/>
-                                    <div
-                                        className={`absolute bottom-0 right-0 w-6 h-6 border-b-2 border-r-2 ${isSelected ? 'border-primary/100' : 'border-primary/0'} rounded-br-2xl pointer-events-none transition-all duration-100 ease-in-out`}/>
+        {/* Search island */}
+        <div className="bg-tdi-blue shadow px-4 py-3 flex items-center gap-2">
+          <Search size={14} className="text-secondary/50 flex-shrink-0"/>
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="search..."
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-none w-full"
+            />
+            <div
+              className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
+          </div>
+        </div>
 
-                                    <div className="w-[200px] flex items-center gap-2 overflow-hidden">
-                                        <div
-                                            className={`p-1 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
-                                            <User size={16}/>
-                                        </div>
-                                        <span className="truncate" title={user.username}>{user.username}</span>
-                                    </div>
+        {/* Table */}
+        <div className="bg-tdi-blue shadow flex flex-col flex-1">
+          <div className="px-5 py-3 border-b border-secondary/20 flex items-center">
+            <span className="text-secondary font-semibold uppercase tracking-tight text-sm flex-1">Users</span>
+            <span
+              className="text-secondary/40 text-xs uppercase tracking-widest font-semibold">{filteredUsers.length}</span>
+          </div>
 
-                                    <div className="w-[250px] flex items-center overflow-hidden">
-                                        <span className="truncate" title={user.email}>{user.email}</span>
-                                    </div>
-
-                                    <div className="w-[80px] flex justify-center items-center">
-                                        <div
-                                            className={`p-1 rounded-full ${user.isDomestic ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                            {user.isDomestic ? <Home size={14}/> : <Globe size={14}/>}
-                                        </div>
-                                    </div>
-
-                                    <div className="w-[80px] flex justify-center items-center">
-                                        <div
-                                            className={`p-1 rounded-full ${user.isAdmin === 'true' ? 'bg-purple-500' : 'bg-gray-500'}`}>
-                                            {user.isAdmin === 'true' ? <Shield size={14}/> : <User size={14}/>}
-                                        </div>
-                                    </div>
-
-                                    <div className="w-[100px] flex justify-center items-center">
-                                        <span className="text-sm">
-                                          {user.lastConfirm ? timeAgo(user.lastConfirm) : 'Never'}
-                                        </span>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                <div id="userArea"
-                     className="bg-primary text-secondary w-[400px] p-3 flex flex-col gap-3 rounded-2xl h-fit">
-                    {selectedUser ? (
-                        <>
-                            <div className="flex items-center gap-2 text-lg font-semibold">
-                                <User size={20}/>
-                                User Details
-                            </div>
-                            <div className="w-full bg-secondary rounded-xl h-1"/>
-
-                            <div className="space-y-3">
-                                <div>
-                                    <div className="text-sm opacity-70">Username</div>
-                                    <div className="break-words ">{selectedUser.username}</div>
-                                </div>
-
-                                <div>
-                                    <div className="text-sm opacity-70">Email</div>
-                                    <div className="break-words">{selectedUser.email}</div>
-                                </div>
-
-                                <div>
-                                    <div className="text-sm opacity-70">{"Full Name"}</div>
-                                    <div
-                                        className="break-words text-sm">{selectedUser.uid.split('/')[0]} {selectedUser.uid.split('/')[1]}</div>
-                                </div>
-
-                                <div>
-                                    <div className="text-sm opacity-70">Last Confirmation</div>
-                                    <div className="flex items-center gap-2 mt-1">
-                                        <Calendar size={16}/>
-                                        {selectedUser.lastConfirm ? (
-                                            <div>
-                                                <div>{new Date(selectedUser.lastConfirm).toLocaleDateString()}</div>
-                                                <div
-                                                    className="text-sm opacity-70">{timeAgo(selectedUser.lastConfirm)}</div>
-                                            </div>
-                                        ) : (
-                                            <span className="opacity-70">Never confirmed</span>
-                                        )}
-                                    </div>
-                                </div>
-                                <div className="flex flex-row gap-4 w-full">
-                                    <div className={'grow'}>
-                                        {!activeSpinner ?
-                                            <div
-                                                className={'rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer w-full'}
-                                                onClick={async () => {
-                                                    setActiveSpinner(true);
-                                                    const id = selectedUser.uid;
-                                                    const ret = await fetchBoth(`/api/toggleIsActive?uid=${selectedUser.uid}&active=${selectedUser.isActive}`);
-                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
-                                                        ...user,
-                                                        isActive: selectedUser.isActive ? 0 : 1
-                                                    } : user))
-                                                    setActiveSpinner(false);
-                                                }}
-                                            >
-                                                <div className="text-sm opacity-70">Work Status</div>
-                                                <div className="flex items-center gap-2 mt-1">
-
-                                                    <>
-                                                        <div
-                                                            className={`p-1 rounded-full ${selectedUser.isActive ? 'bg-green-500' : 'bg-red-500'}`}>
-                                                            <User size={16}/>
-                                                        </div>
-                                                        {selectedUser.isActive ? (<span>Active</span>) :
-                                                            <span>Inactive</span>}
-                                                    </>
-                                                </div>
-                                            </div> : <div className="flex items-center w-full h-full">
-                                                <PuffLoader size={25} color={"#64748B"}/>
-                                            </div>
-                                        }
-                                    </div>
-
-
-                                    <div className={'grow'}>
-                                        {!typeSpinner ?
-                                            <div
-                                                className={'w-full rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
-                                                onClick={async () => {
-                                                    console.log('dispatch user type update request')
-                                                    setTypeSpinner(true);
-                                                    const id = selectedUser.uid;
-                                                    const ret = await fetchBoth(`/api/updateTheirCrew?uid=${selectedUser.uid}&crew=${selectedUser.isDomestic}`)
-                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
-                                                        ...user,
-                                                        isDomestic: !selectedUser.isDomestic // why did i properly pass this but nothing else lmfao
-                                                    } : user))
-                                                    setTypeSpinner(false)
-                                                }}
-                                            >
-                                                <div className="text-sm opacity-70">Account Type</div>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <div
-                                                        className={`p-1 rounded-full ${selectedUser.isDomestic ? 'bg-blue-500' : 'bg-green-500'}`}>
-                                                        {selectedUser.isDomestic ? <Home size={14}/> :
-                                                            <Globe size={14}/>}
-                                                    </div>
-                                                    <span>{selectedUser.isDomestic ? 'Domestic' : 'International'}</span>
-                                                </div>
-                                            </div>
-                                            :
-                                            <div className="flex items-center w-full h-full">
-                                                <PuffLoader size={25} color={"#64748B"}/>
-                                            </div>
-                                        }
-                                    </div>
-                                    <div className={'grow'}>
-                                        {!userSpinner ?
-                                            <div
-                                                className={'w-full rounded-xl p-2 bg-secondary/0 hover:bg-secondary/100 ease-in-out duration-300 transition-all text-secondary hover:text-primary cursor-pointer '}
-                                                onClick={async () => {
-                                                    setUserSpinner(true);
-                                                    const id = selectedUser.uid;
-                                                    const ret = await fetchBoth(`/api/toggleIsAdmin?uid=${selectedUser.uid}&admin=${selectedUser.isAdmin}`);
-                                                    if (ret.status === 200) setUsers(prev => prev.map(user => user.uid === id ? {
-                                                        ...user,
-                                                        isAdmin: selectedUser.isAdmin === 'true' ? '' : 'true'
-                                                    } : user))
-                                                    setUserSpinner(false);
-                                                }}
-                                            >
-                                                <div className="text-sm opacity-70">Role</div>
-                                                <div className="flex items-center gap-2 mt-1">
-                                                    <div
-                                                        className={`p-1 rounded-full ${selectedUser.isAdmin === 'true' ? 'bg-purple-500' : 'bg-gray-500'}`}>
-                                                        {selectedUser.isAdmin === 'true' ? <Shield size={14}/> :
-                                                            <User size={14}/>}
-                                                    </div>
-                                                    <span>{selectedUser.isAdmin === 'true' ? 'Admin' : 'User'}</span>
-                                                </div>
-                                            </div>
-                                            :
-                                            <div className="flex items-center w-full h-full">
-                                                <PuffLoader size={25} color={"#64748B"}/>
-                                            </div>
-                                        }
-                                    </div>
-                                </div>
-                                <div className={'flex flex-row items-center justify-center h-[48px]'}>
-                                    {!pwEmail ? <div
-                                        className={'p-3 bg-secondary/0 hover:bg-secondary/100 text-secondary hover:text-primary transition-all ease-in-out duration-300 rounded-xl cursor-pointer'}
-                                        onClick={async () => {
-                                            setPwEmail(true);
-                                            const response = await fetchBoth(`/api/recover?email=${selectedUser.email}`);
-                                            if (response.status === 500) console.error(response);
-                                            setPwEmail(false);
-                                        }}
-                                    >
-
-                                        Send Password Reset
-                                    </div> : <PuffLoader size={25} color={"#64748B"}/>}
-                                </div>
-                            </div>
-                        </>
-                    ) : (
-                        <div className="text-center py-8 opacity-70">
-                            <User size={48} className="mx-auto mb-3 opacity-50"/>
-                            <p>Select a user to view details</p>
-                        </div>
-                    )}
-                </div>
+          <div className="bg-secondary shadow mx-4 my-4 overflow-auto">
+            {/* Header row */}
+            <div className="flex items-center px-4 py-2 border-b border-primary/10">
+              <div className="w-[180px] text-xs font-semibold uppercase tracking-widest text-primary/40">Name</div>
+              <div className="flex-1 text-xs font-semibold uppercase tracking-widest text-primary/40">Email</div>
+              <div
+                className="w-[60px] text-center text-xs font-semibold uppercase tracking-widest text-primary/40">Type
+              </div>
+              <div
+                className="w-[60px] text-center text-xs font-semibold uppercase tracking-widest text-primary/40">Role
+              </div>
+              <div
+                className="w-[90px] text-center text-xs font-semibold uppercase tracking-widest text-primary/40">Last
+              </div>
             </div>
-            {/*??*/
-            }
-        </main>
-    )
-        ;
+
+            {filteredUsers.map((user, idx) => {
+              const isSelected = selectedUpid === user.upid;
+              return (
+                <div
+                  key={user.upid}
+                  onClick={() => setSelectedUpid(isSelected ? null : user.upid)}
+                  className={`flex items-center px-4 py-2 cursor-pointer border-b border-primary/5 transition-all duration-150 ${
+                    isSelected
+                      ? "bg-tdi-blue/10"
+                      : idx % 2 === 0 ? "hover:bg-tdi-blue/5" : "bg-primary/[0.02] hover:bg-tdi-blue/5"
+                  }`}
+                >
+                  {/* Active indicator + name */}
+                  <div className="w-[180px] flex items-center gap-2">
+                    <div className={`w-1.5 h-1.5 flex-shrink-0 ${user.isActive ? "bg-tdi-blue" : "bg-primary/20"}`}/>
+                    <span className={`text-xs font-semibold uppercase tracking-tight truncate ${
+                      user.isActive ? "text-primary" : "text-primary/30"
+                    }`}>
+                                            {user.lastName}, {user.firstName}
+                                        </span>
+                  </div>
+
+                  <div className="flex-1 text-xs text-primary/40 tracking-tight truncate">{user.email}</div>
+
+                  <div className="w-[60px] text-center">
+                                        <span className={`text-xs font-semibold uppercase tracking-tight ${
+                                          user.isDomestic ? "text-tdi-blue" : "text-primary/40"
+                                        }`}>
+                                            {user.isDomestic ? "DOM" : "FOR"}
+                                        </span>
+                  </div>
+
+                  <div className="w-[60px] text-center">
+                                        <span className={`text-xs font-semibold uppercase tracking-tight ${
+                                          user.isAdmin ? "text-tdi-blue" : "text-primary/20"
+                                        }`}>
+                                            {user.isAdmin ? "ADM" : "USR"}
+                                        </span>
+                  </div>
+
+                  <div className="w-[90px] text-center text-xs text-primary/35 tracking-tight">
+                    {user.lastConfirm ? timeAgo(user.lastConfirm) : "—"}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* ── RIGHT: Action panels ──────────────────────────── */}
+      <div className="flex flex-col gap-4 w-[320px] flex-shrink-0">
+
+        {/* Detail panel */}
+        <div className="bg-tdi-blue shadow flex flex-col">
+          <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
+            <User size={14} className="text-secondary/50"/>
+            <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
+                            {selectedUser ? `${selectedUser.firstName} ${selectedUser.lastName}` : "Select a user"}
+                        </span>
+          </div>
+
+          {selectedUser ? (
+            <div className="flex flex-col gap-3 px-4 py-4">
+              {/* Info rows */}
+              <div className="bg-secondary shadow px-4 py-3 flex flex-col gap-2">
+                <div className="flex justify-between">
+                  <span className="text-xs text-primary/40 uppercase tracking-widest font-semibold">UPID</span>
+                  <span className="text-xs font-semibold text-primary tracking-tight">{selectedUser.upid}</span>
+                </div>
+                <div className="h-[1px] bg-primary/10"/>
+                <div className="flex justify-between">
+                  <span className="text-xs text-primary/40 uppercase tracking-widest font-semibold">Email</span>
+                  <span
+                    className="text-xs font-semibold text-primary tracking-tight truncate max-w-[180px]">{selectedUser.email}</span>
+                </div>
+                <div className="h-[1px] bg-primary/10"/>
+                <div className="flex justify-between items-center">
+                  <span className="text-xs text-primary/40 uppercase tracking-widest font-semibold">Last Confirm</span>
+                  <span className="text-xs font-semibold text-primary tracking-tight">
+                                        {selectedUser.lastConfirm
+                                          ? `${selectedUser.lastConfirm.slice(5)} · ${timeAgo(selectedUser.lastConfirm)}`
+                                          : "Never"}
+                                    </span>
+                </div>
+              </div>
+
+              {/* Action tiles */}
+              <div className="flex gap-2">
+                <ActionTile
+                  label="Active"
+                  active={selectedUser.isActive}
+                  activeColor={selectedUser.isActive ? "bg-tdi-blue" : "bg-secondary/30"}
+                  icon={<User size={12}/>}
+                  loading={activeSpinner}
+                  onClick={async () => {
+                    setActiveSpinner(true);
+                    const res = await fetchBoth(`/api/admin/toggleActive?upid=${selectedUser.upid}&active=${selectedUser.isActive}`);
+                    if (res.status === 200) updateUser(selectedUser.upid, {isActive: !selectedUser.isActive});
+                    setActiveSpinner(false);
+                  }}
+                />
+                <ActionTile
+                  label="Domestic"
+                  active={selectedUser.isDomestic}
+                  activeColor={selectedUser.isDomestic ? "bg-tdi-blue" : "bg-secondary/30"}
+                  icon={selectedUser.isDomestic ? <Home size={12}/> : <Globe size={12}/>}
+                  loading={typeSpinner}
+                  onClick={async () => {
+                    setTypeSpinner(true);
+                    const res = await fetchBoth(`/api/admin/toggleDomestic?upid=${selectedUser.upid}&domestic=${selectedUser.isDomestic}`);
+                    if (res.status === 200) updateUser(selectedUser.upid, {isDomestic: !selectedUser.isDomestic});
+                    setTypeSpinner(false);
+                  }}
+                />
+                <ActionTile
+                  label="Admin"
+                  active={selectedUser.isAdmin}
+                  activeColor={selectedUser.isAdmin ? "bg-tdi-blue" : "bg-secondary/30"}
+                  icon={selectedUser.isAdmin ? <Shield size={12}/> : <User size={12}/>}
+                  loading={adminSpinner}
+                  onClick={async () => {
+                    setAdminSpinner(true);
+                    const res = await fetchBoth(`/api/admin/toggleAdmin?upid=${selectedUser.upid}&admin=${selectedUser.isAdmin}`);
+                    if (res.status === 200) updateUser(selectedUser.upid, {isAdmin: !selectedUser.isAdmin});
+                    setAdminSpinner(false);
+                  }}
+                />
+              </div>
+
+              {/* Password reset */}
+              <Button
+                onClick={async () => {
+                  setPwLoading(true);
+                  await fetchBoth(`/api/recover?email=${selectedUser.email}`);
+                  setPwLoading(false);
+                }}
+                className="w-full justify-center"
+                noshadow={true}
+              >
+                {pwLoading ? "..." : "Send Password Reset"}
+              </Button>
+            </div>
+          ) : (
+            <div className="px-4 py-8 text-center text-secondary/30 text-xs uppercase tracking-widest font-semibold">
+              no user selected
+            </div>
+          )}
+        </div>
+
+        {/* Invite panel */}
+        <div className="bg-tdi-blue shadow flex flex-col">
+          <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
+            <UserPlus size={14} className="text-secondary/50"/>
+            <span className="text-secondary font-semibold uppercase tracking-tight text-sm">Invite User</span>
+          </div>
+
+          <div className="flex flex-col gap-3 px-4 py-4">
+            {[
+              {label: "UPID", value: inviteUpid, set: setInviteUpid, placeholder: "U016"},
+              {label: "First Name", value: inviteFirst, set: setInviteFirst, placeholder: "Jane"},
+              {label: "Last Name", value: inviteLast, set: setInviteLast, placeholder: "Doe"},
+              {label: "Email", value: inviteEmail, set: setInviteEmail, placeholder: "jane@tdi-bi.com"},
+            ].map(({label, value, set, placeholder}) => (
+              <div key={label}>
+                <div className="text-secondary/50 text-xs uppercase tracking-widest font-semibold mb-1">{label}</div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder={placeholder}
+                    value={value}
+                    onChange={(e) => set(e.target.value)}
+                    className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/20 outline-none w-full"
+                  />
+                  <div
+                    className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
+                </div>
+              </div>
+            ))}
+
+            <Button
+              onClick={() => {
+                // invite logic to be implemented
+                console.log({inviteUpid, inviteFirst, inviteLast, inviteEmail});
+              }}
+              className="w-full justify-center mt-1"
+              noshadow={true}
+            >
+              Send Invite
+            </Button>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
 }

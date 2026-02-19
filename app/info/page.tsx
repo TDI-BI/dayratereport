@@ -1,125 +1,179 @@
 "use client";
+import {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
+import {fetchBoth} from "@/utils/fetchboth";
+import {Button} from "@/components/button";
 
-import { redirect } from "next/navigation";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { fetchBoth } from "@/utils/fetchboth";
-import { User, Mail, Ship } from "lucide-react";
+const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+const DayCard = ({day, index, ship}: { day: string; index: number; ship: string | undefined }) => (
+  <div className={`bg-secondary shadow flex flex-col px-3 py-2 ${ship ? "" : "opacity-50"}`}>
+    <div className="text-xs font-semibold uppercase tracking-tight text-primary">
+      {DAYS[index % 7]}
+    </div>
+    <div className="text-xs font-semibold uppercase tracking-tight text-primary/50">
+      {day.slice(5, 10)}
+    </div>
+    <div className="mt-1 h-[1px] w-full bg-primary/10"/>
+    <div
+      className={`mt-1 text-xs font-semibold uppercase tracking-tight text-primary`}>
+      {ship || "—"}
+    </div>
+  </div>
+);
 
 const Profile = () => {
-    const [pl, setpl] = useState(0); /// tracks initial page load, useful for redirect
-    const [session, setSesh] = useState({} as { [key: string]: any });
-    const [copied, setCopied] = useState(false);
+  const router = useRouter();
+  const [account, setAccount] = useState<Record<string, any>>({});
+  const [weekOne, setWeekOne] = useState<string[]>([]);
+  const [weekTwo, setWeekTwo] = useState<string[]>([]);
+  const [vessels, setVessels] = useState<Record<string, string>>({});
+  const [daysWorked, setDaysWorked] = useState(0);
 
-    const setCrew = async (c: number) => {
-        const getme = await fetchBoth(`/api/updatemycrew?c=${c}`);
-        const ret = await getme.json();
+  useEffect(() => {
+    async function load() {
+      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=firstName,lastName,email,isDomestic");
+      if (authRes.status === 401) {
+        router.push("/");
+        return;
+      }
+      const authData = await authRes.json();
+      setAccount(authData.resp);
 
-        if (ret.resp) {
-            gsesh();
+      if (authData.resp?.isDomestic) {
+        // Domestic: fetch both weeks of the biweekly period
+        const [domRes, p1Res, p2Res, w1Res, w2Res] = await Promise.all([
+          fetchBoth("/api/period/getLatestDomesticPeriod"),
+          fetchBoth("/api/days/verifyDate?prev=0"),
+          fetchBoth("/api/days/verifyDate?prev=1"),
+          fetchBoth("/api/days/getWorkWeek?prev=0"),
+          fetchBoth("/api/days/getWorkWeek?prev=1"),
+        ]);
+
+        const domData = await domRes.json();
+        const fullPeriod: string[] = domData.resp ?? [];
+
+        const p1Data = await p1Res.json();
+        const p2Data = await p2Res.json();
+        const w1 = p1Data.resp ?? [];
+        const w2 = p2Data.resp ?? [];
+
+        // Figure out which week is first in the period
+        if (fullPeriod.includes(w1[0])) {
+          setWeekOne(w1);
+          setWeekTwo(w2);
+        } else {
+          setWeekOne(w2);
+          setWeekTwo(w1);
         }
-    };
 
-    const gsesh = async () => {
-        const ret = (await (await fetchBoth(`/api/sessionforclient`)).json())
-            .resp;
+        const dict: Record<string, string> = {};
+        let worked = 0;
+        for (const res of [w1Res, w2Res]) {
+          const data = await res.json();
+          data.resp?.forEach((entry: { day: string; ship: string }) => {
+            if (entry.ship) {
+              dict[entry.day] = entry.ship;
+              worked++;
+            }
+          });
+        }
+        setVessels(dict);
+        setDaysWorked(worked);
+      } else {
+        // Foreign: just current week
+        const [periodRes, weekRes] = await Promise.all([
+          fetchBoth("/api/days/verifyDate?prev=0"),
+          fetchBoth("/api/days/getWorkWeek?prev=0"),
+        ]);
+        const periodData = await periodRes.json();
+        setWeekOne(periodData.resp ?? []);
 
-        setSesh(ret);
-        setpl(1);
-    };
+        const weekData = await weekRes.json();
+        const dict: Record<string, string> = {};
+        let worked = 0;
+        weekData.resp?.forEach((entry: { day: string; ship: string }) => {
+          if (entry.ship) {
+            dict[entry.day] = entry.ship;
+            worked++;
+          }
+        });
+        setVessels(dict);
+        setDaysWorked(worked);
+      }
+    }
 
-    useEffect(() => {
-        gsesh();
-    }, []);
+    load();
+  }, [router]);
 
-    if (!session.isLoggedIn && pl) redirect("../../../"); // block viewing the page in some cases
+  const allDays = [...weekOne, ...weekTwo];
 
-    return (
-        <main className="flex min-h-screen flex-col items-center pt-[10px] px-5 py-5">
-            <div className="text-center font-semibold text-lg py-[10px]">
-                Welcome{" "}
-                {session.userId
-                    ? session.userId.split("/")[0] +
-                      " " +
-                      session.userId.split("/")[1]
-                    : ""}
+  return (
+    <main className="flex justify-center px-5 bg-secondary min-h-screen">
+      <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
+
+        {/* Account info card — header has name left, INFO right */}
+        <div className="bg-tdi-blue shadow flex flex-col">
+          <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
+                        <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
+                            {account.firstName ? `${account.firstName} ${account.lastName}` : "—"}
+                        </span>
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
+                            Info
+                        </span>
+          </div>
+          <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Email</span>
+            <span className="text-secondary text-xs font-semibold tracking-tight">{account.email || "—"}</span>
+          </div>
+          <div className="px-4 py-3 flex items-center justify-between">
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew Type</span>
+            <span className="text-secondary text-xs font-semibold uppercase tracking-tight">
+                            {account.isDomestic !== undefined ? (account.isDomestic ? "Domestic" : "Foreign") : "—"}
+                        </span>
+          </div>
+        </div>
+
+        {/* Period card */}
+        <div className="bg-tdi-blue shadow flex flex-col">
+          <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
+                        <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
+                            {account.isDomestic ? "Current Period" : "This Week"}
+                        </span>
+            <span className="text-secondary/50 text-xs font-semibold uppercase tracking-widest">
+                            {daysWorked} days worked
+                        </span>
+          </div>
+
+          {/* Two-column grid of day cards */}
+          <div className={`p-3 grid gap-2 ${weekTwo.length > 0 ? "grid-cols-2" : "grid-cols-2"}`}>
+            {/* Week 1 */}
+            <div className="flex flex-col gap-3">
+              {weekOne.map((day, i) => (
+                <DayCard key={day} day={day} index={i} ship={vessels[day]}/>
+              ))}
             </div>
+            {/* Week 2 (domestic only) */}
+            {weekTwo.length > 0 && (
+              <div className="flex flex-col gap-3">
+                {weekTwo.map((day, i) => (
+                  <DayCard key={day} day={day} index={i} ship={vessels[day]}/>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
 
-            <div className="rounded-md w-full max-w-[600px] h-[3px] bg-primary" />
-            <div className=" w-full max-w-[600px] h-[10px] " />
+        {/* Issues button */}
+        <a href="mailto:parkerseeley@tdi-bi.com" className="flex">
+          <Button className="w-full justify-center">
+            ISSUES
+          </Button>
+        </a>
 
-            <div className="flex gap-5 ">
-                <User />
-                <p> {session.username ? session.username : ""} </p>
-            </div>
-
-            <div className="flex gap-5 ">
-                <Mail />
-                <p> {session.userEmail ? session.userEmail : ""} </p>
-            </div>
-
-            <div className=" w-full max-w-[600px] h-[10px] " />
-
-            <div className="flex py-[10px] gap-5" id="target">
-                <button
-                    className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
-                    onClick={() => setCrew(1)}
-                >
-                    <div>domestic</div>
-                    <div
-                        className={`rounded-md ${
-                            session.isDomestic
-                                ? "w-[100%]"
-                                : "w-[0%] group-hover:w-[100%]"
-                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                    />
-                </button>
-                <button
-                    className="group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[10px] px-[20px] space-y-[5px]"
-                    onClick={() => setCrew(0)}
-                >
-                    <div>foreign</div>
-                    <div
-                        className={`rounded-md ${
-                            !session.isDomestic
-                                ? "w-[100%]"
-                                : "w-[0%] group-hover:w-[100%]"
-                        } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                    />
-                </button>
-            </div>
-
-            <div className=" w-full max-w-[600px] h-[10px] " />
-
-            <Link href="https://forms.gle/EKyxpDDTSZknZYpe8">
-                <div
-                    className="text-center group max-w-[180px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[15px] px-[20px] "
-                    onClick={() => setCrew(1)}
-                >
-                    <div>feedback?</div>
-                </div>
-            </Link>
-
-            <div className=" w-full max-w-[600px] h-[10px] " />
-
-            <div className='space-y-[5px] text-center'>
-                <p>pressing issues, email: </p>
-                <div
-                    className="cursor-pointer text-center group max-w-[300px] min-w-[150px] rounded-md bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 py-[15px] px-[20px] "
-                    onClick={async () => {
-                        setCopied(true)
-                        try{navigator.clipboard.writeText("parkerseeley@tdi-bi.com")}catch(e){} //will throw error if insecure mode (https/non-local-host)
-                        window.location.href = `mailto:parkerseeley@tdi-bi.com`;
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        setCopied(false)
-                    }}
-                >
-                    <div className='select-none'>parkerseeley@tdi-bi.com</div> 
-                </div>
-                <p className={`${copied ? 'opacity-100' : 'opacity-0'} duration-300 transition-all ease-in-out `}>opening email client</p>
-            </div>
-        </main>
-    );
+      </div>
+    </main>
+  );
 };
 
 export default Profile;
