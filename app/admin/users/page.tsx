@@ -251,7 +251,7 @@ export default function UserManagementPage() {
                   loading={typeSpinner}
                   onClick={async () => {
                     setTypeSpinner(true);
-                    const res = await fetchBoth(`/api/admin/toggleDomestic?upid=${selectedUser.upid}&domestic=${selectedUser.isDomestic}`);
+                    const res = await fetchBoth(`/api/admin/toggleCrew?upid=${selectedUser.upid}`);
                     if (res.status === 200) updateUser(selectedUser.upid, {isDomestic: !selectedUser.isDomestic});
                     setTypeSpinner(false);
                   }}
@@ -264,7 +264,7 @@ export default function UserManagementPage() {
                   loading={adminSpinner}
                   onClick={async () => {
                     setAdminSpinner(true);
-                    const res = await fetchBoth(`/api/admin/toggleAdmin?upid=${selectedUser.upid}&admin=${selectedUser.isAdmin}`);
+                    const res = await fetchBoth(`/api/admin/toggleAdmin?upid=${selectedUser.upid}`);
                     if (res.status === 200) updateUser(selectedUser.upid, {isAdmin: !selectedUser.isAdmin});
                     setAdminSpinner(false);
                   }}
@@ -275,7 +275,7 @@ export default function UserManagementPage() {
               <Button
                 onClick={async () => {
                   setPwLoading(true);
-                  await fetchBoth(`/api/recover?email=${selectedUser.email}`);
+                  await fetchBoth(`/api/account/recover?email=${selectedUser.email}`);
                   setPwLoading(false);
                 }}
                 className="w-full justify-center"
@@ -295,7 +295,7 @@ export default function UserManagementPage() {
         <div className="bg-tdi-blue shadow flex flex-col">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
             <UserPlus size={14} className="text-secondary/50"/>
-            <span className="text-secondary font-semibold uppercase tracking-tight text-sm">Invite User</span>
+            <span className="text-secondary font-semibold uppercase tracking-tight text-sm">Invite New User</span>
           </div>
 
           <div className="flex flex-col gap-3 px-4 py-4">
