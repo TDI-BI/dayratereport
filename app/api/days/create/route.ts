@@ -35,24 +35,23 @@ export const GET = async (request: NextRequest) => {
     }
 
     // Bounds check - make sure they aren't writing to an out of range period
+    //i need to set up some protection here to make sure you arent doing illegal stuff
     if (account.isDomestic) {
-      const [periodRows] = await connection.execute(
-        'SELECT date FROM periodstarts ORDER BY id DESC LIMIT 1'
-      );
-      const latestStart = (periodRows as any[])[0]?.date;
-      const inCurrentPeriod = getPeriod(0).includes(latestStart);
-      const validPrev = inCurrentPeriod ? (prev === 0 || prev === 1) : (prev === 0 || prev === -1);
-      if (!validPrev) {
-        await connection.end();
-        return NextResponse.json({success: false, error: 'out of bounds period'}, {status: 400});
-      }
+      const existsQuery =
+        "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;";
+      const dateret = JSON.parse(
+        JSON.stringify(await connection.execute(existsQuery))
+      )[0][0]["date"];
+      const thingy = getPeriod().includes(dateret)
+        ? (prev == -1 || prev == 0)
+        : prev == 1 || prev == 0;
+      if (!thingy) return new Response(JSON.stringify({error: 'youre oob'}), {status: 400});
     } else {
-      const currentMonth = Number(getPeriod()[0].slice(5, 7));
-      const periodInMonth = period.some(d => Number(d.slice(5, 7)) === currentMonth);
-      if (!periodInMonth) {
-        await connection.end();
-        return NextResponse.json({success: false, error: 'out of bounds period'}, {status: 400});
-      }
+      const thism = Number(getPeriod()[0].slice(5, 7)) - 1; // keeps us zero indexed to mimic getMonth
+      const list = period.filter((e) => {
+        return Number(e.slice(5, 7)) - 1 == thism
+      })
+      if (!list.length) return new Response(JSON.stringify({error: 'youre oob'}), {status: 400});
     }
     // --- Parse incoming days ---
     // Format: "2025-01-06:EMMA;2025-01-07:BMCC;2025-01-08:;"

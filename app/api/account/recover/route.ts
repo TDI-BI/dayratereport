@@ -8,20 +8,13 @@ import { dispatchEmail } from '@/utils/dispatchEmail';
 import crypto from 'crypto';
 
 export const GET = async (request: NextRequest) => {
-  // Simplified: Only block non-admins if logged in
-  const session = await getSession();
-  if (session.isLoggedIn && session.upid) {
-    return NextResponse.json(
-      { success: false, error: 'please log out first' },
-      { status: 400 }
-    );
-  }
 
   // Get and validate URL parameters
   const { searchParams } = request.nextUrl;
   const email = searchParams.get('email');
 
   if (!email) {
+    console.error('im an ffc')
     return NextResponse.json(
       { success: false, error: 'email required' },
       { status: 400 }

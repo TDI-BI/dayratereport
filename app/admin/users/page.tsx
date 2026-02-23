@@ -300,20 +300,20 @@ export default function UserManagementPage() {
 
           <div className="flex flex-col gap-3 px-4 py-4">
             {[
-              {label: "UPID", value: inviteUpid, set: setInviteUpid, placeholder: "U016"},
+              {label: "Paycor ID (optional)", value: inviteUpid, set: setInviteUpid, placeholder: "U016"},
               {label: "First Name", value: inviteFirst, set: setInviteFirst, placeholder: "Jane"},
               {label: "Last Name", value: inviteLast, set: setInviteLast, placeholder: "Doe"},
               {label: "Email", value: inviteEmail, set: setInviteEmail, placeholder: "jane@tdi-bi.com"},
             ].map(({label, value, set, placeholder}) => (
               <div key={label}>
-                <div className="text-secondary/50 text-xs uppercase tracking-widest font-semibold mb-1">{label}</div>
+                <div className="text-secondary/50 text-xs tracking-widest font-semibold mb-1 uppercase">{label}</div>
                 <div>
                   <input
                     type="text"
                     placeholder={placeholder}
                     value={value}
                     onChange={(e) => set(e.target.value)}
-                    className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/20 outline-none w-full"
+                    className="peer bg-transparent text-secondary text-xs font-semibold tracking-tight placeholder:text-secondary/20 outline-none w-full"
                   />
                   <div
                     className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
@@ -322,9 +322,30 @@ export default function UserManagementPage() {
             ))}
 
             <Button
-              onClick={() => {
-                // invite logic to be implemented
+              onClick={async () => {
                 console.log({inviteUpid, inviteFirst, inviteLast, inviteEmail});
+                try {
+                  const res = await fetch('/api/admin/inviteUser', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                      upid: inviteUpid,
+                      firstName: inviteFirst,
+                      lastName: inviteLast,
+                      email: inviteEmail,
+                    }),
+                  });
+
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error);
+
+                  console.log('User invited successfully:', data);
+                  // handle success (e.g. close modal, show toast)
+
+                } catch (error) {
+                  console.error('Invite failed:', error);
+                  // handle error (e.g. show toast)
+                }
               }}
               className="w-full justify-center mt-1"
               noshadow={true}

@@ -33,19 +33,10 @@ const LoginForm = () => {
           login
         </Button>
         <Button
-          className="flex-1"
-          onClick={() => router.push('/login/register')}
-        >
-          register
-        </Button>
-      </div>
-
-      <div className="flex justify-center">
-        <Button
           onClick={() => router.push('/login/recover')}
-          className="w-auto px-6"
+          className="flex-1"
         >
-          recover account
+          recover
         </Button>
       </div>
     </form>

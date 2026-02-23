@@ -7,7 +7,7 @@ import {Button} from "@/components/button";
 
 const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
 const CREW = ["ALL", "DOM", "FOR"];
-const DAYS_SHORT = ["M", "T", "W", "T", "F", "S", "S"];
+const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S", ];
 
 interface UserRow {
   upid: string;

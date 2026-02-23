@@ -115,12 +115,13 @@ const Profile = () => {
         {/* Account info card — header has name left, INFO right */}
         <div className="bg-tdi-blue shadow flex flex-col">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
-                        <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
-                            {account.firstName ? `${account.firstName} ${account.lastName}` : "—"}
-                        </span>
             <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
-                            Info
-                        </span>
+              Name
+            </span>
+            <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
+              {account.firstName ? `${account.firstName} ${account.lastName}` : "—"}
+            </span>
+
           </div>
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
             <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Email</span>
@@ -129,8 +130,8 @@ const Profile = () => {
           <div className="px-4 py-3 flex items-center justify-between">
             <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew Type</span>
             <span className="text-secondary text-xs font-semibold uppercase tracking-tight">
-                            {account.isDomestic !== undefined ? (account.isDomestic ? "Domestic" : "Foreign") : "—"}
-                        </span>
+              {account.isDomestic !== undefined ? (account.isDomestic ? "Domestic" : "Foreign") : "—"}
+            </span>
           </div>
         </div>
 
@@ -167,7 +168,7 @@ const Profile = () => {
         {/* Issues button */}
         <a href="mailto:parkerseeley@tdi-bi.com" className="flex">
           <Button className="w-full justify-center">
-            ISSUES
+            ISSUES?
           </Button>
         </a>
 

@@ -1,8 +1,4 @@
 'use server';
-
-import {getPort} from '@/utils/getPort';
-
-const por = getPort();
 import {getIronSession} from 'iron-session';
 import {cookies} from 'next/headers';
 import {redirect} from 'next/navigation';
@@ -46,7 +42,6 @@ export const login = async (
   const dbAcc = res.resp[0];
 
 
-
   // Check if account is active
   if (!dbAcc.isActive) {
     return {error: 'account inactive'};
@@ -80,16 +75,12 @@ export const mkAccount = async (
   formData: FormData
 ) => {
   // Get form data
-  const formFirstname = formData.get('firstname') as string;
-  const formLastname = formData.get('lastname') as string;
   const formUsername = formData.get('nusername') as string;
-  const formEmail = formData.get('email') as string;
   const formPassword = formData.get('password1') as string;
   const formPasswordRepeat = formData.get('password2') as string;
   const formWorkType = formData.get('worktype') as string;
-  const formCrew = formData.get('crew') as string; // domestic or foreign
+  const formToken = formData.get('token') as string;
 
-  console.log(formCrew);
   console.log(formWorkType);
 
   // Validation
@@ -98,9 +89,6 @@ export const mkAccount = async (
   }
 
   if (
-    !formFirstname ||
-    !formLastname ||
-    !formEmail ||
     !formUsername ||
     !formPassword
   ) {
@@ -112,17 +100,8 @@ export const mkAccount = async (
     return {error: 'select a work type'};
   }
 
-  // Validate crew is selected
-  if (!['domestic', 'foreign'].includes(formCrew)) {
-    return {error: 'select a crew type'};
-  }
-
   if (formUsername.includes(' ')) {
     return {error: 'username cannot contain spaces'};
-  }
-
-  if (formEmail.includes(' ')) {
-    return {error: 'email cannot contain spaces'};
   }
 
   // Create hashed password
@@ -130,7 +109,7 @@ export const mkAccount = async (
 
   // Query API with new schema fields
   const response = await fetchBoth(
-    `/api/account/create?username=${formUsername}&password=${hashword}&email=${formEmail}&firstname=${formFirstname}&lastname=${formLastname}&worktype=${formWorkType}&crew=${formCrew}`
+    `/api/account/create?username=${formUsername}&password=${hashword}&worktype=${formWorkType}&token=${formToken}`
   );
   const res = await response.json();
 

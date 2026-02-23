@@ -30,9 +30,13 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
 
   useEffect(() => {
     const amIAdmin = async () => {
-      const amIAdminInf = await fetch('/api/account/myAccountInfo?fields=isAdmin')
-      const thisGuy = await amIAdminInf.json();
-      if (thisGuy.resp.isAdmin) setAdmin(true);
+      try {
+        const amIAdminInf = await fetch('/api/account/myAccountInfo?fields=isAdmin')
+        const thisGuy = await amIAdminInf.json();
+        if (thisGuy.resp.isAdmin) setAdmin(true);
+      } catch (e) {
+
+      }
     }
     amIAdmin();
   }, []);
@@ -165,14 +169,6 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
             }`}/>
           </Link>
           <div className="w-[2px] h-[20px] bg-secondary/20"/>
-          <form action={logout}>
-            <button className="group px-6 py-3 flex flex-col items-center">
-              <span className="text-secondary text-sm font-semibold uppercase tracking-tight select-none">
-                Logout
-              </span>
-              <div className="w-0 group-hover:w-full h-[2px] bg-secondary transition-all duration-300 ease-in-out"/>
-            </button>
-          </form>
           {admin ? (<>
             <div className="w-[2px] h-[20px] bg-secondary/20"/>
             <Link href="/admin" className="group px-6 py-3 flex flex-col items-center">
@@ -201,6 +197,15 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
                 isActive("/admin/emails") ? "w-full" : "w-0 group-hover:w-full"
               }`}/>
             </Link></>) : ''}
+          <form action={logout}>
+            <button className="group px-6 py-3 flex flex-col items-center">
+              <span className="text-secondary text-sm font-semibold uppercase tracking-tight select-none">
+                Logout
+              </span>
+              <div className="w-0 group-hover:w-full h-[2px] bg-secondary transition-all duration-300 ease-in-out"/>
+            </button>
+          </form>
+
         </div>
       </nav>
     </div>
