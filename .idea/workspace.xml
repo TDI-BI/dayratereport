@@ -4,26 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/api/account/create/tokenInfo/route.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/admin/inviteUser/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/account/create/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/create/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/account/recover/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/recover/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/days/create/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/create/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/info/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/info/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/loginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/loginForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/register/registrationForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/register/registrationForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/reset-password/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/reset-password/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/login/reset-password/resetForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/login/reset-password/resetForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/navbarclient.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/navbarclient.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/payperiod.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/utils/payperiod.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -147,7 +128,7 @@
       <workItem from="1771438986380" duration="14184000" />
       <workItem from="1771522147337" duration="13737000" />
       <workItem from="1771606691053" duration="5266000" />
-      <workItem from="1771876060395" duration="13250000" />
+      <workItem from="1771876060395" duration="13804000" />
     </task>
     <servers />
   </component>
