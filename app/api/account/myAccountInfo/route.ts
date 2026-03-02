@@ -1,28 +1,34 @@
 // /api/account/myAccountInfo/route.ts
-// Returns account info for the currently logged-in user
-
-import {getSession} from '@/actions';
-import {NextRequest, NextResponse} from 'next/server';
-import {connectToDb} from '@/utils/connectToDb';
+import { getSession } from '@/actions';
+import { NextRequest, NextResponse } from 'next/server';
+import { connectToDb } from '@/utils/connectToDb';
 
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
 
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return NextResponse.json(
-      {success: false, error: 'not logged in'},
-      {status: 401}
+      { success: false, error: 'not logged in' },
+      { status: 401 }
     );
   }
 
-  // Optional ?fields=isDomestic,username,etc
-  const {searchParams} = request.nextUrl;
+  const { searchParams } = request.nextUrl;
   const fieldsParam = searchParams.get('fields');
 
-  // Allowlist of columns to prevent injection via field names
-  const ALLOWED_FIELDS = ['upid', 'username', 'isDomestic', 'isActive', 'isAdmin', 'firstName', 'lastName', 'email'];
+  // Removed upid and isDomestic from direct column list
+  const ALLOWED_FIELDS = [
+    'username',
+    'isActive',
+    'isAdmin',
+    'firstName',
+    'lastName',
+    'email',
+    'isDomestic'
+  ];
 
   let selectedFields: string[];
+
   if (fieldsParam) {
     selectedFields = fieldsParam
       .split(',')
@@ -31,42 +37,63 @@ export const GET = async (request: NextRequest) => {
 
     if (selectedFields.length === 0) {
       return NextResponse.json(
-        {success: false, error: 'no valid fields requested'},
-        {status: 400}
+        { success: false, error: 'no valid fields requested' },
+        { status: 400 }
       );
     }
   } else {
-    // Default: return everything except password
     selectedFields = ALLOWED_FIELDS;
   }
 
   const connection = await connectToDb();
 
   try {
+    // Build SELECT list
+    const userFields = selectedFields.filter(f => f !== 'isDomestic');
+    const includeDomestic = selectedFields.includes('isDomestic');
+
+    const selectParts = [
+      ...userFields.map(f => `u.${f}`)
+    ];
+
+    if (includeDomestic) {
+      selectParts.push(`
+        CASE 
+          WHEN d.email IS NOT NULL THEN TRUE
+          ELSE FALSE
+        END AS isDomestic
+      `);
+    }
+
     const query = `
-        SELECT ${selectedFields.join(', ')}
-        FROM users
-        WHERE upid = ?
+      SELECT ${selectParts.join(', ')}
+      FROM users u
+      LEFT JOIN isDomestic d ON u.email = d.email
+      WHERE u.email = ?
     `;
 
-    const [results] = await connection.execute(query, [session.upid]);
+    const [results] = await connection.execute(query, [session.email]);
     await connection.end();
 
     const users = results as any[];
 
     if (users.length === 0) {
       return NextResponse.json(
-        {success: false, error: 'user not found'},
-        {status: 404}
+        { success: false, error: 'user not found' },
+        { status: 404 }
       );
     }
 
-    return NextResponse.json({success: true, resp: users[0]}, {status: 200});
+    return NextResponse.json(
+      { success: true, resp: users[0] },
+      { status: 200 }
+    );
+
   } catch (error) {
     await connection.end();
     return NextResponse.json(
-      {success: false, error: (error as Error).message},
-      {status: 500}
+      { success: false, error: (error as Error).message },
+      { status: 500 }
     );
   }
 };

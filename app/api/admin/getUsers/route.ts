@@ -1,30 +1,36 @@
-//pull a list of all users in database
-
+// pull a list of all users in database
 import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
 
-//this is about as simple as you can get for creating an API route lol
 export const GET = async (request: NextRequest) => {
-  //block non-admins
   const session = await getSession();
 
-  //build query
-  const query = "SELECT username, firstName, lastName, email, isDomestic, lastConfirm, isAdmin, isActive, workType, upid FROM users;"; // just omit passwod
   const connection = await connectToDb();
   try {
-
     const [adminCheck] = await connection.execute(
-      "SELECT isAdmin FROM users WHERE upid = ?",
-      [session.upid]
+      "SELECT isAdmin FROM users WHERE email = ?",
+      [session.email]
     );
     if (!(adminCheck as any[])[0]?.isAdmin) {
       await connection.end();
       return NextResponse.json({success: false, error: "unauthorized"}, {status: 403});
     }
 
-    //execute query
-    const [results] = await connection.execute(query);
+    const [results] = await connection.execute(
+      `SELECT u.username,
+              u.firstName,
+              u.lastName,
+              u.email,
+              u.isAdmin,
+              u.isActive,
+              u.workType,
+              id.domesticId
+       FROM users u
+                LEFT JOIN isDomestic id ON u.email = id.email
+       ORDER BY u.lastName, u.firstName`
+    );
+
     connection.end();
     return new Response(JSON.stringify({resp: results}), {status: 200});
   } catch (error) {

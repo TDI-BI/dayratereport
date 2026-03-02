@@ -1,6 +1,4 @@
 // /api/days/create/route.ts
-// Upserts the user's worked days for a given week
-
 import {NextRequest, NextResponse} from 'next/server';
 import {getSession} from '@/actions';
 import {connectToDb} from '@/utils/connectToDb';
@@ -9,7 +7,7 @@ import {getPeriod} from '@/utils/payperiod';
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
 
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return NextResponse.json({success: false, error: 'not logged in'}, {status: 401});
   }
 
@@ -19,14 +17,15 @@ export const GET = async (request: NextRequest) => {
 
   const period = getPeriod(prev);
 
-  // --- Bounds check ---
   const connection = await connectToDb();
 
   try {
-    // Verify account is active
     const [rows] = await connection.execute(
-      'SELECT isActive, isDomestic FROM users WHERE upid = ?',
-      [session.upid]
+      `SELECT u.isActive, id.domesticId
+       FROM users u
+       LEFT JOIN isDomestic id ON u.email = id.email
+       WHERE u.email = ?`,
+      [session.email]
     );
     const account = (rows as any[])[0];
     if (!account || !account.isActive) {
@@ -34,11 +33,10 @@ export const GET = async (request: NextRequest) => {
       return NextResponse.json({success: false, error: 'account inactive or not found'}, {status: 403});
     }
 
-    // Bounds check - make sure they aren't writing to an out of range period
-    //i need to set up some protection here to make sure you arent doing illegal stuff
-    if (account.isDomestic) {
-      const existsQuery =
-        "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;";
+    const isDomestic = account.domesticId !== null && account.domesticId !== undefined;
+
+    if (isDomestic) {
+      const existsQuery = "SELECT id, date FROM periodstarts ORDER BY id DESC LIMIT 1;";
       const dateret = JSON.parse(
         JSON.stringify(await connection.execute(existsQuery))
       )[0][0]["date"];
@@ -47,17 +45,14 @@ export const GET = async (request: NextRequest) => {
         : prev == 1 || prev == 0;
       if (!thingy) return new Response(JSON.stringify({error: 'youre oob'}), {status: 400});
     } else {
-      const thism = Number(getPeriod()[0].slice(5, 7)) - 1; // keeps us zero indexed to mimic getMonth
+      const thism = Number(getPeriod()[0].slice(5, 7)) - 1;
       const list = period.filter((e) => {
-        return Number(e.slice(5, 7)) - 1 == thism
-      })
+        return Number(e.slice(5, 7)) - 1 == thism;
+      });
       if (!list.length) return new Response(JSON.stringify({error: 'youre oob'}), {status: 400});
     }
-    // --- Parse incoming days ---
-    // Format: "2025-01-06:EMMA;2025-01-07:BMCC;2025-01-08:;"
-    // Only include days that actually have a ship assigned
-    const workedDays: { day: string; ship: string }[] = [];
 
+    const workedDays: { day: string; ship: string }[] = [];
     daysParam.split(';').forEach(entry => {
       if (!entry) return;
       const [day, ship] = entry.split(':');
@@ -66,22 +61,21 @@ export const GET = async (request: NextRequest) => {
       }
     });
 
-    // --- Upsert: delete this week's entries then reinsert only worked days ---
     await connection.execute(
       `DELETE
        FROM days
-       WHERE upid = ? AND day IN (${period.map(() => '?').join(', ')})`,
-      [session.upid, ...period]
+       WHERE userEmail = ? AND day IN (${period.map(() => '?').join(', ')})`,
+      [session.email, ...period]
     );
+
     if (workedDays.length > 0) {
       const placeholders = workedDays.map(() => '(?, ?, ?)').join(', ');
-      const values = workedDays.flatMap(({day, ship}) => [session.upid, day, ship]);
+      const values = workedDays.flatMap(({day, ship}) => [session.email, day, ship]);
       await connection.execute(
-        `INSERT INTO days (upid, day, ship)
+        `INSERT INTO days (userEmail, day, ship)
          VALUES ${placeholders}`,
         values
       );
-
     }
 
     await connection.end();

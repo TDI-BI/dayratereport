@@ -9,7 +9,7 @@ import {connectToDb} from '@/utils/connectToDb';
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
 
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return NextResponse.json(
       {success: false, error: 'not logged in'},
       {status: 401}
@@ -27,11 +27,11 @@ export const GET = async (request: NextRequest) => {
     const query = `
         SELECT day, ship
         FROM days
-        WHERE upid = ?
+        WHERE email = ?
           AND day IN (${period.map(() => '?').join(', ')})
     `;
 
-    const [results] = await connection.execute(query, [session.upid, ...period]);
+    const [results] = await connection.execute(query, [session.email, ...period]);
     await connection.end();
 
     return NextResponse.json({success: true, resp: results}, {status: 200});

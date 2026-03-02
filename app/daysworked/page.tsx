@@ -23,7 +23,7 @@ export default function Home() {
   // Auth + account type — runs once
   useEffect(() => {
     async function init() {
-      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=upid,isDomestic");
+      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=email,isDomestic");
       if (authRes.status === 401) {
         router.push("/");
         return;

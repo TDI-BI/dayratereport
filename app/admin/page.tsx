@@ -1,21 +1,18 @@
 "use client";
-import {useState, useEffect, useMemo} from "react";
+import React, {useState, useEffect, useMemo} from "react";
 import {useRouter} from "next/navigation";
-import {fetchBoth} from "@/utils/fetchboth";
 import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-react";
 import {Button} from "@/components/button";
 
 const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
 const CREW = ["ALL", "DOM", "FOR"];
-const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S", ];
+const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
 
 interface UserRow {
-  upid: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  isDomestic: boolean;
-  lastConfirm: string | null;
+  domesticId?: string | null;
   days: Record<string, string>;
 }
 
@@ -75,7 +72,7 @@ export default function Admin() {
         ? `/api/admin/getDomesticPeriods?add=${add}`
         : `/api/admin/getIntlPeriods?add=${add}`;
 
-      const res = await fetchBoth(route);
+      const res = await fetch(route);
       if (res.status === 401 || res.status === 403) {
         router.push("/");
         return;
@@ -93,6 +90,7 @@ export default function Admin() {
 
   const currentWeek = payload?.weeks[weekIndex] ?? [];
 
+
   const filteredUsers = useMemo(() => {
     if (!payload) return [];
     return payload.users.filter((user) => {
@@ -100,8 +98,8 @@ export default function Admin() {
         const full = `${user.firstName} ${user.lastName}`.toLowerCase();
         if (!full.includes(nameFilter.toLowerCase())) return false;
       }
-      if (crewFilter === "DOM" && !user.isDomestic) return false;
-      if (crewFilter === "FOR" && user.isDomestic) return false;
+      if (crewFilter === "DOM" && !user.domesticId) return false;
+      if (crewFilter === "INT" && user.domesticId) return false;
       if (shipFilter !== "ALL") {
         const hasShip = currentWeek.some((day) => user.days[day] === shipFilter);
         if (!hasShip) return false;
@@ -284,9 +282,6 @@ export default function Admin() {
                 <th
                   className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[50px]">Crew
                 </th>
-                <th
-                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[80px]">Last
-                </th>
                 {currentWeek.map((day, i) => (
                   <th key={day} className="text-center px-1 py-2 w-[64px]">
                     <div
@@ -312,7 +307,7 @@ export default function Admin() {
                 const hasReported = weekDaysWorked > 0;
                 return (
                   <tr
-                    key={user.upid}
+                    key={user.email}
                     className={`border-b border-primary/5 transition-colors duration-150 hover:bg-tdi-blue/5 ${
                       idx % 2 === 0 ? "" : "bg-primary/[0.02]"
                     }`}
@@ -325,15 +320,15 @@ export default function Admin() {
                       <div className="text-xs text-primary/25 tracking-tight">{user.email}</div>
                     </td>
                     <td className="px-3 py-2 text-center">
-                                                <span
-                                                  className={`text-xs font-semibold uppercase tracking-tight ${user.isDomestic ? "text-tdi-blue" : "text-primary/40"}`}>
-                                                    {user.isDomestic ? "DOM" : "FOR"}
-                                                </span>
-                    </td>
-                    <td className="px-3 py-2 text-center">
-                                                <span className="text-xs text-primary/35 font-medium tracking-tight">
-                                                    {user.lastConfirm?.slice(5) ?? "—"}
-                                                </span>
+                      {user.domesticId ? (
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary">
+                          {user.domesticId}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/40">
+                          INT
+                        </span>
+                      )}
                     </td>
                     {currentWeek.map((day) => {
                       const ship = user.days[day];
@@ -342,8 +337,8 @@ export default function Admin() {
                           {ship ? (
                             <span
                               className="text-xs font-semibold uppercase tracking-tight text-tdi-blue bg-tdi-blue/10 px-1.5 py-0.5">
-                                                                {ship}
-                                                            </span>
+                              {ship}
+                            </span>
                           ) : (
                             <span className="text-primary/15 text-xs">—</span>
                           )}
@@ -351,10 +346,10 @@ export default function Admin() {
                       );
                     })}
                     <td className="px-3 py-2 text-center">
-                                                <span
-                                                  className={`text-xs font-semibold ${weekDaysWorked > 0 ? "text-primary" : "text-primary/20"}`}>
-                                                    {weekDaysWorked || "—"}
-                                                </span>
+                      <span
+                        className={`text-xs font-semibold ${weekDaysWorked > 0 ? "text-primary" : "text-primary/20"}`}>
+                        {weekDaysWorked || "—"}
+                      </span>
                     </td>
                   </tr>
                 );
@@ -364,7 +359,6 @@ export default function Admin() {
           )}
         </div>
       </div>
-
     </main>
   );
 }

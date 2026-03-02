@@ -1,7 +1,7 @@
 import { SessionOptions } from 'iron-session';
 
 export interface sessionData {
-  upid?: string; // Just store the user's Paycor ID
+  email?: string; // store of users email (pkey)
   isLoggedIn?: boolean;
 }
 

@@ -1,14 +1,8 @@
 // /api/admin/getIntlPeriods/route.ts
-// Returns assembled period data for international (foreign) crew.
-// International periods are calendar-month based.
-// `add` param adds additional past months to the payload.
-// Frontend nav moves through the delivered weeks within the payload.
-
 import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
 
-// Returns all days in a given calendar month as YYYY-MM-DD strings
 const getDaysInMonth = (year: number, month: number): string[] => {
   const days: string[] = [];
   const date = new Date(year, month - 1, 1);
@@ -19,7 +13,6 @@ const getDaysInMonth = (year: number, month: number): string[] => {
   return days;
 };
 
-// Chunks an array of days into weeks (Mon-Sun) for frontend nav consistency
 const chunkIntoWeeks = (days: string[]): string[][] => {
   const weeks: string[][] = [];
   let current: string[] = [];
@@ -30,23 +23,22 @@ const chunkIntoWeeks = (days: string[]): string[][] => {
       current = [];
     }
   });
-  if (current.length > 0) weeks.push(current); // partial final week
+  if (current.length > 0) weeks.push(current);
   return weeks;
 };
 
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
 
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return NextResponse.json({success: false, error: "not logged in"}, {status: 401});
   }
 
   const connection = await connectToDb();
   try {
-    // Verify admin
     const [adminCheck] = await connection.execute(
-      "SELECT isAdmin FROM users WHERE upid = ?",
-      [session.upid]
+      "SELECT isAdmin FROM users WHERE email = ?",
+      [session.email]
     );
     if (!(adminCheck as any[])[0]?.isAdmin) {
       await connection.end();
@@ -56,82 +48,64 @@ export const GET = async (request: NextRequest) => {
     const {searchParams} = request.nextUrl;
     const add = Math.max(0, Number(searchParams.get("add") ?? 0));
 
-    // Determine current month from server time in CST (matches getPeriod behavior)
     const nowCST = new Date(new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}));
     const currentYear = nowCST.getFullYear();
-    const currentMonth = nowCST.getMonth() + 1; // 1-indexed
+    const currentMonth = nowCST.getMonth() + 1;
 
-    // Build list of months to include: current month + `add` past months
     const allDays: string[] = [];
-    const weeks: string[][] = [];
 
     for (let i = 0; i <= add; i++) {
-      // Go back i months from current
       let month = currentMonth - i;
       let year = currentYear;
       while (month <= 0) {
         month += 12;
         year -= 1;
       }
-
-      const monthDays = getDaysInMonth(year, month);
-      // Prepend so payload is chronological (oldest first)
-      allDays.unshift(...monthDays);
+      allDays.unshift(...getDaysInMonth(year, month));
     }
 
-    // Chunk into Mon-Sun weeks for frontend nav
-    // We need to align to week boundaries — find the first Monday
-    const weekChunks = chunkIntoWeeks(allDays);
-    weeks.push(...weekChunks);
+    const weeks = chunkIntoWeeks(allDays);
 
-    // Pull all day records for this range
     const [dayRows] = await connection.execute(
-      `SELECT d.upid, d.day, d.ship
+      `SELECT d.userEmail, d.day, d.ship
        FROM days d
        WHERE d.day IN (${allDays.map(() => "?").join(", ")})`,
       allDays
     );
 
-    // Pull all active users
     const [userRows] = await connection.execute(
-      `SELECT upid, firstName, lastName, email, isDomestic, lastConfirm
-       FROM users
-       WHERE isActive = 1
-       ORDER BY lastName, firstName`
+      `SELECT u.email, u.firstName, u.lastName
+       FROM users u
+                LEFT JOIN isDomestic id ON u.email = id.email
+       WHERE u.isActive = 1
+         AND id.email IS NULL
+       ORDER BY u.lastName, u.firstName`
     );
 
     await connection.end();
 
-    // Build lookup: upid -> { day -> ship }
-    const daysByUpid: Record<string, Record<string, string>> = {};
+    const daysByEmail: Record<string, Record<string, string>> = {};
     (dayRows as any[]).forEach((row) => {
-      if (!daysByUpid[row.upid]) daysByUpid[row.upid] = {};
-      daysByUpid[row.upid][row.day] = row.ship;
+      if (!daysByEmail[row.userEmail]) daysByEmail[row.userEmail] = {};
+      daysByEmail[row.userEmail][row.day] = row.ship;
     });
 
-    // Assemble payload — scaffold all days for every user
     const users = (userRows as any[]).map((user) => {
       const userDays: Record<string, string> = {};
       allDays.forEach((day) => {
-        userDays[day] = daysByUpid[user.upid]?.[day] ?? "";
+        userDays[day] = daysByEmail[user.email]?.[day] ?? "";
       });
       return {
-        upid: user.upid,
+        email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        email: user.email,
-        isDomestic: !!user.isDomestic,
-        lastConfirm: user.lastConfirm ?? null,
         days: userDays,
       };
     });
 
     return NextResponse.json({
       success: true,
-      resp: {
-        weeks,   // string[][] chunked Mon-Sun, for frontend nav
-        users,
-      }
+      resp: {weeks, users}
     }, {status: 200});
 
   } catch (error) {

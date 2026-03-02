@@ -36,7 +36,7 @@ export const GET = async (request: NextRequest) => {
   try {
     // Build query - using new schema
     const query = `
-      SELECT upid, username, firstName, lastName, email, isActive
+      SELECT email, username, firstName, lastName, email, isActive
       FROM users
       WHERE email = ?
     `;
@@ -73,8 +73,8 @@ export const GET = async (request: NextRequest) => {
     await connection.execute(
       `UPDATE users
        SET resetToken = ?, resetTokenExpiry = ?
-       WHERE upid = ?`,
-      [resetToken, resetTokenExpiry, user.upid]
+       WHERE email = ?`,
+      [resetToken, resetTokenExpiry, user.email]
     );
 
     // Send recovery email with token

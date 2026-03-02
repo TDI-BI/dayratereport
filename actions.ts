@@ -57,7 +57,7 @@ export const login = async (
   }
 
   // Create minimal session with just upid
-  session.upid = dbAcc.upid;
+  session.email = dbAcc.email;
   session.isLoggedIn = true;
   await session.save();
 
@@ -119,7 +119,7 @@ export const mkAccount = async (
 
   // Log in the new user - just store upid
   const session = await getSession();
-  session.upid = res.upid;
+  session.email = res.email;
   session.isLoggedIn = true;
   await session.save();
 

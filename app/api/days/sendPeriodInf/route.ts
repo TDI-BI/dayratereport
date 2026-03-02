@@ -1,6 +1,4 @@
 // /api/sendPeriodinf/route.ts
-// Generates a PDF report and emails it to the user and dayrate
-
 import {getSession} from "@/actions";
 import {NextRequest} from "next/server";
 import {getPeriod} from "@/utils/payperiod";
@@ -13,21 +11,20 @@ export const GET = async (request: NextRequest) => {
   const {searchParams} = request.nextUrl;
   const prev = Number(searchParams.get("prev") ?? 0);
 
-  // Auth check
   const session = await getSession();
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return Response.json({error: "not logged in"}, {status: 401});
   }
 
   const connection = await connectToDb();
 
   try {
-    // Pull account info and verify active
     const [userRows] = await connection.execute(
-      `SELECT firstName, lastName, email, isActive, isDomestic
-       FROM users
-       WHERE upid = ?`,
-      [session.upid]
+      `SELECT u.firstName, u.lastName, u.isActive, id.domesticId
+       FROM users u
+                LEFT JOIN isDomestic id ON u.email = id.email
+       WHERE u.email = ?`,
+      [session.email]
     );
     const user = (userRows as any[])[0];
 
@@ -35,15 +32,15 @@ export const GET = async (request: NextRequest) => {
     if (!user.isActive) return Response.json({error: "account inactive"}, {status: 403});
 
     const fullName = `${user.firstName} ${user.lastName}`;
-    const crewType = user.isDomestic ? "domestic" : "foreign";
+    const isDomestic = user.domesticId !== null && user.domesticId !== undefined;
+    const crewType = isDomestic ? "domestic" : "international";
     const period = getPeriod(prev);
 
-    // Fetch days directly from DB instead of trusting URL params
     const [dayRows] = await connection.execute(
       `SELECT day, ship
        FROM days
-       WHERE upid = ? AND day IN (${period.map(() => "?").join(", ")})`,
-      [session.upid, ...period]
+       WHERE userEmail = ? AND day IN (${period.map(() => "?").join(", ")})`,
+      [session.email, ...period]
     );
     const dayMap: Record<string, string> = {};
     (dayRows as any[]).forEach((row) => {
@@ -57,7 +54,6 @@ export const GET = async (request: NextRequest) => {
       return [day, ship ? "[X]" : "[  ]", ship];
     });
 
-    // Build PDF
     const doc = new jsPDF();
     doc.text(`Report for: ${fullName}`, 100, 10, {align: "center"});
     autoTable(doc, {
@@ -73,25 +69,25 @@ export const GET = async (request: NextRequest) => {
 
     const pdfOutput = doc.output();
 
-    // Log confirmation timestamp for current period only
-    if (!prev) {
-      await connection.execute(
-        `UPDATE users
-         SET lastConfirm = ?
-         WHERE upid = ?`,
-        [new Date().toISOString().substring(0, 10), session.upid]
-      );
-    }
-
     await connection.end();
 
     const fileName = `report_for_${user.firstName}_${user.lastName}_${period[0]}.pdf`;
 
+    // Replace the old lastConfirm update with this
+    if (!prev) {
+      await connection.execute(
+        `INSERT INTO userSubmission (email, dayFor)
+         VALUES (?, ?) ON DUPLICATE KEY
+        UPDATE dayMade = CURRENT_TIMESTAMP`,
+        [session.email, period[1]]
+      );
+    }
+
     dispatchEmail(
       `Travel report for ${fullName} from period starting ${period[0]}`,
       "Text",
-      `The attached file is a travel report for ${fullName} @ ${user.email} for the pay period starting ${period[0]}.\nWith issues email parkerseeley@tdi-bi.com. Do not reply to this email.`,
-      [user.email, "dayrate@tdi-bi.com"],
+      `The attached file is a travel report for ${fullName} @ ${session.email} for the pay period starting ${period[0]}.\nWith issues email parkerseeley@tdi-bi.com. Do not reply to this email.`,
+      [session.email, "dayrate@tdi-bi.com"],
       [{name: fileName, contentType: "application/pdf", base64content: btoa(pdfOutput)}]
     );
 

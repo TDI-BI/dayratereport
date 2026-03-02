@@ -32,7 +32,7 @@ export const GET = async (request: NextRequest) => {
   try {
     // Build query - now selecting from new schema
     const query = `
-      SELECT upid, password, isActive
+      SELECT email, password, isActive
       FROM users
       WHERE username = ?
     `;

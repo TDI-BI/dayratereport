@@ -1,7 +1,6 @@
-import { connectToDb } from '@/utils/connectToDb';
+import {connectToDb} from '@/utils/connectToDb';
 //got rid of the ms graph packages we were using here -- they were all official but better safe than sorry?
 
-//got rid of microsoft's npm packages
 const getAccessToken = async () => {
   const params = new URLSearchParams();
   params.append('grant_type', 'client_credentials');
@@ -69,7 +68,7 @@ export const dispatchEmail = async (
 
   const addLine = async (status: string) => {
     const q = `INSERT INTO emails
-                   SET body=?, sentto=?, status=?, subject=?, date=?`;
+               SET body=?, sentto=?, status=?, subject=?, date=?`;
     const vals = [
       body,
       JSON.stringify(to),

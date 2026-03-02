@@ -1,27 +1,27 @@
 // /api/account/reset-password/route.ts
-import { getSession } from '@/actions';
-import { NextRequest, NextResponse } from 'next/server';
-import { connectToDb } from '@/utils/connectToDb';
+import {getSession} from '@/actions';
+import {NextRequest, NextResponse} from 'next/server';
+import {connectToDb} from '@/utils/connectToDb';
 
 export const GET = async (request: NextRequest) => {
   // Block if already logged in
   const session = await getSession();
   if (session.isLoggedIn) {
     return NextResponse.json(
-      { success: false, error: 'already logged in' },
-      { status: 400 }
+      {success: false, error: 'already logged in'},
+      {status: 400}
     );
   }
 
   // Get and validate URL parameters
-  const { searchParams } = request.nextUrl;
+  const {searchParams} = request.nextUrl;
   const password = searchParams.get('password');
   const resetToken = searchParams.get('token'); // Changed from 'oldhash'
 
   if (!resetToken || !password) {
     return NextResponse.json(
-      { success: false, error: 'missing required parameters' },
-      { status: 400 }
+      {success: false, error: 'missing required parameters'},
+      {status: 400}
     );
   }
 
@@ -31,9 +31,10 @@ export const GET = async (request: NextRequest) => {
   try {
     // Verify token exists and hasn't expired
     const verifyQuery = `
-      SELECT upid, username, isActive, resetTokenExpiry
-      FROM users
-      WHERE resetToken = ? AND resetTokenExpiry > NOW()
+        SELECT email, username, isActive, resetTokenExpiry
+        FROM users
+        WHERE resetToken = ?
+          AND resetTokenExpiry > NOW()
     `;
     const [verifyResults] = await connection.execute(verifyQuery, [resetToken]);
     const users = verifyResults as any[];
@@ -41,8 +42,8 @@ export const GET = async (request: NextRequest) => {
     if (users.length === 0) {
       await connection.end();
       return NextResponse.json(
-        { success: false, error: 'invalid or expired reset link' },
-        { status: 404 }
+        {success: false, error: 'invalid or expired reset link'},
+        {status: 404}
       );
     }
 
@@ -52,21 +53,23 @@ export const GET = async (request: NextRequest) => {
     if (!user.isActive) {
       await connection.end();
       return NextResponse.json(
-        { success: false, error: 'account is inactive' },
-        { status: 403 }
+        {success: false, error: 'account is inactive'},
+        {status: 403}
       );
     }
 
     // Update password and clear reset token
     const updateQuery = `
-      UPDATE users
-      SET password = ?, resetToken = NULL, resetTokenExpiry = NULL
-      WHERE upid = ?
+        UPDATE users
+        SET password         = ?,
+            resetToken       = NULL,
+            resetTokenExpiry = NULL
+        WHERE email = ?
     `;
 
     const [results] = await connection.execute(updateQuery, [
       password,
-      user.upid,
+      user.email,
     ]);
 
     await connection.end();
@@ -79,7 +82,7 @@ export const GET = async (request: NextRequest) => {
           success: false,
           error: 'password reset failed',
         },
-        { status: 400 }
+        {status: 400}
       );
     }
 
@@ -89,13 +92,13 @@ export const GET = async (request: NextRequest) => {
         message: 'password updated successfully',
         username: user.username,
       },
-      { status: 200 }
+      {status: 200}
     );
   } catch (error) {
     await connection.end();
     return NextResponse.json(
-      { success: false, error: (error as Error).message },
-      { status: 500 }
+      {success: false, error: (error as Error).message},
+      {status: 500}
     );
   }
 };

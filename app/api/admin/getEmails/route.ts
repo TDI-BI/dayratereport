@@ -39,8 +39,8 @@ export const GET = async (request: NextRequest) => {
 
 
     const [adminCheck] = await connection.execute(
-      "SELECT isAdmin FROM users WHERE upid = ?",
-      [session.upid]
+      "SELECT isAdmin FROM users WHERE email = ?",
+      [session.email]
     );
     if (!(adminCheck as any[])[0]?.isAdmin) {
       await connection.end();

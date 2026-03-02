@@ -1,8 +1,4 @@
 // /api/admin/getPeriodCsv/route.ts
-// Generates and streams a CSV of period data directly from the server.
-// Accepts same params as getDomesticPeriods/getIntlPeriods plus ship/crew filters.
-// Columns: upid, name, crew, vessel (most-worked), then one per date in range.
-
 import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
@@ -37,16 +33,15 @@ const escapeCsv = (val: string): string => {
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
 
-  if (!session.isLoggedIn || !session.upid) {
+  if (!session.isLoggedIn || !session.email) {
     return NextResponse.json({success: false, error: "not logged in"}, {status: 401});
   }
 
   const connection = await connectToDb();
   try {
-    // Verify admin
     const [adminCheck] = await connection.execute(
-      "SELECT isAdmin FROM users WHERE upid = ?",
-      [session.upid]
+      "SELECT isAdmin FROM users WHERE email = ?",
+      [session.email]
     );
     if (!(adminCheck as any[])[0]?.isAdmin) {
       await connection.end();
@@ -57,7 +52,7 @@ export const GET = async (request: NextRequest) => {
     const mode = searchParams.get("mode") ?? "domestic"; // "domestic" | "intl"
     const add = Math.max(0, Number(searchParams.get("add") ?? 0));
     const shipFilter = searchParams.get("ship") ?? "ALL";
-    const crewFilter = searchParams.get("crew") ?? "ALL"; // "ALL" | "DOM" | "FOR"
+    const crewFilter = searchParams.get("crew") ?? "ALL"; // "ALL" | "DOM" | "INT"
 
     // --- Build date range ---
     let allDays: string[] = [];
@@ -99,35 +94,37 @@ export const GET = async (request: NextRequest) => {
 
     // --- Fetch days + users ---
     const [dayRows] = await connection.execute(
-      `SELECT d.upid, d.day, d.ship
+      `SELECT d.userEmail, d.day, d.ship
        FROM days d
        WHERE d.day IN (${allDays.map(() => "?").join(", ")})`,
       allDays
     );
 
+    const crewJoin = `LEFT JOIN isDomestic id ON u.email = id.email`;
     const crewWhere =
-      crewFilter === "DOM" ? "AND isDomestic = 1" :
-        crewFilter === "FOR" ? "AND isDomestic = 0" : "";
+      crewFilter === "DOM" ? "AND id.email IS NOT NULL" :
+        crewFilter === "INT" ? "AND id.email IS NULL" : "";
 
     const [userRows] = await connection.execute(
-      `SELECT upid, firstName, lastName, email, isDomestic
-       FROM users
-       WHERE isActive = 1 ${crewWhere}
-       ORDER BY lastName, firstName`
+      `SELECT u.email, u.firstName, u.lastName, id.domesticId
+       FROM users u
+           ${crewJoin}
+       WHERE u.isActive = 1 ${crewWhere}
+       ORDER BY u.lastName, u.firstName`
     );
 
     await connection.end();
 
     // Build lookup
-    const daysByUpid: Record<string, Record<string, string>> = {};
+    const daysByEmail: Record<string, Record<string, string>> = {};
     (dayRows as any[]).forEach((row) => {
-      if (!daysByUpid[row.upid]) daysByUpid[row.upid] = {};
-      daysByUpid[row.upid][row.day] = row.ship;
+      if (!daysByEmail[row.userEmail]) daysByEmail[row.userEmail] = {};
+      daysByEmail[row.userEmail][row.day] = row.ship;
     });
 
     // --- Build CSV ---
     const headers = [
-      "upid",
+      "paycorId",
       "name",
       "crew",
       "vessel",
@@ -139,16 +136,14 @@ export const GET = async (request: NextRequest) => {
     (userRows as any[]).forEach((user) => {
       const userDays: Record<string, string> = {};
       allDays.forEach((day) => {
-        userDays[day] = daysByUpid[user.upid]?.[day] ?? "";
+        userDays[day] = daysByEmail[user.email]?.[day] ?? "";
       });
 
-      // Ship filter — skip user if they have no days on that ship
       if (shipFilter !== "ALL") {
         const hasShip = Object.values(userDays).some((s) => s === shipFilter);
         if (!hasShip) return;
       }
 
-      // Skip users with no days worked at all
       const daysWorked = Object.values(userDays).filter(Boolean).length;
       if (!daysWorked) return;
 
@@ -159,9 +154,9 @@ export const GET = async (request: NextRequest) => {
       );
 
       rows.push([
-        user.upid,
+        user.domesticId ?? "",
         `${user.firstName} ${user.lastName}`,
-        user.isDomestic ? "DOM" : "FOR",
+        user.domesticId ? "DOM" : "INT",
         vessel,
         ...allDays.map((day) => userDays[day]),
       ]);

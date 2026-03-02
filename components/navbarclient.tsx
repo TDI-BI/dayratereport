@@ -168,7 +168,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
               isActive("/info") ? "w-full" : "w-0 group-hover:w-full"
             }`}/>
           </Link>
-          <div className="w-[2px] h-[20px] bg-secondary/20"/>
+
           {admin ? (<>
             <div className="w-[2px] h-[20px] bg-secondary/20"/>
             <Link href="/admin" className="group px-6 py-3 flex flex-col items-center">
@@ -197,6 +197,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
                 isActive("/admin/emails") ? "w-full" : "w-0 group-hover:w-full"
               }`}/>
             </Link></>) : ''}
+          <div className="w-[2px] h-[20px] bg-secondary/20"/>
           <form action={logout}>
             <button className="group px-6 py-3 flex flex-col items-center">
               <span className="text-secondary text-sm font-semibold uppercase tracking-tight select-none">
