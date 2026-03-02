@@ -15,7 +15,7 @@ export const GET = async (request: NextRequest) => {
   const token = searchParams.get('token');
 
   if (!username || !password || !workType || !token) {
-    return NextResponse.json({success: false, error: 'missing required fields'}, {status: 400});
+    return NextResponse.json({success: false, error: 'missing fields'}, {status: 400});
   }
 
   if (!['marine', 'tech', 'admin'].includes(workType)) {
@@ -34,19 +34,19 @@ export const GET = async (request: NextRequest) => {
 
     if ((tokenRows as any[]).length === 0) {
       await connection.end();
-      return NextResponse.json({success: false, error: 'invalid or expired token'}, {status: 404});
+      return NextResponse.json({success: false, error: 'invalid token'}, {status: 404});
     }
 
     const invite = (tokenRows as any[])[0];
 
     if (invite.expendedAt) {
       await connection.end();
-      return NextResponse.json({success: false, error: 'token has already been used'}, {status: 410});
+      return NextResponse.json({success: false, error: 'spent token'}, {status: 410});
     }
 
     if (new Date(invite.tokenExpiry) < new Date()) {
       await connection.end();
-      return NextResponse.json({success: false, error: 'token has expired'}, {status: 410});
+      return NextResponse.json({success: false, error: 'expired token'}, {status: 410});
     }
 
     const [existingUsers] = await connection.execute(
@@ -59,7 +59,7 @@ export const GET = async (request: NextRequest) => {
 
     if ((existingUsers as any[]).length > 0) {
       await connection.end();
-      return NextResponse.json({success: false, error: 'username or email already exists'}, {status: 409});
+      return NextResponse.json({success: false, error: 'info already in use'}, {status: 409});
     }
 
     await connection.execute(

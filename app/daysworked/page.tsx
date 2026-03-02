@@ -102,7 +102,7 @@ export default function Home() {
     setTimeout(() => setModalDay(null), 250);
   };
 
-  const save = async () => {
+  const save = async (notimer = 0) => {
     if (saving) return;
     setSaving(true);
     setSaveMsg("saving...");
@@ -121,7 +121,7 @@ export default function Home() {
       setSaveMsg(`error: ${body.error ?? "unknown"}`);
     }
     setSaving(false);
-    await new Promise((r) => setTimeout(r, 5000));
+    if (!notimer) await new Promise((r) => setTimeout(r, 5000));
     setSaveMsg("");
   };
 
@@ -203,8 +203,14 @@ export default function Home() {
           <Button onClick={save} className="flex-1 justify-center">
             {saving ? "..." : "SAVE"}
           </Button>
-          <Button onClick={() => {
-            router.push(`/daysworked/review?prev=${prev}`)
+          <Button onClick={async () => {
+            try {
+              await save(1);
+              router.push(`/daysworked/review?prev=${prev}`)
+            } catch (error) {
+              console.error(error)
+            }
+            return;
           }} className="flex-1 justify-center">
             REVIEW
           </Button>

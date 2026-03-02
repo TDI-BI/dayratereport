@@ -27,7 +27,7 @@ export const GET = async (request: NextRequest) => {
     const query = `
         SELECT day, ship
         FROM days
-        WHERE email = ?
+        WHERE userEmail = ?
           AND day IN (${period.map(() => '?').join(', ')})
     `;
 
@@ -37,6 +37,7 @@ export const GET = async (request: NextRequest) => {
     return NextResponse.json({success: true, resp: results}, {status: 200});
   } catch (error) {
     await connection.end();
+    console.error(error);
     return NextResponse.json(
       {success: false, error: (error as Error).message},
       {status: 500}

@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+
 export const FormWrapper = ({
                               children,
                               errorMessage,
@@ -35,7 +36,7 @@ export const FormWrapper = ({
         {errorMessage && (
           <span
             key={errorMessage}
-            className={`text-secondary/80 italic`}
+            className={`text-secondary/80 italic px-3 text-xs text-center`}
           >
             {errorMessage}
           </span>

@@ -16,17 +16,6 @@ interface UserRow {
   domesticId: string | null;
 }
 
-/* // maybe re-implement this later..,
-const timeAgo = (isoString: string) => {
-  const date = new Date(isoString);
-  const now = new Date();
-  const diff = Math.floor((now.getTime() - date.getTime()) / 1000);
-  if (diff < 60) return `${diff}s ago`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-};
-*/
 export default function UserManagementPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [filter, setFilter] = useState('');

@@ -85,7 +85,7 @@ export const mkAccount = async (
 
   // Validation
   if (formPassword !== formPasswordRepeat) {
-    return {error: 'passwords do not match'};
+    return {error: "passwords don't match"};
   }
 
   if (
@@ -101,7 +101,7 @@ export const mkAccount = async (
   }
 
   if (formUsername.includes(' ')) {
-    return {error: 'username cannot contain spaces'};
+    return {error: 'no spaces allowed'};
   }
 
   // Create hashed password
@@ -142,7 +142,7 @@ export const recover = async (
   try {
     const res = await response.json();
     if (res.resp === 'email sent') {
-      return {error: 'recovery instructions sent, check your spam box!'};
+      return {error: 'recovery instructions sent'};
     }
     return {error: 'account not found'};
   } catch (e) {

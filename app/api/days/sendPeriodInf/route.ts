@@ -69,7 +69,6 @@ export const GET = async (request: NextRequest) => {
 
     const pdfOutput = doc.output();
 
-    await connection.end();
 
     const fileName = `report_for_${user.firstName}_${user.lastName}_${period[0]}.pdf`;
 
@@ -82,6 +81,7 @@ export const GET = async (request: NextRequest) => {
         [session.email, period[1]]
       );
     }
+    await connection.end();
 
     dispatchEmail(
       `Travel report for ${fullName} from period starting ${period[0]}`,
