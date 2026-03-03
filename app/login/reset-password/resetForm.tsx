@@ -16,7 +16,7 @@ const ResetForm = () => {
 
   const [state, formAction] = useActionState<any, FormData>(
     resetPassword,
-    undefined
+    {}
   );
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const ResetForm = () => {
 
   return (
     <form action={formAction} className="space-y-4">
-      <FormWrapper errorMessage={state.error || ''}>
+      <FormWrapper errorMessage={state.error}>
         <input
           className="hidden"
           name="token"
