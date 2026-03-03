@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/actions.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/account/create/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/create/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/days/getWorkWeek/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/getWorkWeek/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/api/days/sendPeriodInf/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/days/sendPeriodInf/route.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/formwrapper.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/components/formwrapper.tsx" afterDir="false" />
-    </list>
+    <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -140,7 +131,7 @@
       <workItem from="1771876060395" duration="13804000" />
       <workItem from="1772044090092" duration="16513000" />
       <workItem from="1772131984191" duration="3214000" />
-      <workItem from="1772202822991" duration="3369000" />
+      <workItem from="1772202822991" duration="3869000" />
     </task>
     <servers />
   </component>
