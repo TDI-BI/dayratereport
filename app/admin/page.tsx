@@ -65,6 +65,8 @@ export default function Admin() {
   const [crewFilter, setCrewFilter] = useState("ALL");
   const [nameFilter, setNameFilter] = useState("");
 
+  console.log(payload);
+
   useEffect(() => {
     async function load() {
       setLoading(true);
@@ -280,7 +282,7 @@ export default function Admin() {
                   className="text-left px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[180px]">Name
                 </th>
                 <th
-                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[50px]">Crew
+                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[50px]">ID
                 </th>
                 {currentWeek.map((day, i) => (
                   <th key={day} className="text-center px-1 py-2 w-[64px]">

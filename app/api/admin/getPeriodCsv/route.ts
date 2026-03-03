@@ -106,7 +106,7 @@ export const GET = async (request: NextRequest) => {
         crewFilter === "INT" ? "AND id.email IS NULL" : "";
 
     const [userRows] = await connection.execute(
-      `SELECT u.email, u.firstName, u.lastName, id.domesticId
+      `SELECT u.email, u.firstName, u.lastName, u.workType, id.domesticId
        FROM users u
            ${crewJoin}
        WHERE u.isActive = 1 ${crewWhere}
@@ -127,7 +127,7 @@ export const GET = async (request: NextRequest) => {
       "paycorId",
       "name",
       "crew",
-      "vessel",
+      "workType",   // was "vessel"
       ...allDays,
     ];
 
@@ -157,7 +157,7 @@ export const GET = async (request: NextRequest) => {
         user.domesticId ?? "",
         `${user.firstName} ${user.lastName}`,
         user.domesticId ? "DOM" : "INT",
-        vessel,
+        user.workType ?? "",   // was vessel
         ...allDays.map((day) => userDays[day]),
       ]);
     });
