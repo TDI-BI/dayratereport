@@ -1,25 +1,17 @@
-"use server";
+'use server';
+import {getIronSession} from 'iron-session';
+import {cookies} from 'next/headers';
+import {redirect} from 'next/navigation';
+import {fetchBoth} from '@/utils/fetchboth';
 
-import { getPort } from "@/utils/getPort";
+import {sessionOptions, sessionData, defaultSession} from '@/lib';
 
-const por = getPort();
-import { getIronSession } from "iron-session";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import { fetchBoth } from "@/utils/fetchboth";
-
-import {
-  sessionOptions,
-  sessionData,
-  defaultSession, // legacy, dont want to delete
-} from "@/lib";
-
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 
 export const getSession = async () => {
   const session = await getIronSession<sessionData>(
     await cookies(),
-    sessionOptions,
+    sessionOptions
   );
 
   return session;
@@ -27,155 +19,165 @@ export const getSession = async () => {
 
 export const login = async (
   prevState: { error: undefined | string },
-  formData: FormData,
+  formData: FormData
 ) => {
-  //get session information
   const session = await getSession();
-  const formUsername = formData.get("username") as string;
-  const formPassword = formData.get("password") as string;
+  const formUsername = formData.get('username') as string;
+  const formPassword = formData.get('password') as string;
 
-  //query API
-  const response = await fetchBoth(`/api/login?&username=${formUsername}`);
+  // Validate input
+  if (!formUsername || !formPassword) {
+    return {error: 'username and password required'};
+  }
+
+  // Query API - now using upid instead of uid
+  const response = await fetchBoth(
+    `/api/account/login?username=${formUsername}`
+  );
   const res = await response.json();
+  if (res.error) {
+    return {error: 'account not found'};
+  }
+
   const dbAcc = res.resp[0];
 
+
+  // Check if account is active
+  if (!dbAcc.isActive) {
+    return {error: 'account inactive'};
+  }
+
   try {
-    // compare our password with the hash using bcrypt
     const auth = await bcrypt.compare(formPassword, dbAcc.password);
     if (!auth) {
-      return { error: "wrong password for account" };
+      return {error: 'incorrect password'};
     }
   } catch (error) {
-    return { error: "no account for that username" };
+    return {error: 'authentication failed'};
   }
-  //create cookie
-  session.userId = dbAcc.uid;
-  session.username = dbAcc.username;
-  session.userEmail = dbAcc.email;
+
+  // Create minimal session with just upid
+  session.email = dbAcc.email;
   session.isLoggedIn = true;
-  session.isAdmin = dbAcc.isAdmin == "true";
-  session.isDomestic = dbAcc.isDomestic; //UPDATE THIS LATER
-  session.isActive = dbAcc.isActive === 1;
   await session.save();
 
-  redirect("/");
+  redirect('/');
 };
+
 export const logout = async () => {
-  // destroy loggedin cookie
   const session = await getSession();
   session.destroy();
-  redirect("/");
+  redirect('/');
 };
 
 export const mkAccount = async (
   prevState: { error: undefined | string },
-  formData: FormData,
+  formData: FormData
 ) => {
-  //get form data
-  const formFirstname = formData.get("firstname") as string;
-  const formLastname = formData.get("lastname") as string;
-  const formUsername = formData.get("nusername") as string;
-  const formEmail = formData.get("email") as string;
-  const formPassword = formData.get("password1") as string;
-  const formPasswordRepeat = formData.get("password2") as string;
-  const formCrew = formData.get("crew") as string;
-  if (formPassword !== formPasswordRepeat)
-    return { error: "passwords do not match" };
+  // Get form data
+  const formUsername = formData.get('nusername') as string;
+  const formPassword = formData.get('password1') as string;
+  const formPasswordRepeat = formData.get('password2') as string;
+  const formWorkType = formData.get('worktype') as string;
+  const formToken = formData.get('token') as string;
 
-  //create hashed password
+  console.log(formWorkType);
+
+  // Validation
+  if (formPassword !== formPasswordRepeat) {
+    return {error: "passwords don't match"};
+  }
+
+  if (
+    !formUsername ||
+    !formPassword
+  ) {
+    return {error: 'all fields required'};
+  }
+
+  // Validate workType is one of the allowed values
+  if (!['marine', 'tech', 'admin'].includes(formWorkType)) {
+    return {error: 'select a work type'};
+  }
+
+  if (formUsername.includes(' ')) {
+    return {error: 'no spaces allowed'};
+  }
+
+  // Create hashed password
   const hashword = await bcrypt.hash(formPassword, 10);
 
-  // block if anything is wrong
-  if (
-    formFirstname == "" ||
-    formLastname == "" ||
-    formEmail == "" ||
-    formUsername == "" ||
-    formPassword == ""
-  ) {
-    return { error: "empty fields" };
-  }
-  if (formCrew == "") return { error: "select a crew type" };
-
-  if (formUsername.includes(" ")) return { error: "username has spaces" };
-  if (formEmail.includes(" ")) return { error: "email has spaces" };
-
-  //query API
-  const fullname = formFirstname + "/" + formLastname;
+  // Query API with new schema fields
   const response = await fetchBoth(
-    `/api/mkaccount?username=${formUsername}&password=${hashword}&email=${formEmail}&fullname=${fullname}&isdomestic=${formCrew}`,
+    `/api/account/create?username=${formUsername}&password=${hashword}&worktype=${formWorkType}&token=${formToken}`
   );
   const res = await response.json();
-  try {
-    if (res.error) return res; // catch error in account creation
-  } catch (error) {}
 
-  //no errors means we survived! log us in
+  if (res.error) {
+    return res;
+  }
+
+  // Log in the new user - just store upid
   const session = await getSession();
-  session.userId = fullname;
-  session.username = formUsername;
-  session.userEmail = formEmail;
+  session.email = res.email;
   session.isLoggedIn = true;
-  session.isAdmin = false; // should always be false on account creation
-  session.isDomestic = formCrew == "domestic"; //UPDATE THIS LATER
-  session.isActive = true; //TODO we may want to swap this later, but for now we want accounts to be active by default
   await session.save();
-  redirect("../../"); // -> uncomment this out when im done toying with the form
+
+  redirect('../../');
 };
 
 export const recover = async (
   prevState: { error: undefined | string },
-  formData: FormData,
+  formData: FormData
 ) => {
-  //get form data
-  const formEmail = formData.get("email") as string;
+  const formEmail = formData.get('email') as string;
 
-  //block if incomplete
-  if (!formEmail) return { error: "no email" };
+  if (!formEmail) {
+    return {error: 'email required'};
+  }
 
-  //query api
-  const response = await fetchBoth(`/api/recover?&email=${formEmail}`);
+  // Query API
+  const response = await fetchBoth(`/api/account/recover?email=${formEmail}`);
 
-  // check query response
   try {
     const res = await response.json();
-    const rmessage = res.resp;
-    if (rmessage == "email sent")
-      return { error: "recovery instructions sent, check your spam box!" };
-    throw "just need to catch this";
+    if (res.resp === 'email sent') {
+      return {error: 'recovery instructions sent'};
+    }
+    return {error: 'account not found'};
   } catch (e) {
-    return { error: "account not found" };
+    return {error: 'account not found'};
   }
 };
 
 export const resetPassword = async (
   prevState: { error: undefined | string },
-  formData: FormData,
+  formData: FormData
 ) => {
-  //get form data
-  const oldhash = formData.get("acc") as string;
-  const formPassword = formData.get("password1") as string;
-  const formPasswordRepeat = formData.get("password2") as string;
+  const resetToken = formData.get('token') as string; // Changed from "acc"
+  const formPassword = formData.get('password1') as string;
+  const formPasswordRepeat = formData.get('password2') as string;
 
-  if (formPassword == "" || formPasswordRepeat == "")
-    return { error: "empty fields" };
+  if (!formPassword || !formPasswordRepeat) {
+    return {error: 'all fields required'};
+  }
 
-  //block if something is incorrect
-  if (formPassword !== formPasswordRepeat)
-    return { error: "passwords do not match" };
+  if (formPassword !== formPasswordRepeat) {
+    return {error: 'passwords do not match'};
+  }
 
-  //encrypt new password
+  // Encrypt new password
   const hashword = await bcrypt.hash(formPassword, 10);
 
-  //query API
+  // Query API with token instead of oldhash
   const response = await fetchBoth(
-    `/api/resetpassword?password=${hashword}&oldhash=${oldhash}`,
+    `/api/account/reset-password?password=${hashword}&token=${resetToken}`
   );
   const res = await response.json();
 
-  //check results
-  try {
-    if (res.error) return res; // catch error in account creation
-  } catch (error) {}
-  redirect("../../"); // -> uncomment this out when im done toying with the form
+  if (res.error) {
+    return res;
+  }
+
+  redirect('../../');
 };

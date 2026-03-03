@@ -1,26 +1,25 @@
-import { ReactElement, } from "react";
+import {ReactElement, useState} from 'react';
+
 interface lineprops {
-    name: string;
-    type: string;
-    placeholder: string;
-    icon: ReactElement<any>;
+  name: string;
+  type: string;
+  placeholder: string;
+  icon: ReactElement<any>;
 }
 
 export const FormLine = (ins: lineprops) => {
-    return (
-        <h1 className="flex justify-center gap-[10px] group bg-primary/0 hover:bg-primary/100 text-primary hover:text-secondary transition-all ease-in-out duration-300 rounded-lg py-[10px] px-[10px]">
-            {ins.icon}
-            <div>
-                <input
-                    className="text-inherit bg-inherit focus:outline-none peer"
-                    name={ins.name}
-                    type={ins.type}
-                    placeholder={ins.placeholder}
-                />
-                <div
-                    className={`rounded-md w-[0%] peer-focus:w-[100%] group-hover:w-[100%] h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                />
-            </div>
-        </h1>
-    );
+  return (
+    <h1 className={`flex items-center gap-3 px-4 py-3 text-secondary focus-within:bg-secondary focus-within:text-primary transition-all duration-300 ease-in-out focus-within:shadow `}>
+      <div>{ins.icon}</div>
+      <div className="w-full">
+        <input
+          className="peer bg-transparent outline-none w-full font-medium tracking-tight"
+          name={ins.name}
+          type={ins.type}
+          placeholder={ins.placeholder}
+        />
+        <div className="h-[2px] w-full bg-secondary mt-2 peer-focus:bg-primary transition-colors duration-300 ease-in-out"/>
+      </div>
+    </h1>
+  );
 };

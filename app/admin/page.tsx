@@ -1,493 +1,364 @@
 "use client";
-
-import {getPeriod} from "@/utils/payperiod";
-import {useState, useEffect, useMemo} from "react";
-import {fetchBoth} from "@/utils/fetchboth";
-import {mkConfig, generateCsv, download} from "export-to-csv";
+import React, {useState, useEffect, useMemo} from "react";
 import {useRouter} from "next/navigation";
-import {AdminNav} from "@/components/adminNav";
-import {
-    Calendar,
-    Earth,
-    Mail,
-    MoveDown,
-    MoveLeft,
-    MoveRight,
-    Search,
-    Ship,
-} from "lucide-react";
+import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-react";
+import {Button} from "@/components/button";
 
-interface User {
-    username: string;
-    uid: string;
-    email: string;
-    isDomestic: boolean;
-    lastConfirm: string;
+const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
+const CREW = ["ALL", "DOM", "FOR"];
+const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
+
+interface UserRow {
+  email: string;
+  firstName: string;
+  lastName: string;
+  domesticId?: string | null;
+  days: Record<string, string>;
 }
 
-const Admin = () => {
-    const router = useRouter();
+interface Payload {
+  weeks: string[][];
+  users: UserRow[];
+}
 
-    const [shipEh, setShipEh] = useState("ALL");
-    const [periodEh, setPeriodEh] = useState(0);
-    const period = getPeriod(periodEh);
-    const [userFilter, setUserFilter] = useState("");
-    const [inc, setInc] = useState<{ [key: string]: string }[]>([]);
-    const [users, setUsers] = useState<User[]>([]);
-    const [crewEh, setCrewEh] = useState("ALL");
-    const [weeks, setWeeks] = useState(1);
-    const [refresh, setRefresh] = useState(true);
-    const [pageErr, setPageErr] = useState(false);
-    const [open, isOpen] = useState(false);
+const IslandBtn = ({
+                     active,
+                     onClick,
+                     children,
+                   }: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) => (
+  <button
+    onClick={onClick}
+    className="group relative px-3 py-2 flex flex-col items-center"
+  >
+        <span className={`text-xs font-semibold uppercase tracking-tight transition-colors duration-200 select-none ${
+          active ? "text-secondary" : "text-secondary/40 group-hover:text-secondary"
+        }`}>
+            {children}
+        </span>
+    <div className={`h-[2px] bg-secondary transition-all duration-300 ease-in-out mt-1 ${
+      active ? "w-full" : "w-0 group-hover:w-full"
+    }`}/>
+  </button>
+);
 
-    // Split the effects to prevent unnecessary re-renders
+const Divider = () => (
+  <div className="w-[2px] h-[16px] bg-secondary/20 self-center mx-1"/>
+);
 
-    const getDaysCallable = async () => {
-        setRefresh(true);
-        const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
-        const res = await response.json();
-        setInc(res.resp);
-        setRefresh(false);
-    };
+const HDivider = () => (
+  <div className="h-[2px] w-full bg-secondary/20 my-1"/>
+);
 
-    useEffect(() => {
-        const getDays = async () => {
-            try {
-                setRefresh(true);
-                const response = await fetchBoth(`/api/admingetdays?prev=${periodEh}&tot=${weeks}`);
-                const res = await response.json();
-                if (!res.resp) throw {error: "no input"};
-                setInc(res.resp);
-                setRefresh(false);
-            } catch (e) {
-                console.error(e);
-                setInc([]);
-                setPageErr(true); // cook up better site protections ?
-            }
-        };
-        const getUsers = async () => {
-            try {
-                let resp = await fetchBoth("/api/getusers");
-                const users = await resp.json();
-                if (!users.resp) throw {error: "no input"};
-                setUsers(users.resp);
-            } catch (e) {
-                console.error(e);
-                setUsers([]);
-                setPageErr(true);
-            }
-        };
-        const getStuff = async () => {
-            setRefresh(true);
+export default function Admin() {
+  const router = useRouter();
+  const [mode, setMode] = useState<"domestic" | "intl">("domestic");
+  const [add, setAdd] = useState(0);
+  const [payload, setPayload] = useState<Payload | null>(null);
+  const [weekIndex, setWeekIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-            await getUsers();
-            await getDays();
+  const [shipFilter, setShipFilter] = useState("ALL");
+  const [crewFilter, setCrewFilter] = useState("ALL");
+  const [nameFilter, setNameFilter] = useState("");
 
-            setRefresh(false);
-        };
+  useEffect(() => {
+    async function load() {
+      setLoading(true);
+      const route = mode === "domestic"
+        ? `/api/admin/getDomesticPeriods?add=${add}`
+        : `/api/admin/getIntlPeriods?add=${add}`;
 
-        getStuff();
-    }, [periodEh, weeks]); // Only re-fetch when period changes
+      const res = await fetch(route);
+      if (res.status === 401 || res.status === 403) {
+        router.push("/");
+        return;
+      }
+      const data = await res.json();
+      if (data.resp) {
+        setPayload(data.resp);
+        setWeekIndex(data.resp.weeks.length - 1);
+      }
+      setLoading(false);
+    }
 
-    if (pageErr) {
-        router.push('/daysworked')
-    } // FIX HERE <- this doesnt break in prod, the error is ignorable, but in dev it throws an error and gets annoying. probably want to fix this eventually
+    load();
+  }, [mode, add, router]);
 
-    // Memoized filtered data processing
-    const filteredData = useMemo(() => {
-        // Group days by username and filter by period
-        const daysByUser = inc.reduce<Record<string, any[]>>((acc, day) => {
-            // Check if the day is within the current period
-            if (!period.includes(day["day"])) return acc;
-
-            // Ship filter
-            if (shipEh !== "ALL" && day["ship"] !== shipEh) return acc;
-
-            if (!acc[day["username"]]) {
-                acc[day["username"]] = [];
-            }
-            acc[day["username"]].push(day);
-            return acc;
-        }, {});
-
-        // Process and filter users
-        return users
-            .filter((user) => {
-                // Username filter
-                const usernameMatched =
-                    !userFilter ||
-                    String(user["uid"])
-                        .replace("/", " ")
-                        .toLowerCase()
-                        .includes(userFilter.toLowerCase());
-
-                // Check if user has days in the filtered set
-                const userDays = daysByUser[user["username"]] || [];
-
-                return usernameMatched && userDays.length > 0;
-            }).filter((user) => {
-                if (crewEh == 'ALL') return true;
-                else if (crewEh == 'DOM') return user.isDomestic
-                else return !user.isDomestic
-            })
-            .map((user) => {
-                // Get user's days
-                const userDays = daysByUser[user["username"]] || [];
-
-                // Create a map of worker types by date
-                const workerTypeByDate: Record<string, string> = {};
-                userDays.forEach((day) => {
-                    workerTypeByDate[day.day] = day.type;
-                });
-
-                return {
-                    ...user,
-                    workerTypes: workerTypeByDate,
-                };
-            });
-    }, [inc, users, shipEh, userFilter, period]);
+  const currentWeek = payload?.weeks[weekIndex] ?? [];
 
 
-    const expcsv = async () => {
-        // Made async to handle the initial getdays call
-        // First, ensure we have fresh data
-        await getDaysCallable();
+  const filteredUsers = useMemo(() => {
+    if (!payload) return [];
+    return payload.users.filter((user) => {
+      if (nameFilter) {
+        const full = `${user.firstName} ${user.lastName}`.toLowerCase();
+        if (!full.includes(nameFilter.toLowerCase())) return false;
+      }
+      if (crewFilter === "DOM" && !user.domesticId) return false;
+      if (crewFilter === "INT" && user.domesticId) return false;
+      if (shipFilter !== "ALL") {
+        const hasShip = currentWeek.some((day) => user.days[day] === shipFilter);
+        if (!hasShip) return false;
+      }
+      return true;
+    });
+  }, [payload, nameFilter, crewFilter, shipFilter, currentWeek]);
 
-        // Generate periods for the specified number of weeks
-        let experiod: string[] = [];
-        for (let i = Number(weeks) - 1; i >= 0; i--) {
-            const nperiod = getPeriod(i + periodEh);
-            let day: string[] = [];
-            nperiod.map((p) => {
-                day.push(p);
-            });
-            experiod = [...experiod, ...day];
-        }
+  const exportCsv = () => {
+    const params = new URLSearchParams({
+      mode, add: String(add), ship: shipFilter, crew: crewFilter,
+    });
+    window.location.href = `/api/admin/getPeriodCsv?${params}`;
+  };
 
-        const expme: { [key: string]: string }[] = [];
+  const weekLabel = currentWeek.length
+    ? `${currentWeek[0].slice(5)} — ${currentWeek[currentWeek.length - 1].slice(5)}`
+    : "—";
 
-        users.forEach((user) => {
-            // Crew filter - note crewEh is lowercase but we're comparing with uppercase
-            if (crewEh.toUpperCase() !== "ALL") {
-                const isUserDomestic = user.isDomestic;
-                if (
-                    (crewEh.toUpperCase() === "DOM" && !isUserDomestic) ||
-                    (crewEh.toUpperCase() === "FOR" && isUserDomestic)
-                ) {
-                    return;
-                }
-            }
+  return (
+    <main className="min-h-screen bg-secondary flex flex-col gap-4 p-6">
 
-            let pushme: { [key: string]: string } = {};
-            const name = user.uid.split("/")[1] + " " + user.uid.split("/")[0];
-            pushme["name"] = name;
-            pushme["crew"] = user.isDomestic ? "DOM" : "FOR";
+      {/* ── TOP BAR ──────────────────────────────────────────── */}
+      <div className="flex items-start gap-4">
 
-            let sum = 0;
-            let boatCount: Record<string, number> = {};
-            experiod.forEach((day) => {
-                // Pre-filter inc array once for this user and day
-                const filteredInc = inc.filter((e) => {
-                    if (!e.ship) return;
-                    if (shipEh.toLowerCase() === "all") return true;
-                    return e.ship.toUpperCase() === shipEh.toUpperCase();
-                });
+        {/* Island 1 — filters, stacked vertically */}
+        <div className="bg-tdi-blue shadow flex flex-col px-4 py-3 gap-3 w-full">
 
-                const dayWork = filteredInc.find(
-                    (d) => d.username === user.username && d.day === day
-                );
+          {/* Vessel filter row */}
+          <div className="flex items-center gap-1">
+            <Ship size={14} className="text-secondary/50 flex-shrink-0 mr-2"/>
+            {VESSELS.map((v, i) => (
+              <span key={v} className="flex items-center">
+                                {i > 0 && <Divider/>}
+                <IslandBtn active={shipFilter === v} onClick={() => setShipFilter(v)}>
+                                    {v}
+                                </IslandBtn>
+                            </span>
+            ))}
+          </div>
 
-                const workerType = dayWork ? dayWork.type : "";
-                if (dayWork) boatCount[dayWork.ship] = boatCount[dayWork.ship] ? boatCount[dayWork.ship] + 1 : 1;
-                pushme[day] = workerType;
+          <HDivider/>
 
-                if (workerType !== "") sum += 1;
-            });
+          {/* Crew filter row */}
+          <div className="flex items-center gap-1">
+            <User size={14} className="text-secondary/50 flex-shrink-0 mr-2"/>
+            {CREW.map((c, i) => (
+              <span key={c} className="flex items-center">
+                                {i > 0 && <Divider/>}
+                <IslandBtn active={crewFilter === c} onClick={() => setCrewFilter(c)}>
+                                    {c}
+                                </IslandBtn>
+                            </span>
+            ))}
+          </div>
 
-            if (sum > 0) {
-                const mostBoat = Object.entries(boatCount).reduce((a, b) =>
-                    a[1] > b[1] ? a : b
-                )[0];
-                pushme['location'] = mostBoat;
-                expme.push(pushme);
-            }
-        });
+          <HDivider/>
 
-        if (!expme.length) {
-            console.log("no records to export");
-            return;
-        }
-
-        console.log(`Exporting ${expme.length} records`);
-        const csvConfig = mkConfig({
-            useKeysAsHeaders: true,
-            filename:
-                `${shipEh}_${period[0]}_TO_${period[6]}_${crewEh}`.toUpperCase(),
-        });
-        const csv = generateCsv(csvConfig)(expme);
-        download(csvConfig)(csv);
-    };
-    console.log()
-    return (
-        <main className="flex min-h-screen flex-col items-center">
-            <AdminNav/>
-            <div className={'h-5'}/>
-            <div className="flex flex-row-reverse flex-wrap justify-center gap-4 pb-[10px]">
-                <div>
-                    <div className="rounded-xl bg-primary text-secondary p-[10px] space-y-[5px]">
-                        <div className="inline-flex w-[245px] h-[50px] justify-between transition-all ease-in-out">
-                            <p className="leading-[50px] px-[10px] text-center">
-                                last
-                            </p>
-                            <button
-                                className="w-[50px] h-[50px] hover:text-primary hover:bg-secondary duration-300 ease-in-out transition-all rounded-xl"
-                                onClick={() => {
-                                    if (weeks > 1) setWeeks(weeks - 1);
-                                }}
-                            >
-                                {"-"}
-                            </button>
-                            <p className="leading-[50px] px-[10px] text-center">
-                                {weeks}
-                            </p>
-                            <button
-                                className="w-[50px] h-[50px] hover:text-primary hover:bg-secondary duration-300 ease-in-out transition-all rounded-xl"
-                                onClick={() => {
-                                    if (weeks < 100) setWeeks(weeks + 1);
-                                }}
-                            >
-                                {"+"}
-                            </button>
-                            <p className="leading-[50px] px-[10px] text-center">
-                                weeks
-                            </p>
-                        </div>
-                        <div/>
-
-                        <div/>
-                        <button
-                            className={`w-[245px] h-[50px] rounded-xl duration-300 ease-in-out transition-all ${
-                                refresh ? "" : "hover:text-primary hover:bg-secondary"
-                            }`}
-                            onClick={refresh ? () => {
-                            } : () => expcsv()}
-                        >
-                            {refresh ? "loading ..." : "export"}
-                        </button>
-                    </div>
-                </div>
-                {/* Remove the padding from this div */}
-                <div className=" space-y-[5px]">
-                    {/* filters bar */}
-                    <div
-                        className={`group rounded-xl bg-secondary hover:bg-primary text-primary hover:text-secondary transition-all ease-in-out duration-300 px-2 pt-2 pb-1 space-y-[10px]`}
-                        onClick={() => isOpen(!open)}
-                    >
-                        {/* first line */}
-                        <div className="flex h-auto items-center w-full gap-5 pr-5">
-                            <MoveDown
-                                className={`transform text-inherit transition-all ease-in-out duration-300 ${
-                                    open ? "-rotate-180" : "rotate-0"
-                                }`}
-                            />
-                            {/* Search component */}
-                            <div
-                                className="flex justify-center gap-[10px] group/search bg-secondary/0 hover:bg-secondary/100 text-inherit hover:text-primary transition-all ease-in-out duration-300 rounded-lg py-[10px] px-[10px]">
-                                <Search/>
-                                <div onClick={(e) => e.stopPropagation()}>
-                                    <input
-                                        className="text-inherit bg-inherit focus:outline-none peer"
-                                        type="text"
-                                        placeholder="search users..."
-                                        value={userFilter}
-                                        onChange={(e) => {
-                                            setUserFilter(e.target.value);
-                                        }}
-                                    />
-                                    <div
-                                        className={`rounded-md w-[0%] peer-focus:w-[100%] group-hover/search:w-[100%] h-[3px] bg-primary group-hover:bg/secondary group-hover/search:bg-primary transition-all ease-in-out duration-300 delay-100`}
-                                    />
-                                </div>
-                            </div>
-                            <p className="w-[255px] text-center select-none">
-                                from {period[0]} to {period[6]}
-                            </p>
-                            <div className="flex gap-5 w-[100px]">
-                                <Ship/>
-                                <p className="select-none">{shipEh}</p>
-                            </div>
-                            <div className="flex gap-5 w-[100px]">
-                                <Earth/>
-                                <p className="select-none">{crewEh}</p>
-                            </div>
-                        </div>
-                        <div
-                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                        <div
-                            className={`${
-                                open ? "max-h-[400px]" : "max-h-[0]"
-                            } overflow-hidden transition-all ease-in-out duration-300
-                            pr-5 flex flex-row-reverse gap-5
-                        `}
-                        >
-                            <div className="p-[10px] w-[100px] text-center gap-y-[10px]">
-                                {["ALL", "FOR", "DOM"].map((e: string) => (
-                                    <div
-                                        key={e}
-                                        className="h-[40px] group/item"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            setCrewEh(e);
-                                        }}
-                                    >
-                                        <p className="h-[38px] leading-[38px] select-none">
-                                            {e}
-                                        </p>
-                                        <div
-                                            className={`rounded-md ${
-                                                e == crewEh
-                                                    ? "w-100%"
-                                                    : "w-[0%] group-hover/item:w-[100%]"
-                                            } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="p-[10px] w-[100px] text-center gap-y-[10px]">
-                                {[
-                                    "ALL",
-                                    "BMCC",
-                                    "EMMA",
-                                    "PROT",
-                                    "GYRE",
-                                    "NAUT",
-                                    "TOOL",
-                                    "3RD",
-                                    "ADMN",
-                                ].map((e: string) => (
-                                    <div
-                                        key={e}
-                                        className="h-[40px] group/item"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                            setShipEh(e);
-                                        }}
-                                    >
-                                        <p className="h-[38px] leading-[38px] select-none">
-                                            {e}
-                                        </p>
-                                        <div
-                                            className={`rounded-md ${
-                                                e == shipEh
-                                                    ? "w-100%"
-                                                    : "w-[0%] group-hover/item:w-[100%]"
-                                            } h-[3px] bg-primary group-hover:bg-secondary transition-all ease-in-out duration-300 delay-100`}
-                                        />
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex gap-10 w-[255px] justify-center">
-                                <button
-                                    className="group/left flex items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-inherit bg-inherit hover:bg-secondary hover:text-primary"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        setPeriodEh(periodEh + 1);
-                                    }}
-                                >
-                                    <MoveLeft
-                                        size={24}
-                                        className="flex-shrink-0"
-                                    />
-                                    <p className="whitespace-nowrap opacity-0 group-hover/left:opacity-100 transition-all duration-300 ease-in-out text-inherit">
-                                        last week
-                                    </p>
-                                </button>
-
-                                <button
-                                    className="group/right flex flex-row-reverse items-center gap-1 transition-all duration-300 ease-in-out overflow-hidden max-w-[50px] hover:max-w-[150px] py-[10px] h-[44px] px-5 rounded-md text-inherit bg-inherit hover:bg-secondary hover:text-primary"
-                                    onClick={(event) => {
-                                        event.stopPropagation();
-                                        setPeriodEh(periodEh - 1);
-                                    }}
-                                >
-                                    <MoveRight
-                                        size={24}
-                                        className="flex-shrink-0"
-                                    />
-                                    <p className="whitespace-nowrap opacity-0 group-hover/right:opacity-100 transition-all duration-300 ease-in-out">
-                                        next week
-                                    </p>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="rounded-md w-[100%] h-[3px] bg-primary"/>
-                    <div className="flex w-[100%] flex-col items-center">
-                        <div className="inline-flex">
-                            <div className="inline-flex">
-                                <p className="w-[140px] text-center">name</p>
-                            </div>
-                            {period.map((e) => (
-                                <p key={e} className="w-[88px] text-center">
-                                    {e.slice(5, 10)}
-                                </p>
-                            ))}
-                        </div>
-                        <div className="h-[2px] w-[802px] bg-gray-500"/>
-                        <div className="flex-col pt-[5px] space-x-[5px] ">
-                            <div className="flex flex-col space-y-[5px]">
-                                {filteredData.map((user) => (
-                                    <div
-                                        key={user.username}
-                                        className="group px-[10px] flex flex-col text-primary bg-primary/0 hover:bg-primary/100 hover:text-secondary rounded-xl transition-all ease-in-out duration-300 overflow-y-hidden max-h-[50px] hover:max-h-[110px] space-y-[5px] hover:pb-[5px]"
-                                    >
-                                        <div className="flex">
-                                            <div className="inline-flex">
-                                                <div className="w-[140px] text-center">
-                                                    <div>
-                                                        {user.uid.split("/")[0]}
-                                                    </div>
-                                                    <div>
-                                                        {user.uid.split("/")[1]}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {period.map((date) => (
-                                                <p
-                                                    key={date}
-                                                    className="w-[88px] text-center leading-[50px]"
-                                                >
-                                                    {user.workerTypes[date] ||
-                                                        "-"}
-                                                </p>
-                                            ))}
-                                        </div>
-                                        <div
-                                            className="rounded-md w-[0%] group-hover:w-[100%] h-[3px] bg-secondary transition-all ease-in-out duration-300 delay-100"/>
-                                        <div className='flex gap-5 justify-center'>
-                                            <div className='flex gap-2'>
-                                                <Mail/>
-                                                <p>{user.email}</p>
-                                            </div>
-                                            <div className='flex gap-2'>
-                                                <Earth/>
-                                                <p>{user.isDomestic ? 'domestic' : 'foreign'}</p>
-                                            </div>
-                                            <div className='flex gap-2'>
-                                                <Calendar/>
-                                                <p>{user.lastConfirm}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+          {/* Search row */}
+          <div className="flex items-center gap-2 px-1 group/search w-full">
+            <Search size={14} className="text-secondary/50 flex-shrink-0"/>
+            <div className="w-full">
+              <input
+                type="text"
+                placeholder="user search..."
+                value={nameFilter}
+                onChange={(e) => setNameFilter(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-none w-full"
+              />
+              <div
+                className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
             </div>
-        </main>
-    );
-};
+          </div>
+        </div>
 
-export default Admin;
+        {/* Island 2 — mode + weeks + export, stacked vertically */}
+        <div className="bg-tdi-blue shadow flex flex-col px-4 py-3 gap-3 ml-auto w-160">
+
+          {/* DOM / INTL */}
+          <div className="flex items-center justify-between gap-1">
+            {(["domestic", "intl"] as const).map((m, i) => (
+              <span key={m} className="flex items-center">
+                                {i > 0 && <Divider/>}
+                <IslandBtn
+                  active={mode === m}
+                  onClick={() => {
+                    setMode(m);
+                    setAdd(0);
+                  }}
+                >
+                                    {m}
+                                </IslandBtn>
+                            </span>
+            ))}
+          </div>
+
+          <HDivider/>
+
+          {/* Weeks +/- */}
+          <div className="flex items-center justify-between px-1">
+                        <span className="text-secondary/40 text-xs uppercase tracking-widest font-semibold select-none">
+                            weeks
+                        </span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setAdd((a) => Math.max(0, a - 1))}
+                className="text-secondary/50 hover:text-secondary transition-colors duration-200 font-bold text-sm w-4 text-center"
+              >−
+              </button>
+              <span className="text-secondary text-xs font-semibold w-5 text-center select-none">
+                                {add + (mode === "domestic" ? 2 : 4)}
+                            </span>
+              <button
+                onClick={() => setAdd((a) => Math.min(50, a + 1))}
+                className="text-secondary/50 hover:text-secondary transition-colors duration-200 font-bold text-sm w-4 text-center"
+              >+
+              </button>
+            </div>
+          </div>
+
+          <HDivider/>
+
+          {/* Export button */}
+          <Button onClick={exportCsv} className="justify-center gap-2 w-full" noshadow={true}>
+            <div className={'flex items-center justify-between w-full'}>
+              <Download size={30}/>
+              CSV
+            </div>
+          </Button>
+        </div>
+      </div>
+
+      {/* ── SPREADSHEET PANEL ────────────────────────────────── */}
+      <div className="bg-tdi-blue shadow flex flex-col flex-1">
+
+        {/* Panel header — week nav lives here */}
+        <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-4">
+          <button
+            onClick={() => setWeekIndex((i) => Math.max(0, i - 1))}
+            disabled={weekIndex === 0}
+            className="text-secondary/40 hover:text-secondary disabled:opacity-20 transition-colors duration-200"
+          >
+            <ChevronLeft size={15}/>
+          </button>
+          <span className="text-secondary font-semibold uppercase tracking-tight text-sm min-w-[160px] text-center">
+                        {weekLabel}
+                    </span>
+          <button
+            onClick={() => setWeekIndex((i) => Math.min((payload?.weeks.length ?? 1) - 1, i + 1))}
+            disabled={weekIndex === (payload?.weeks.length ?? 1) - 1}
+            className="text-secondary/40 hover:text-secondary disabled:opacity-20 transition-colors duration-200"
+          >
+            <ChevronRight size={15}/>
+          </button>
+
+          <div className="ml-auto flex items-center gap-6">
+                        <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
+                            {filteredUsers.filter(u => currentWeek.some(d => u.days[d])).length} reported
+                        </span>
+            <span className="text-secondary/30 text-xs uppercase tracking-widest font-semibold">
+                            {filteredUsers.filter(u => !currentWeek.some(d => u.days[d])).length} pending
+                        </span>
+          </div>
+        </div>
+
+        {/* White inset table */}
+        <div className="bg-secondary shadow mx-4 my-4 overflow-auto">
+          {loading ? (
+            <div className="text-primary/30 text-xs uppercase tracking-widest font-semibold p-6">
+              loading...
+            </div>
+          ) : (
+            <table className="w-full border-collapse">
+              <thead>
+              <tr className="border-b border-primary/10">
+                <th
+                  className="text-left px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[180px]">Name
+                </th>
+                <th
+                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[50px]">Crew
+                </th>
+                {currentWeek.map((day, i) => (
+                  <th key={day} className="text-center px-1 py-2 w-[64px]">
+                    <div
+                      className="text-xs font-semibold uppercase tracking-widest text-primary/40">{DAYS_SHORT[i % 7]}</div>
+                    <div className="text-xs text-primary/25 font-medium">{day.slice(8)}</div>
+                  </th>
+                ))}
+                <th
+                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[40px]">Σ
+                </th>
+              </tr>
+              </thead>
+              <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan={4 + currentWeek.length}
+                      className="py-8 text-center text-xs uppercase tracking-widest text-primary/30 font-semibold">
+                    no results
+                  </td>
+                </tr>
+              ) : filteredUsers.map((user, idx) => {
+                const weekDaysWorked = currentWeek.filter((d) => user.days[d]).length;
+                const hasReported = weekDaysWorked > 0;
+                return (
+                  <tr
+                    key={user.email}
+                    className={`border-b border-primary/5 transition-colors duration-150 hover:bg-tdi-blue/5 ${
+                      idx % 2 === 0 ? "" : "bg-primary/[0.02]"
+                    }`}
+                  >
+                    <td className="px-4 py-2">
+                      <div
+                        className={`text-xs font-semibold uppercase tracking-tight ${hasReported ? "text-primary" : "text-primary/25"}`}>
+                        {user.lastName}, {user.firstName}
+                      </div>
+                      <div className="text-xs text-primary/25 tracking-tight">{user.email}</div>
+                    </td>
+                    <td className="px-3 py-2 text-center">
+                      {user.domesticId ? (
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary">
+                          {user.domesticId}
+                        </span>
+                      ) : (
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/40">
+                          INT
+                        </span>
+                      )}
+                    </td>
+                    {currentWeek.map((day) => {
+                      const ship = user.days[day];
+                      return (
+                        <td key={day} className="px-1 py-2 text-center">
+                          {ship ? (
+                            <span
+                              className="text-xs font-semibold uppercase tracking-tight text-tdi-blue bg-tdi-blue/10 px-1.5 py-0.5">
+                              {ship}
+                            </span>
+                          ) : (
+                            <span className="text-primary/15 text-xs">—</span>
+                          )}
+                        </td>
+                      );
+                    })}
+                    <td className="px-3 py-2 text-center">
+                      <span
+                        className={`text-xs font-semibold ${weekDaysWorked > 0 ? "text-primary" : "text-primary/20"}`}>
+                        {weekDaysWorked || "—"}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+              </tbody>
+            </table>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}

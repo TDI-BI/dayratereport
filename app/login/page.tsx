@@ -1,13 +1,14 @@
-import LoginForm from "@/components/loginForm";
-import { getSession } from "@/actions";
-import { redirect } from "next/navigation";
-const logpage = async () => {
-    const session = await getSession();
-    return (
-        <main className="flex min-h-screen flex-col items-center px-5">
-            {session.isLoggedIn ? redirect("/daysworked") : <LoginForm />}
-        </main>
-    );
+import LoginForm from './loginForm';
+import {getSession} from '@/actions';
+import {redirect} from 'next/navigation';
+import {FormWrapper} from "@/components/formwrapper";
+
+const LoginPage = async () => {
+  const session = await getSession();
+
+  return (<main className="flex justify-center px-5 bg-secondary">
+    <div className='flex justify-center'> {session.isLoggedIn ? redirect('/daysworked') : <LoginForm/>}</div>
+  </main>);
 };
 
-export default logpage;
+export default LoginPage;

@@ -86,7 +86,7 @@ describe('Admin Component', () => {
                     json: () => Promise.resolve({ resp: mockDays }),
                 });
             }
-            if (url.includes('/api/getusers')) {
+            if (url.includes('/api/getUsers')) {
                 return Promise.resolve({
                     json: () => Promise.resolve({ resp: mockUsers }),
                 });
@@ -115,7 +115,7 @@ describe('Admin Component', () => {
             expect(screen.getByText('MARINE')).toBeInTheDocument();
 
             // Verify API calls were made
-            expect(fetchBoth).toHaveBeenCalledWith('/api/getusers');
+            expect(fetchBoth).toHaveBeenCalledWith('/api/getUsers');
             expect(fetchBoth).toHaveBeenCalledWith('/api/admingetdays?prev=0&tot=1');
         });
     });
