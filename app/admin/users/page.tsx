@@ -1,7 +1,7 @@
 'use client';
 
-import {useState, useEffect} from 'react';
-import {Mail, Search, UserPlus} from 'lucide-react';
+import React, {useState, useEffect} from 'react';
+import {Download, Mail, Search, UserPlus} from 'lucide-react';
 import {Button} from "@/components/button";
 import {LoadOverlay} from "@/components/loadingOverlay";
 
@@ -380,6 +380,13 @@ export default function UserManagementPage() {
             </div>
           </div>
         </LoadOverlay>
+        <Button onClick={async () => await fetch('/api/admin/getUsersCsv?active=0')}
+                className="justify-center gap-2 w-full">
+          <div className={'flex items-center justify-center gap-5 w-full'}>
+            <Download size={30}/>
+            Export User CSV
+          </div>
+        </Button>
       </div>
     </main>
   );
