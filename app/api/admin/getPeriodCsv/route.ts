@@ -167,7 +167,7 @@ export const GET = async (request: NextRequest) => {
       ...rows.map((row) => row.map(escapeCsv).join(",")),
     ].join("\n");
 
-    const dateRange = `${allDays[0]}_TO_${allDays[allDays.length - 1]}`;
+    const dateRange = `${allDays[0]}_THRU_${allDays[allDays.length - 1]}`;
     const filename = `${mode.toUpperCase()}_${shipFilter}_${crewFilter}_${dateRange}.csv`.toUpperCase();
 
     return new Response(csvLines, {

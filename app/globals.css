@@ -5,17 +5,16 @@
 :root {
     --color-primary: 18, 18, 18;
     --color-secondary: 240, 240, 240;
-    --tdi-blue: 76, 68, 199; /*PLAY WITH THIS*/
+    --tdi-blue: 33, 28, 102; /*PLAY WITH THIS*/
 }
 
 .shadow {
-    box-shadow: 10px 10px 0px 0px rgba(0, 0, 0, 1);
 }
 
 
 body {
     color: rgb(var(--color-primary));
-    background: rgb(var(--color-secondary));
+    background: rgb(219, 219, 219);
     padding-bottom: 20px;
 
 }

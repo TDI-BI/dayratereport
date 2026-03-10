@@ -3,7 +3,7 @@ import {Suspense} from "react";
 
 const RegisterPage = async () => {
   return (
-    <main className="flex justify-center px-5 bg-secondary">
+    <main className="flex justify-center px-5">
       <Suspense fallback={<p>loading...</p>}>
         <RegistrationForm/>
       </Suspense>

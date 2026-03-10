@@ -7,7 +7,7 @@ import {fetchBoth} from "@/utils/fetchboth";
 import {getPeriod} from "@/utils/payperiod";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const VESSELS = ["NONE", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
+const VESSELS = ["NONE", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD", "ADMIN"];
 
 export default function Home() {
   const router = useRouter();
@@ -128,7 +128,7 @@ export default function Home() {
   const modalIndex = modalDay ? period.indexOf(modalDay) : -1;
 
   return (
-    <main className="flex justify-center px-5 bg-secondary min-h-screen">
+    <main className="flex justify-center px-5 min-h-screen">
       <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
         {/* Nav Buttons */}

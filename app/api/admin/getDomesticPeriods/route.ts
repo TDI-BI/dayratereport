@@ -41,14 +41,16 @@ export const GET = async (request: NextRequest) => {
     for (let pair = 0; pair < totalWeekPairs; pair++) {
       const week1 = getPeriod(pair * 2);
       const week2 = getPeriod(pair * 2 + 1);
+
       if (week1.includes(latestStart)) {
-        weeks.push(week1, week2);
-        allDays.push(...week1, ...week2);
+        weeks.unshift(week1, week2);
+        allDays.unshift(...week1, ...week2);
       } else {
-        weeks.push(week2, week1);
-        allDays.push(...week2, ...week1);
+        weeks.unshift(week2, week1);
+        allDays.unshift(...week2, ...week1);
       }
     }
+
 
     const [dayRows] = await connection.execute(
       `SELECT d.userEmail, d.day, d.ship, u.firstName, u.lastName

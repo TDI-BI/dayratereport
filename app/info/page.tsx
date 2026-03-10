@@ -109,7 +109,7 @@ const Profile = () => {
   const allDays = [...weekOne, ...weekTwo];
 
   return (
-    <main className="flex justify-center px-5 bg-secondary min-h-screen">
+    <main className="flex justify-center px-5 min-h-screen">
       <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
         {/* Account info card — header has name left, INFO right */}
