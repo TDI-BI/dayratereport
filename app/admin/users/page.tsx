@@ -70,8 +70,9 @@ export default function UserManagementPage() {
             <div className="flex items-center px-4 py-2 border-b border-primary/10">
               <div className="w-[180px] text-xs font-semibold uppercase tracking-widest text-primary">Name</div>
               <div className="flex-1 text-xs font-semibold uppercase tracking-widest text-primary">Email</div>
-              <div
-                className="w-[60px] text-center text-xs font-semibold uppercase tracking-widest text-primary">Type
+              <div className="w-[100px] text-center text-xs font-semibold uppercase tracking-widest text-primary">Type
+              </div>
+              <div className="w-[100px] text-center text-xs font-semibold uppercase tracking-widest text-primary">ID
               </div>
               <div
                 className="w-[60px] text-center text-xs font-semibold uppercase tracking-widest text-primary">Role
@@ -102,11 +103,15 @@ export default function UserManagementPage() {
 
                   <div className="flex-1 text-xs text-primary/40 tracking-tight truncate">{user.email}</div>
 
-                  <div className="w-[60px] text-center">
-                    <span className={`text-xs font-semibold uppercase tracking-tight ${
-                      user.id ? "text-tdi-blue" : "text-primary/40"
-                    }`}>
-                      {user.id}
+                  <div className="w-[100px] text-center">
+                    <span className={`text-xs font-semibold uppercase tracking-tight text-primary`}>
+                      {user.workType}
+                    </span>
+                  </div>
+
+                  <div className="w-[100px] text-center">
+                    <span className={`text-xs font-semibold uppercase tracking-tight text-primary`}>
+                      {user.id ?? "—"}
                     </span>
                   </div>
 

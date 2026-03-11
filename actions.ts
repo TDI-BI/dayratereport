@@ -78,10 +78,7 @@ export const mkAccount = async (
   const formUsername = formData.get('nusername') as string;
   const formPassword = formData.get('password1') as string;
   const formPasswordRepeat = formData.get('password2') as string;
-  const formWorkType = formData.get('worktype') as string;
   const formToken = formData.get('token') as string;
-
-  console.log(formWorkType);
 
   // Validation
   if (formPassword !== formPasswordRepeat) {
@@ -95,11 +92,6 @@ export const mkAccount = async (
     return {error: 'all fields required'};
   }
 
-  // Validate workType is one of the allowed values
-  if (!['marine', 'tech', 'admin'].includes(formWorkType)) {
-    return {error: 'select a work type'};
-  }
-
   if (formUsername.includes(' ')) {
     return {error: 'no spaces allowed'};
   }
@@ -109,7 +101,7 @@ export const mkAccount = async (
 
   // Query API with new schema fields
   const response = await fetchBoth(
-    `/api/account/create?username=${formUsername}&password=${hashword}&worktype=${formWorkType}&token=${formToken}`
+    `/api/account/create?username=${formUsername}&password=${hashword}&token=${formToken}`
   );
   const res = await response.json();
 

@@ -12,6 +12,5 @@ export interface UserRow {
   workType: string;
   username: string;
   id: string | null; // this should be id
-  crew: string;
-
+  isDomestic: boolean;
 }

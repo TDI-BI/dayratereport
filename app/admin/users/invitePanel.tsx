@@ -26,10 +26,12 @@ const InvitePanel = () => {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
-          upid: inviteUpid || null,
+          upid: inviteUpid,
           firstName: inviteFirst,
           lastName: inviteLast,
           email: inviteEmail,
+          type: inviteType,
+          crew: inviteCrew
         }),
       });
 

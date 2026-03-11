@@ -28,6 +28,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
           id: editState.id ?? null,
           isActive: editState.isActive,
           isAdmin: editState.isAdmin,
+          isDomestic: editState.isDomestic,
         }),
       });
 
@@ -87,9 +88,11 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                   {(["Domestic", "Foreign"] as const).map((t) => (
                     <span
                       key={t}
-                      onClick={() => setEditState((prev: any) => ({...prev, crew: t}))}
+                      onClick={() => setEditState((prev: any) => ({...prev, isDomestic: t === 'Domestic'}))}
                       className={`flex flex-grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
-                        editState.crew === t ? "border-primary" : "border-transparent hover:border-primary"
+                        (t === 'Domestic' && editState.isDomestic) || (t === 'Foreign' && !editState.isDomestic)
+                          ? "border-primary"
+                          : "border-transparent hover:border-primary"
                       }`}
                     >
                       {t}
@@ -121,7 +124,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                 <div className="flex justify-between items-center gap-4">
                       <span
                         className="text-xs text-primary/40 uppercase tracking-widest font-semibold whitespace-nowrap">
-                        {editState.crew === 'Domestic' ? 'Paycor' : 'tdi'} ID
+                        {editState.isDomestic ? 'Paycor' : 'tdi'} ID
                       </span>
                   <input
                     className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-none text-right w-full max-w-[200px] py-0.5 transition-colors"

@@ -20,7 +20,7 @@ export const POST = async (request: NextRequest) => {
       return NextResponse.json({success: false, error: "unauthorized"}, {status: 403});
     }
 
-    const {email, firstName, lastName, username, domesticId, isActive, isAdmin} = await request.json();
+    const {email, firstName, lastName, username, id, isDomestic, isActive, isAdmin} = await request.json();
 
     if (!email || !firstName || !lastName) {
       await connection.end();
@@ -39,21 +39,28 @@ export const POST = async (request: NextRequest) => {
       [firstName, lastName, username || null, isActive, isAdmin, email]
     );
 
-    // Handle isDomestic — upsert if domesticId provided, delete if cleared
-    if (domesticId) {
-      await connection.execute(
-        `INSERT INTO isDomestic (email, domesticId)
-         VALUES (?, ?) ON DUPLICATE KEY
-        UPDATE domesticId = ?`,
-        [email, domesticId, domesticId]
-      );
+    // Handle ID — enforce mutual exclusivity between isDomestic and isForeign
+    if (id) {
+      if (isDomestic) {
+        await connection.execute(`DELETE FROM isForeign WHERE email = ?`, [email]);
+        await connection.execute(
+          `INSERT INTO isDomestic (email, domesticId) VALUES (?, ?)
+           ON DUPLICATE KEY UPDATE domesticId = ?`,
+          [email, id, id]
+        );
+      } else {
+        await connection.execute(`DELETE FROM isDomestic WHERE email = ?`, [email]);
+        await connection.execute(
+          `INSERT INTO isForeign (email, fcId)
+           VALUES (?, ?) ON DUPLICATE KEY
+          UPDATE fcId = ?`,
+          [email, id, id]
+        );
+      }
     } else {
-      await connection.execute(
-        `DELETE
-         FROM isDomestic
-         WHERE email = ?`,
-        [email]
-      );
+      // ID cleared — remove from both tables
+      await connection.execute(`DELETE FROM isDomestic WHERE email = ?`, [email]);
+      await connection.execute(`DELETE FROM isForeign WHERE email = ?`, [email]);
     }
 
     await connection.end();

@@ -25,9 +25,11 @@ export const GET = async (request: NextRequest) => {
               u.isAdmin,
               u.isActive,
               u.workType,
-              id.domesticId
+              COALESCE(id.domesticId, f.fcId) AS id,
+              id.domesticId IS NOT NULL       AS isDomestic
        FROM users u
                 LEFT JOIN isDomestic id ON u.email = id.email
+                LEFT JOIN isForeign f ON u.email = f.email
        ORDER BY u.lastName, u.firstName`
     );
 
