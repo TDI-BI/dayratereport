@@ -102,7 +102,7 @@ export const GET = async (request: NextRequest) => {
 
     const crewWhere =
       crewFilter === "DOM" ? "AND id.domesticId IS NOT NULL" :
-        crewFilter === "FOR" ? "AND f.fcId IS NOT NULL" : "";
+        crewFilter === "FC" ? "AND f.fcId IS NOT NULL" : "";
 
     const [userRows] = await connection.execute(
       `SELECT u.email,
