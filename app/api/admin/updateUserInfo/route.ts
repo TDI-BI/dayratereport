@@ -34,8 +34,8 @@ export const POST = async (request: NextRequest) => {
            lastName  = ?,
            isActive  = ?,
            isAdmin   = ?,
-           workType  = ?,
-           WHERE email = ?`,
+           workType  = ?
+       WHERE email = ?`,
       [firstName, lastName, isActive, isAdmin, type, email]
     );
 
