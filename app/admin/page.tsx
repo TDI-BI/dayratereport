@@ -5,7 +5,7 @@ import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-re
 import {Button} from "@/components/button";
 
 const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "ADMIN", "3RD"];
-const CREW = ["ALL", "DOM", "FOR"];
+const CREW = ["ALL", "DOM", "FC"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
 
 interface UserRow {
@@ -102,7 +102,7 @@ export default function Admin() {
         if (!full.includes(nameFilter.toLowerCase())) return false;
       }
       if (crewFilter === "DOM" && !user.isDomestic) return false;
-      if (crewFilter === "FOR" && user.isDomestic) return false;
+      if (crewFilter === "FC" && user.isDomestic) return false;
       if (shipFilter !== "ALL") {
         const hasShip = currentWeek.some((day) => user.days[day] === shipFilter);
         if (!hasShip) return false;
