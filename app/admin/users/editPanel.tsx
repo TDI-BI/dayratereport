@@ -29,6 +29,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
           isActive: editState.isActive,
           isAdmin: editState.isAdmin,
           isDomestic: editState.isDomestic,
+          type: editState.workType
         }),
       });
 
