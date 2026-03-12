@@ -100,15 +100,20 @@ export const GET = async (request: NextRequest) => {
       allDays
     );
 
-    const crewJoin = `LEFT JOIN isDomestic id ON u.email = id.email`;
     const crewWhere =
-      crewFilter === "DOM" ? "AND id.email IS NOT NULL" :
-        crewFilter === "INT" ? "AND id.email IS NULL" : "";
+      crewFilter === "DOM" ? "AND id.domesticId IS NOT NULL" :
+        crewFilter === "FOR" ? "AND f.fcId IS NOT NULL" : "";
 
     const [userRows] = await connection.execute(
-      `SELECT u.email, u.firstName, u.lastName, u.workType, id.domesticId
+      `SELECT u.email,
+              u.firstName,
+              u.lastName,
+              u.workType,
+              COALESCE(id.domesticId, f.fcId) AS userId,
+              id.domesticId IS NOT NULL       AS isDomestic
        FROM users u
-           ${crewJoin}
+                LEFT JOIN isDomestic id ON u.email = id.email
+                LEFT JOIN isForeign f ON u.email = f.email
        WHERE u.isActive = 1 ${crewWhere}
        ORDER BY u.lastName, u.firstName`
     );
@@ -124,10 +129,11 @@ export const GET = async (request: NextRequest) => {
 
     // --- Build CSV ---
     const headers = [
-      "paycorId",
+      "id",
       "name",
       "crew",
-      "workType",   // was "vessel"
+      "boat",
+      "workType",
       ...allDays,
     ];
 
@@ -147,17 +153,19 @@ export const GET = async (request: NextRequest) => {
       const daysWorked = Object.values(userDays).filter(Boolean).length;
       if (!daysWorked) return;
 
-      const vessel = getMostWorkedVessel(
-        shipFilter === "ALL"
-          ? userDays
-          : Object.fromEntries(Object.entries(userDays).filter(([, v]) => v === shipFilter))
-      );
+      const relevantDays = shipFilter === "ALL"
+        ? userDays
+        : Object.fromEntries(Object.entries(userDays).filter(([, v]) => v === shipFilter));
+
+      const boat = getMostWorkedVessel(relevantDays);
+      const crew = Boolean(user.isDomestic) ? "Domestic Crew" : "Foreign Crew";
 
       rows.push([
-        user.domesticId ?? "",
+        user.userId ?? "",
         `${user.firstName} ${user.lastName}`,
-        user.domesticId ? "DOM" : "INT",
-        user.workType ?? "",   // was vessel
+        crew,
+        boat,
+        user.workType ?? "",
         ...allDays.map((day) => userDays[day]),
       ]);
     });

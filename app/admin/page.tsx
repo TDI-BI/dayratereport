@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-react";
 import {Button} from "@/components/button";
 
-const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
+const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "ADMIN", "3RD"];
 const CREW = ["ALL", "DOM", "FOR"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
 
@@ -12,7 +12,8 @@ interface UserRow {
   email: string;
   firstName: string;
   lastName: string;
-  domesticId?: string | null;
+  userId: string | null;
+  isDomestic: boolean;
   days: Record<string, string>;
 }
 
@@ -100,8 +101,8 @@ export default function Admin() {
         const full = `${user.firstName} ${user.lastName}`.toLowerCase();
         if (!full.includes(nameFilter.toLowerCase())) return false;
       }
-      if (crewFilter === "DOM" && !user.domesticId) return false;
-      if (crewFilter === "FC" && user.domesticId) return false;
+      if (crewFilter === "DOM" && !user.isDomestic) return false;
+      if (crewFilter === "FOR" && user.isDomestic) return false;
       if (shipFilter !== "ALL") {
         const hasShip = currentWeek.some((day) => user.days[day] === shipFilter);
         if (!hasShip) return false;
@@ -322,13 +323,15 @@ export default function Admin() {
                       <div className="text-xs text-primary/25 tracking-tight">{user.email}</div>
                     </td>
                     <td className="px-3 py-2 text-center">
-                      {user.domesticId ? (
-                        <span className="text-xs font-semibold uppercase tracking-tight text-primary">
-                          {user.domesticId}
+                      {user.userId ? (
+                        <span className={`text-xs font-semibold uppercase tracking-tight ${
+                          user.isDomestic ? "text-primary" : "text-tdi-blue"
+                        }`}>
+                          {user.userId}
                         </span>
                       ) : (
-                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/40">
-                          FC
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/20">
+                          —
                         </span>
                       )}
                     </td>

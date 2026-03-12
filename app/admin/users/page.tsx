@@ -135,7 +135,7 @@ export default function UserManagementPage() {
 
         <InvitePanel/>
 
-        <Button onClick={async () => await fetch('/api/admin/getUsersCsv?active=0')}
+        <Button onClick={() => window.location.href = '/api/admin/getUsersCsv?active=0'}
                 className="justify-center gap-2 w-full">
           <div className={'flex items-center justify-center gap-5 w-full'}>
             <Download size={30}/>

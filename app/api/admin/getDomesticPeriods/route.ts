@@ -62,9 +62,14 @@ export const GET = async (request: NextRequest) => {
     );
 
     const [userRows] = await connection.execute(
-      `SELECT u.email, u.firstName, u.lastName, id.domesticId
+      `SELECT u.email,
+              u.firstName,
+              u.lastName,
+              COALESCE(id.domesticId, f.fcId) AS userId,
+              id.domesticId IS NOT NULL       AS isDomestic
        FROM users u
                 LEFT JOIN isDomestic id ON u.email = id.email
+                LEFT JOIN isForeign f ON u.email = f.email
        WHERE u.isActive = 1
        ORDER BY u.lastName, u.firstName`
     );
@@ -86,7 +91,8 @@ export const GET = async (request: NextRequest) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
-        domesticId: user.domesticId ?? null,
+        userId: user.userId ?? null,
+        isDomestic: Boolean(user.isDomestic),
         days: userDays,
       };
     });

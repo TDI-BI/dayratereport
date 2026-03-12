@@ -41,9 +41,11 @@ export const GET = async (request: NextRequest) => {
               u.workType,
               u.isAdmin,
               u.isActive,
-              id.domesticId
+              COALESCE(id.domesticId, f.fcId) AS userId,
+              id.domesticId IS NOT NULL       AS isDomestic
        FROM users u
                 LEFT JOIN isDomestic id ON u.email = id.email
+                LEFT JOIN isForeign f ON u.email = f.email
            ${whereClause}
        ORDER BY u.lastName, u.firstName`
     );
@@ -58,7 +60,7 @@ export const GET = async (request: NextRequest) => {
       "workType",
       "isAdmin",
       "isActive",
-      "domesticId",
+      "id",
       "crew",
     ];
 
@@ -70,8 +72,8 @@ export const GET = async (request: NextRequest) => {
       user.workType ?? "",
       user.isAdmin ? "1" : "0",
       user.isActive ? "1" : "0",
-      user.domesticId ?? "",
-      user.domesticId ? "DOM" : "INT",
+      user.userId ?? "",
+      Boolean(user.isDomestic) ? "Domestic" : "Foreign",
     ]);
 
     const csvLines = [
