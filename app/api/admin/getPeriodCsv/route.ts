@@ -156,7 +156,7 @@ export const GET = async (request: NextRequest) => {
         : Object.fromEntries(Object.entries(userDays).filter(([, v]) => v === shipFilter));
 
       const boat = getMostWorkedVessel(relevantDays);
-      const crew = Boolean(user.isDomestic) ? "Domestic Crew" : "Foreign Crew";
+      const crew = Boolean(user.isDomestic) ? "DOM" : "FC";
       const total = Object.values(userDays).filter(Boolean).length;
       rows.push([
         user.userId ?? "",
