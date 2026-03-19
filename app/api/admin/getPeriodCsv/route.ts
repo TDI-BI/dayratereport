@@ -49,7 +49,7 @@ export const GET = async (request: NextRequest) => {
     }
 
     const {searchParams} = request.nextUrl;
-    const mode = searchParams.get("mode") ?? "domestic"; // "domestic" | "intl"
+    const mode = searchParams.get("mode") ?? "weeks"; // "domestic" | "intl"
     const add = Math.max(0, Number(searchParams.get("add") ?? 0));
     const shipFilter = searchParams.get("ship") ?? "ALL";
     const crewFilter = searchParams.get("crew") ?? "ALL"; // "ALL" | "DOM" | "INT"
@@ -57,7 +57,7 @@ export const GET = async (request: NextRequest) => {
     // --- Build date range ---
     let allDays: string[] = [];
 
-    if (mode === "domestic") {
+    if (mode === "weeks") {
       const [periodRows] = await connection.execute(
         "SELECT date FROM periodstarts ORDER BY id DESC LIMIT 1"
       );
@@ -70,12 +70,9 @@ export const GET = async (request: NextRequest) => {
       for (let pair = 0; pair < 1 + add; pair++) {
         const week1 = getPeriod(pair * 2);
         const week2 = getPeriod(pair * 2 + 1);
-        if (week1.includes(latestStart)) {
-          allDays.push(...week1, ...week2);
-        } else {
-          allDays.push(...week2, ...week1);
-        }
+        allDays.push(...week1, ...week2);
       }
+      allDays.sort();
     } else {
       const nowCST = new Date(new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}));
       const currentYear = nowCST.getFullYear();
