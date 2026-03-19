@@ -134,6 +134,7 @@ export const GET = async (request: NextRequest) => {
       "crew",
       "boat",
       "workType",
+      "total",      // <-- add this
       ...allDays,
     ];
 
@@ -159,13 +160,14 @@ export const GET = async (request: NextRequest) => {
 
       const boat = getMostWorkedVessel(relevantDays);
       const crew = Boolean(user.isDomestic) ? "Domestic Crew" : "Foreign Crew";
-
+      const total = Object.values(userDays).filter(Boolean).length;
       rows.push([
         user.userId ?? "",
         `${user.firstName} ${user.lastName}`,
         crew,
         boat,
         user.workType ?? "",
+        String(total),
         ...allDays.map((day) => userDays[day]),
       ]);
     });

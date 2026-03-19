@@ -63,22 +63,6 @@ export const POST = async (request: NextRequest) => {
       }
     }
 
-    // Check email uniqueness against pending invites
-    const [existingInvite] = await connection.execute(
-      `SELECT email
-       FROM invited_users
-       WHERE email = ?
-         AND expendedAt IS NULL`,
-      [email]
-    );
-    if ((existingInvite as any[]).length > 0) {
-      await connection.end();
-      return new Response(
-        JSON.stringify({error: "An invitation has already been sent to this email."}),
-        {status: 409}
-      );
-    }
-
     const token = crypto.randomBytes(32).toString('hex');
     const tokenExpiry = new Date();
     tokenExpiry.setDate(tokenExpiry.getDate() + 7);

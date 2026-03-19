@@ -30,7 +30,7 @@ export const login = async (
     return {error: 'username and password required'};
   }
 
-  // Query API - now using upid instead of uid
+  // Query API
   const response = await fetchBoth(
     `/api/account/login?username=${formUsername}`
   );
@@ -40,7 +40,6 @@ export const login = async (
   }
 
   const dbAcc = res.resp[0];
-
 
   // Check if account is active
   if (!dbAcc.isActive) {
@@ -56,12 +55,18 @@ export const login = async (
     return {error: 'authentication failed'};
   }
 
-  // Create minimal session with just upid
+  // Create session
   session.email = dbAcc.email;
   session.isLoggedIn = true;
   await session.save();
 
-  redirect('/');
+  console.log(dbAcc);
+
+  if (dbAcc.isAdmin) {
+    redirect('/admin');
+  } else {
+    redirect('/daysworked');
+  }
 };
 
 export const logout = async () => {

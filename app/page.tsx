@@ -1,14 +1,21 @@
-import { getSession } from "@/actions";
-import { redirect } from "next/navigation";
-//THIS PAGE JUST EXISTS TO REDIRECT US TO A DIFFERENT PAGE
-const home = async () => {
-    const session = await getSession();
+import {getSession} from "@/actions";
+import {redirect} from "next/navigation";
+import {cookies} from "next/headers";
+import {fetchBoth} from "@/utils/fetchboth";
 
-    return (
-        <main className="flex min-h-screen flex-col items-center">
-            {session.isLoggedIn ? redirect("/daysworked") : redirect("/login")}
-        </main>
-    );
+const home = async () => {
+  const session = await getSession();
+
+  const response = await fetchBoth(
+    `/api/account/whereto`,
+  );
+  const data = await response.json();
+
+  if (data.success) {
+    redirect(data.redirect);
+  } else {
+    redirect("/login");
+  }
 };
 
 export default home;
