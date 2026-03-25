@@ -130,8 +130,8 @@ export const GET = async (request: NextRequest) => {
       "name",
       "crew",
       "boat",
-      "workType",
-      "total",      // <-- add this
+      "department",
+      "days",      // <-- add this
       ...allDays,
     ];
 

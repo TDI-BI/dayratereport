@@ -4,7 +4,7 @@ import {useRouter} from "next/navigation";
 import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-react";
 import {Button} from "@/components/button";
 
-const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "ADMIN", "3RD"];
+const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
 const CREW = ["ALL", "DOM", "FC"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
 

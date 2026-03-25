@@ -6,7 +6,14 @@
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/users/editPanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/editPanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/users/invitePanel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/invitePanel.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/users/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/users/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/api/admin/getPeriodCsv/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/admin/getPeriodCsv/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/admin/getUsersCsv/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/admin/getUsersCsv/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/info/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/info/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -146,6 +153,7 @@
       <workItem from="1773955282950" duration="2011000" />
       <workItem from="1773958171759" duration="523000" />
       <workItem from="1773959029504" duration="16000" />
+      <workItem from="1774451952088" duration="854000" />
     </task>
     <servers />
   </component>

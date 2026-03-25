@@ -128,7 +128,7 @@ const Profile = () => {
             <span className="text-secondary text-xs font-semibold tracking-tight">{account.email || "—"}</span>
           </div>
           <div className="px-4 py-3 flex items-center justify-between">
-            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew Type</span>
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew</span>
             <span className="text-secondary text-xs font-semibold uppercase tracking-tight">
               {account.isDomestic !== undefined ? (account.isDomestic ? "Domestic" : "Foreign") : "—"}
             </span>

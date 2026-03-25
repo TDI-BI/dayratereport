@@ -7,7 +7,7 @@ import {fetchBoth} from "@/utils/fetchboth";
 import {getPeriod} from "@/utils/payperiod";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-const VESSELS = ["NONE", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD", "ADMIN"];
+const VESSELS = ["NONE", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
 
 export default function Home() {
   const router = useRouter();

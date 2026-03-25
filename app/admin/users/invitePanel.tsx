@@ -113,7 +113,7 @@ const InvitePanel = () => {
               {/*type picker*/}
               <div className="flex justify-between items-center gap-4">
                   <span className="text-xs text-primary/40 uppercase tracking-widest font-semibold whitespace-nowrap">
-                    Type
+                    Department
                   </span>
                 {(["Tech", "Marine"] as const).map((t) => (
                   <span

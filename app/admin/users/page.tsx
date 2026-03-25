@@ -70,7 +70,7 @@ export default function UserManagementPage() {
             <div className="flex items-center px-4 py-2 border-b border-primary/10">
               <div className="w-[180px] text-xs font-semibold uppercase tracking-widest text-primary">Name</div>
               <div className="flex-1 text-xs font-semibold uppercase tracking-widest text-primary">Email</div>
-              <div className="w-[100px] text-center text-xs font-semibold uppercase tracking-widest text-primary">Type
+              <div className="w-[100px] text-center text-xs font-semibold uppercase tracking-widest text-primary">Department
               </div>
               <div className="w-[100px] text-center text-xs font-semibold uppercase tracking-widest text-primary">ID
               </div>

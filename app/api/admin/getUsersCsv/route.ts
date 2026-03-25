@@ -57,7 +57,7 @@ export const GET = async (request: NextRequest) => {
       "firstName",
       "lastName",
       "username",
-      "workType",
+      "Department",
       "isAdmin",
       "isActive",
       "id",
