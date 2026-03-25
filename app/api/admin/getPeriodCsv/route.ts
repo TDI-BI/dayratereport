@@ -98,8 +98,7 @@ export const GET = async (request: NextRequest) => {
     );
 
     const crewWhere =
-      crewFilter === "DOM" ? "AND id.domesticId IS NOT NULL" :
-        crewFilter === "FC" ? "AND f.fcId IS NOT NULL" : "";
+      crewFilter === "DOM" ? "AND id.domesticId IS NOT NULL" : crewFilter === "FC" ? "AND id.domesticId IS NULL" : "";
 
     const [userRows] = await connection.execute(
       `SELECT u.email,
