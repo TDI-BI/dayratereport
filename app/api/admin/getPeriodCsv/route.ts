@@ -130,7 +130,7 @@ export const GET = async (request: NextRequest) => {
       "name",
       "crew",
       "boat",
-      "department",
+      "dept",
       "days",      // <-- add this
       ...allDays,
     ];
