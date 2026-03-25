@@ -109,7 +109,7 @@ const Profile = () => {
   const allDays = [...weekOne, ...weekTwo];
 
   return (
-    <main className="flex justify-center px-5 bg-secondary min-h-screen">
+    <main className="flex justify-center px-5 min-h-screen">
       <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
         {/* Account info card — header has name left, INFO right */}
@@ -128,7 +128,7 @@ const Profile = () => {
             <span className="text-secondary text-xs font-semibold tracking-tight">{account.email || "—"}</span>
           </div>
           <div className="px-4 py-3 flex items-center justify-between">
-            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew Type</span>
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">Crew</span>
             <span className="text-secondary text-xs font-semibold uppercase tracking-tight">
               {account.isDomestic !== undefined ? (account.isDomestic ? "Domestic" : "Foreign") : "—"}
             </span>

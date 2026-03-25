@@ -5,14 +5,15 @@ import {ChevronLeft, ChevronRight, Search, Download, Ship, User} from "lucide-re
 import {Button} from "@/components/button";
 
 const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
-const CREW = ["ALL", "DOM", "FOR"];
+const CREW = ["ALL", "DOM", "FC"];
 const DAYS_SHORT = ["S", "M", "T", "W", "T", "F", "S",];
 
 interface UserRow {
   email: string;
   firstName: string;
   lastName: string;
-  domesticId?: string | null;
+  userId: string | null;
+  isDomestic: boolean;
   days: Record<string, string>;
 }
 
@@ -55,7 +56,7 @@ const HDivider = () => (
 
 export default function Admin() {
   const router = useRouter();
-  const [mode, setMode] = useState<"domestic" | "intl">("domestic");
+  const [mode, setMode] = useState<"weeks" | "months">("weeks");
   const [add, setAdd] = useState(0);
   const [payload, setPayload] = useState<Payload | null>(null);
   const [weekIndex, setWeekIndex] = useState(0);
@@ -70,7 +71,7 @@ export default function Admin() {
   useEffect(() => {
     async function load() {
       setLoading(true);
-      const route = mode === "domestic"
+      const route = mode === "weeks"
         ? `/api/admin/getDomesticPeriods?add=${add}`
         : `/api/admin/getIntlPeriods?add=${add}`;
 
@@ -100,8 +101,8 @@ export default function Admin() {
         const full = `${user.firstName} ${user.lastName}`.toLowerCase();
         if (!full.includes(nameFilter.toLowerCase())) return false;
       }
-      if (crewFilter === "DOM" && !user.domesticId) return false;
-      if (crewFilter === "INT" && user.domesticId) return false;
+      if (crewFilter === "DOM" && !user.isDomestic) return false;
+      if (crewFilter === "FC" && user.isDomestic) return false;
       if (shipFilter !== "ALL") {
         const hasShip = currentWeek.some((day) => user.days[day] === shipFilter);
         if (!hasShip) return false;
@@ -122,7 +123,7 @@ export default function Admin() {
     : "—";
 
   return (
-    <main className="min-h-screen bg-secondary flex flex-col gap-4 p-6">
+    <main className="min-h-screen flex flex-col gap-4 p-6">
 
       {/* ── TOP BAR ──────────────────────────────────────────── */}
       <div className="flex items-start gap-4">
@@ -181,11 +182,11 @@ export default function Admin() {
         {/* Island 2 — mode + weeks + export, stacked vertically */}
         <div className="bg-tdi-blue shadow flex flex-col px-4 py-3 gap-3 ml-auto w-160">
 
-          {/* DOM / INTL */}
+          {/* DOM / FC */}
           <div className="flex items-center justify-between gap-1">
-            {(["domestic", "intl"] as const).map((m, i) => (
+            {(["weeks", "months"] as const).map((m, i) => (
               <span key={m} className="flex items-center">
-                                {i > 0 && <Divider/>}
+                {i > 0 && <Divider/>}
                 <IslandBtn
                   active={mode === m}
                   onClick={() => {
@@ -193,9 +194,9 @@ export default function Admin() {
                     setAdd(0);
                   }}
                 >
-                                    {m}
-                                </IslandBtn>
-                            </span>
+                  {m}
+                </IslandBtn>
+              </span>
             ))}
           </div>
 
@@ -204,7 +205,7 @@ export default function Admin() {
           {/* Weeks +/- */}
           <div className="flex items-center justify-between px-1">
                         <span className="text-secondary/40 text-xs uppercase tracking-widest font-semibold select-none">
-                            weeks
+                            periods
                         </span>
             <div className="flex items-center gap-3">
               <button
@@ -213,7 +214,7 @@ export default function Admin() {
               >−
               </button>
               <span className="text-secondary text-xs font-semibold w-5 text-center select-none">
-                                {add + (mode === "domestic" ? 2 : 4)}
+                                {add + 1}
                             </span>
               <button
                 onClick={() => setAdd((a) => Math.min(50, a + 1))}
@@ -248,8 +249,8 @@ export default function Admin() {
             <ChevronLeft size={15}/>
           </button>
           <span className="text-secondary font-semibold uppercase tracking-tight text-sm min-w-[160px] text-center">
-                        {weekLabel}
-                    </span>
+            {weekLabel}
+          </span>
           <button
             onClick={() => setWeekIndex((i) => Math.min((payload?.weeks.length ?? 1) - 1, i + 1))}
             disabled={weekIndex === (payload?.weeks.length ?? 1) - 1}
@@ -259,12 +260,12 @@ export default function Admin() {
           </button>
 
           <div className="ml-auto flex items-center gap-6">
-                        <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
-                            {filteredUsers.filter(u => currentWeek.some(d => u.days[d])).length} reported
-                        </span>
+            <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
+              {filteredUsers.filter(u => currentWeek.some(d => u.days[d])).length} reported
+            </span>
             <span className="text-secondary/30 text-xs uppercase tracking-widest font-semibold">
-                            {filteredUsers.filter(u => !currentWeek.some(d => u.days[d])).length} pending
-                        </span>
+              {filteredUsers.filter(u => !currentWeek.some(d => u.days[d])).length} pending
+            </span>
           </div>
         </div>
 
@@ -279,20 +280,20 @@ export default function Admin() {
               <thead>
               <tr className="border-b border-primary/10">
                 <th
-                  className="text-left px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[180px]">Name
+                  className="text-left px-4 py-2 text-xs font-semibold uppercase tracking-widest text-primary w-[180px]">Name
                 </th>
                 <th
-                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[50px]">ID
+                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary w-[50px]">ID
                 </th>
                 {currentWeek.map((day, i) => (
                   <th key={day} className="text-center px-1 py-2 w-[64px]">
                     <div
-                      className="text-xs font-semibold uppercase tracking-widest text-primary/40">{DAYS_SHORT[i % 7]}</div>
-                    <div className="text-xs text-primary/25 font-medium">{day.slice(8)}</div>
+                      className="text-xs font-semibold uppercase tracking-widest text-primary">{DAYS_SHORT[i % 7]}</div>
+                    <div className="text-xs text-primary font-medium">{day.slice(8)}</div>
                   </th>
                 ))}
                 <th
-                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary/40 w-[40px]">Σ
+                  className="text-center px-3 py-2 text-xs font-semibold uppercase tracking-widest text-primary w-[40px]">Σ
                 </th>
               </tr>
               </thead>
@@ -322,13 +323,15 @@ export default function Admin() {
                       <div className="text-xs text-primary/25 tracking-tight">{user.email}</div>
                     </td>
                     <td className="px-3 py-2 text-center">
-                      {user.domesticId ? (
-                        <span className="text-xs font-semibold uppercase tracking-tight text-primary">
-                          {user.domesticId}
+                      {user.userId ? (
+                        <span className={`text-xs font-semibold uppercase tracking-tight ${
+                          user.isDomestic ? "text-primary" : "text-tdi-blue"
+                        }`}>
+                          {user.userId}
                         </span>
                       ) : (
-                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/40">
-                          INT
+                        <span className="text-xs font-semibold uppercase tracking-tight text-primary/20">
+                          —
                         </span>
                       )}
                     </td>

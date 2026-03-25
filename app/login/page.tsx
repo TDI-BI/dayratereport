@@ -6,7 +6,7 @@ import {FormWrapper} from "@/components/formwrapper";
 const LoginPage = async () => {
   const session = await getSession();
 
-  return (<main className="flex justify-center px-5 bg-secondary">
+  return (<main className="flex justify-center px-5 ">
     <div className='flex justify-center'> {session.isLoggedIn ? redirect('/daysworked') : <LoginForm/>}</div>
   </main>);
 };

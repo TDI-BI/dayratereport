@@ -30,7 +30,7 @@ export const login = async (
     return {error: 'username and password required'};
   }
 
-  // Query API - now using upid instead of uid
+  // Query API
   const response = await fetchBoth(
     `/api/account/login?username=${formUsername}`
   );
@@ -40,7 +40,6 @@ export const login = async (
   }
 
   const dbAcc = res.resp[0];
-
 
   // Check if account is active
   if (!dbAcc.isActive) {
@@ -56,12 +55,18 @@ export const login = async (
     return {error: 'authentication failed'};
   }
 
-  // Create minimal session with just upid
+  // Create session
   session.email = dbAcc.email;
   session.isLoggedIn = true;
   await session.save();
 
-  redirect('/');
+  console.log(dbAcc);
+
+  if (dbAcc.isAdmin) {
+    redirect('/admin');
+  } else {
+    redirect('/daysworked');
+  }
 };
 
 export const logout = async () => {
@@ -78,10 +83,7 @@ export const mkAccount = async (
   const formUsername = formData.get('nusername') as string;
   const formPassword = formData.get('password1') as string;
   const formPasswordRepeat = formData.get('password2') as string;
-  const formWorkType = formData.get('worktype') as string;
   const formToken = formData.get('token') as string;
-
-  console.log(formWorkType);
 
   // Validation
   if (formPassword !== formPasswordRepeat) {
@@ -95,11 +97,6 @@ export const mkAccount = async (
     return {error: 'all fields required'};
   }
 
-  // Validate workType is one of the allowed values
-  if (!['marine', 'tech', 'admin'].includes(formWorkType)) {
-    return {error: 'select a work type'};
-  }
-
   if (formUsername.includes(' ')) {
     return {error: 'no spaces allowed'};
   }
@@ -109,7 +106,7 @@ export const mkAccount = async (
 
   // Query API with new schema fields
   const response = await fetchBoth(
-    `/api/account/create?username=${formUsername}&password=${hashword}&worktype=${formWorkType}&token=${formToken}`
+    `/api/account/create?username=${formUsername}&password=${hashword}&token=${formToken}`
   );
   const res = await response.json();
 

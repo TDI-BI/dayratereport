@@ -49,7 +49,7 @@ export const GET = async (request: NextRequest) => {
     }
 
     const {searchParams} = request.nextUrl;
-    const mode = searchParams.get("mode") ?? "domestic"; // "domestic" | "intl"
+    const mode = searchParams.get("mode") ?? "weeks"; // "domestic" | "intl"
     const add = Math.max(0, Number(searchParams.get("add") ?? 0));
     const shipFilter = searchParams.get("ship") ?? "ALL";
     const crewFilter = searchParams.get("crew") ?? "ALL"; // "ALL" | "DOM" | "INT"
@@ -57,7 +57,7 @@ export const GET = async (request: NextRequest) => {
     // --- Build date range ---
     let allDays: string[] = [];
 
-    if (mode === "domestic") {
+    if (mode === "weeks") {
       const [periodRows] = await connection.execute(
         "SELECT date FROM periodstarts ORDER BY id DESC LIMIT 1"
       );
@@ -70,12 +70,9 @@ export const GET = async (request: NextRequest) => {
       for (let pair = 0; pair < 1 + add; pair++) {
         const week1 = getPeriod(pair * 2);
         const week2 = getPeriod(pair * 2 + 1);
-        if (week1.includes(latestStart)) {
-          allDays.push(...week1, ...week2);
-        } else {
-          allDays.push(...week2, ...week1);
-        }
+        allDays.push(...week1, ...week2);
       }
+      allDays.sort();
     } else {
       const nowCST = new Date(new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}));
       const currentYear = nowCST.getFullYear();
@@ -100,15 +97,20 @@ export const GET = async (request: NextRequest) => {
       allDays
     );
 
-    const crewJoin = `LEFT JOIN isDomestic id ON u.email = id.email`;
     const crewWhere =
-      crewFilter === "DOM" ? "AND id.email IS NOT NULL" :
-        crewFilter === "INT" ? "AND id.email IS NULL" : "";
+      crewFilter === "DOM" ? "AND id.domesticId IS NOT NULL" :
+        crewFilter === "FC" ? "AND f.fcId IS NOT NULL" : "";
 
     const [userRows] = await connection.execute(
-      `SELECT u.email, u.firstName, u.lastName, u.workType, id.domesticId
+      `SELECT u.email,
+              u.firstName,
+              u.lastName,
+              u.workType,
+              COALESCE(id.domesticId, f.fcId) AS userId,
+              id.domesticId IS NOT NULL       AS isDomestic
        FROM users u
-           ${crewJoin}
+                LEFT JOIN isDomestic id ON u.email = id.email
+                LEFT JOIN isForeign f ON u.email = f.email
        WHERE u.isActive = 1 ${crewWhere}
        ORDER BY u.lastName, u.firstName`
     );
@@ -124,10 +126,12 @@ export const GET = async (request: NextRequest) => {
 
     // --- Build CSV ---
     const headers = [
-      "paycorId",
+      "id",
       "name",
       "crew",
-      "workType",   // was "vessel"
+      "boat",
+      "department",
+      "days",      // <-- add this
       ...allDays,
     ];
 
@@ -147,17 +151,20 @@ export const GET = async (request: NextRequest) => {
       const daysWorked = Object.values(userDays).filter(Boolean).length;
       if (!daysWorked) return;
 
-      const vessel = getMostWorkedVessel(
-        shipFilter === "ALL"
-          ? userDays
-          : Object.fromEntries(Object.entries(userDays).filter(([, v]) => v === shipFilter))
-      );
+      const relevantDays = shipFilter === "ALL"
+        ? userDays
+        : Object.fromEntries(Object.entries(userDays).filter(([, v]) => v === shipFilter));
 
+      const boat = getMostWorkedVessel(relevantDays);
+      const crew = Boolean(user.isDomestic) ? "DOM" : "FC";
+      const total = Object.values(userDays).filter(Boolean).length;
       rows.push([
-        user.domesticId ?? "",
+        user.userId ?? "",
         `${user.firstName} ${user.lastName}`,
-        user.domesticId ? "DOM" : "INT",
-        user.workType ?? "",   // was vessel
+        crew,
+        boat,
+        user.workType ?? "",
+        String(total),
         ...allDays.map((day) => userDays[day]),
       ]);
     });
@@ -167,7 +174,7 @@ export const GET = async (request: NextRequest) => {
       ...rows.map((row) => row.map(escapeCsv).join(",")),
     ].join("\n");
 
-    const dateRange = `${allDays[0]}_TO_${allDays[allDays.length - 1]}`;
+    const dateRange = `${allDays[0]}_THRU_${allDays[allDays.length - 1]}`;
     const filename = `${mode.toUpperCase()}_${shipFilter}_${crewFilter}_${dateRange}.csv`.toUpperCase();
 
     return new Response(csvLines, {

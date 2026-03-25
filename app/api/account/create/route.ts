@@ -11,15 +11,10 @@ export const GET = async (request: NextRequest) => {
   const {searchParams} = request.nextUrl;
   const username = searchParams.get('username');
   const password = searchParams.get('password');
-  const workType = searchParams.get('worktype');
   const token = searchParams.get('token');
 
-  if (!username || !password || !workType || !token) {
+  if (!username || !password || !token) {
     return NextResponse.json({success: false, error: 'missing fields'}, {status: 400});
-  }
-
-  if (!['marine', 'tech', 'admin'].includes(workType)) {
-    return NextResponse.json({success: false, error: 'invalid work type'}, {status: 400});
   }
 
   const connection = await connectToDb();
@@ -65,15 +60,23 @@ export const GET = async (request: NextRequest) => {
     await connection.execute(
       `INSERT INTO users (username, password, firstName, lastName, email, workType, isAdmin, isActive)
        VALUES (?, ?, ?, ?, ?, ?, 0, 1)`,
-      [username, password, invite.firstName, invite.lastName, invite.email, workType]
+      [username, password, invite.firstName, invite.lastName, invite.email, invite.type]
     );
 
     if (invite.pcid) {
-      await connection.execute(
-        `INSERT INTO isDomestic (email, domesticId)
-         VALUES (?, ?)`,
-        [invite.email, invite.pcid]
-      );
+      if (invite.isDomestic) {
+        await connection.execute(
+          `INSERT INTO isDomestic (email, domesticId)
+           VALUES (?, ?)`,
+          [invite.email, invite.pcid]
+        );
+      } else {
+        await connection.execute(
+          `INSERT INTO isForeign (email, fcId)
+           VALUES (?, ?)`,
+          [invite.email, invite.pcid]
+        );
+      }
     }
 
     await connection.execute(

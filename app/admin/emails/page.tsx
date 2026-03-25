@@ -37,7 +37,7 @@ const ViewEmails = () => {
   }, [filter, page]);
 
   return (
-    <main className="min-h-screen bg-secondary flex gap-6 p-6">
+    <main className="min-h-screen flex gap-6 p-6">
 
       {/* ── LEFT: Email list ──────────────────────────────── */}
       <div className="flex flex-col gap-4 flex-1 min-w-0">

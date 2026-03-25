@@ -4,14 +4,16 @@ import {dispatchEmail} from "@/utils/dispatchEmail";
 import crypto from "crypto";
 
 export const POST = async (request: NextRequest) => {
-  const {upid, firstName, lastName, email} = await request.json();
+  const {upid, firstName, lastName, email, type, crew} = await request.json();
 
-  if (!firstName || !lastName || !email) {
+  if (!upid || !firstName || !lastName || !email || !type) {
     return new Response(
-      JSON.stringify({error: "firstName, lastName, and email are required."}),
+      JSON.stringify({error: "upid, firstName, lastName, email, and type are required."}),
       {status: 400}
     );
   }
+
+  const isDomestic = type === 'domestic';
 
   const connection = await connectToDb();
   try {
@@ -30,18 +32,32 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
-    // Check Paycor ID uniqueness if provided
-    if (upid) {
-      const [existingDomestic] = await connection.execute(
+    // Check ID uniqueness against the correct table
+    if (isDomestic) {
+      const [existing] = await connection.execute(
         `SELECT email
          FROM isDomestic
          WHERE domesticId = ?`,
         [upid]
       );
-      if ((existingDomestic as any[]).length > 0) {
+      if ((existing as any[]).length > 0) {
         await connection.end();
         return new Response(
-          JSON.stringify({error: "This Paycor ID is already assigned to another user."}),
+          JSON.stringify({error: "This Domestic ID is already assigned to another user."}),
+          {status: 409}
+        );
+      }
+    } else {
+      const [existing] = await connection.execute(
+        `SELECT email
+         FROM isForeign
+         WHERE fcId = ?`,
+        [upid]
+      );
+      if ((existing as any[]).length > 0) {
+        await connection.end();
+        return new Response(
+          JSON.stringify({error: "This Foreign Contractor ID is already assigned to another user."}),
           {status: 409}
         );
       }
@@ -52,9 +68,9 @@ export const POST = async (request: NextRequest) => {
     tokenExpiry.setDate(tokenExpiry.getDate() + 7);
 
     await connection.execute(
-      `INSERT INTO invited_users (pcid, firstName, lastName, email, token, tokenExpiry)
-       VALUES (?, ?, ?, ?, ?, ?)`,
-      [upid ?? null, firstName, lastName, email, token, tokenExpiry]
+      `INSERT INTO invited_users (pcid, firstName, lastName, email, token, tokenExpiry, isDomestic, type)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [upid, firstName, lastName, email, token, tokenExpiry, isDomestic, type]
     );
 
     const baseUrl = `${process.env.NEXT_PUBLIC_TYPE}${process.env.NEXT_PUBLIC_URL}`;
