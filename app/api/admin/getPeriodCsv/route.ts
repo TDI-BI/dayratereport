@@ -3,16 +3,7 @@ import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
 import {getPeriod} from "@/utils/payperiod";
-
-const getDaysInMonth = (year: number, month: number): string[] => {
-  const days: string[] = [];
-  const date = new Date(year, month - 1, 1);
-  while (date.getMonth() === month - 1) {
-    days.push(date.toISOString().substring(0, 10));
-    date.setDate(date.getDate() + 1);
-  }
-  return days;
-};
+import {getMask} from "@/utils/getMask";
 
 const getMostWorkedVessel = (days: Record<string, string>): string => {
   const counts: Record<string, number> = {};
@@ -50,44 +41,12 @@ export const GET = async (request: NextRequest) => {
 
     const {searchParams} = request.nextUrl;
     const mode = searchParams.get("mode") ?? "weeks"; // "domestic" | "intl"
-    const add = Math.max(0, Number(searchParams.get("add") ?? 0));
     const shipFilter = searchParams.get("ship") ?? "ALL";
     const crewFilter = searchParams.get("crew") ?? "ALL"; // "ALL" | "DOM" | "INT"
+    const ind = Math.max(1, Number(searchParams.get("ind") ?? 1));
+    const amount = Math.max(1, Number(searchParams.get("amount") ?? 1));
+    const allDays = (await getMask(ind, amount, mode === "weeks"));
 
-    // --- Build date range ---
-    let allDays: string[] = [];
-
-    if (mode === "weeks") {
-      const [periodRows] = await connection.execute(
-        "SELECT date FROM periodstarts ORDER BY id DESC LIMIT 1"
-      );
-      const latestStart = (periodRows as any[])[0]?.date as string;
-      if (!latestStart) {
-        await connection.end();
-        return NextResponse.json({success: false, error: "no period found"}, {status: 500});
-      }
-
-      for (let pair = 0; pair < 1 + add; pair++) {
-        const week1 = getPeriod(pair * 2);
-        const week2 = getPeriod(pair * 2 + 1);
-        allDays.push(...week1, ...week2);
-      }
-      allDays.sort();
-    } else {
-      const nowCST = new Date(new Date().toLocaleDateString("en-US", {timeZone: "America/Chicago"}));
-      const currentYear = nowCST.getFullYear();
-      const currentMonth = nowCST.getMonth() + 1;
-
-      for (let i = add; i >= 0; i--) {
-        let month = currentMonth - i;
-        let year = currentYear;
-        while (month <= 0) {
-          month += 12;
-          year -= 1;
-        }
-        allDays.push(...getDaysInMonth(year, month));
-      }
-    }
 
     // --- Fetch days + users ---
     const [dayRows] = await connection.execute(
