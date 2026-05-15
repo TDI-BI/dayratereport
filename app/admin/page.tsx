@@ -3,6 +3,7 @@ import React, {useState, useEffect, useMemo} from "react";
 import {useRouter} from "next/navigation";
 import {ChevronLeft, ChevronRight, Search, Download, Ship, User, Calendar1} from "lucide-react";
 import {Button} from "@/components/button";
+import DayCell from "@/app/admin/DayCell";
 
 const VESSELS = ["ALL", "BMCC", "EMMA", "PROT", "GYRE", "NAUT", "3RD"];
 const CREW = ["ALL", "DOM", "FC"];
@@ -95,6 +96,27 @@ export default function Admin() {
     getMask().catch(console.error);
   }, [maskInd, mode, add])
 
+  const updateDay = async (email: string, day: string, vessel: string): Promise<void> => {
+    const params = new URLSearchParams({email, day, ship: vessel});
+    const res = await fetch(`/api/admin/setDay?${params.toString()}`);
+
+    if (!res.ok) {
+      throw new Error(`setDay failed: ${res.status}`);
+    }
+
+    setPayload((prev) => {
+      if (!prev) return prev;
+      return {
+        ...prev,
+        users: prev.users.map((u) =>
+          u.email === email
+            ? {...u, days: {...u.days, [day]: vessel}}
+            : u
+        ),
+      };
+    });
+  };
+
 
   const filteredUsers = useMemo(() => {
     if (!payload) return [];
@@ -114,9 +136,6 @@ export default function Admin() {
   }, [payload, nameFilter, crewFilter, shipFilter]);
 
   const exportCsv = () => {
-    const params = new URLSearchParams({
-      mode, add: String(add), ship: shipFilter, crew: crewFilter,
-    });
     window.location.href = `/api/admin/getPeriodCsv?ship=${shipFilter}&crew=${crewFilter}&amount=${add}&ind=${maskInd}&mode=${mode}`;
   };
 
@@ -281,7 +300,7 @@ export default function Admin() {
         </div>
 
         {/* White inset table */}
-        <div className="bg-secondary shadow mx-4 my-4 overflow-auto">
+        <div className="bg-secondary shadow mx-4 my-4">
           {loading ? (
             <div className="text-primary/30 text-xs uppercase tracking-widest font-semibold p-6">
               loading...
@@ -351,16 +370,13 @@ export default function Admin() {
                     {week.map((day) => {
                       const ship = user.days[day];
                       return (
-                        <td key={day} className="px-1 py-2 text-center">
-                          {ship ? (
-                            <span
-                              className="text-xs font-semibold uppercase tracking-tight text-tdi-blue bg-tdi-blue/10 px-1.5 py-0.5">
-                              {ship}
-                            </span>
-                          ) : (
-                            <span className="text-primary/15 text-xs">—</span>
-                          )}
-                        </td>
+                        <DayCell
+                          key={day}
+                          ship={ship}
+                          day={day}
+                          vessels={VESSELS}
+                          onUpdate={(d, v) => updateDay(user.email, d, v)}
+                        />
                       );
                     })}
                     <td className="px-3 py-2 text-center">
@@ -377,6 +393,8 @@ export default function Admin() {
           )}
         </div>
       </div>
+      <div className={'h-[170px]'}></div>
+      {/*this is a spacer*/}
     </main>
   );
 }
