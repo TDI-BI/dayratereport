@@ -40,7 +40,7 @@ next-env.d.ts
 /scripts/eow.txt
 /scripts/log.txt
 
-/.idea/*
+.idea/
 
 #claude
-/.claude
+.claude/
