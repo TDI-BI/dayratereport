@@ -1,7 +1,6 @@
 "use client";
 import {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
-import {fetchBoth} from "@/utils/fetchboth";
 import {Button} from "@/components/button";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -32,7 +31,7 @@ const Profile = () => {
 
   useEffect(() => {
     async function load() {
-      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=firstName,lastName,email,isDomestic");
+      const authRes = await fetch("/api/account/myAccountInfo?fields=firstName,lastName,email,isDomestic");
       if (authRes.status === 401) {
         router.push("/");
         return;
@@ -43,11 +42,11 @@ const Profile = () => {
       if (authData.resp?.isDomestic) {
         // Domestic: fetch both weeks of the biweekly period
         const [domRes, p1Res, p2Res, w1Res, w2Res] = await Promise.all([
-          fetchBoth("/api/period/getLatestDomesticPeriod"),
-          fetchBoth("/api/days/verifyDate?prev=0"),
-          fetchBoth("/api/days/verifyDate?prev=1"),
-          fetchBoth("/api/days/getWorkWeek?prev=0"),
-          fetchBoth("/api/days/getWorkWeek?prev=1"),
+          fetch("/api/period/getLatestDomesticPeriod"),
+          fetch("/api/days/verifyDate?prev=0"),
+          fetch("/api/days/verifyDate?prev=1"),
+          fetch("/api/days/getWorkWeek?prev=0"),
+          fetch("/api/days/getWorkWeek?prev=1"),
         ]);
 
         const domData = await domRes.json();
@@ -83,8 +82,8 @@ const Profile = () => {
       } else {
         // Foreign: just current week
         const [periodRes, weekRes] = await Promise.all([
-          fetchBoth("/api/days/verifyDate?prev=0"),
-          fetchBoth("/api/days/getWorkWeek?prev=0"),
+          fetch("/api/days/verifyDate?prev=0"),
+          fetch("/api/days/getWorkWeek?prev=0"),
         ]);
         const periodData = await periodRes.json();
         setWeekOne(periodData.resp ?? []);
@@ -105,8 +104,6 @@ const Profile = () => {
 
     load();
   }, [router]);
-
-  const allDays = [...weekOne, ...weekTwo];
 
   return (
     <main className="flex justify-center px-5 min-h-screen">

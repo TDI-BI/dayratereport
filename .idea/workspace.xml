@@ -5,10 +5,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b1218624-9d97-4185-b6c0-2218fd5d22ce" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/app/admin/DayCell.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api/admin/setDay/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/admin/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/app/admin/page.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/app/daysworked/page.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/app/daysworked/review/page.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/app/daysworked/review/thanks/page.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/app/info/page.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/components/navbar.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/components/reportDropDown.test.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/__test__/utils/fetchboth.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/admin/emails/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/admin/emails/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/account/recover/route.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/api/account/recover/route.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/admin/getDomesticPeriods/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/days/getday/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/hello/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/insert/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/uploadships/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/uploadships/shipjson.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/uploadusers/route.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api/uploadusers/usersjson.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/daysworked/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/daysworked/review/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/review/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/daysworked/review/thanks/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/daysworked/review/thanks/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/info/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/info/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/old-favicon.ico" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/mkaccountForm.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/navbarclient.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/recoverForm.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/reportDropDown.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/resetForm.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/fetchboth.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/getPort.tsx" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -154,6 +184,7 @@
       <workItem from="1777654967864" duration="215000" />
       <workItem from="1778521637316" duration="17371000" />
       <workItem from="1778776998582" duration="4867000" />
+      <workItem from="1779125777457" duration="1156000" />
     </task>
     <servers />
   </component>

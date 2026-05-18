@@ -1,7 +1,6 @@
 "use client";
 import {useRouter} from "next/navigation";
 import {useEffect, useState} from "react";
-import {fetchBoth} from "@/utils/fetchboth";
 import {Button} from "@/components/button";
 
 const Thanks = () => {
@@ -10,7 +9,7 @@ const Thanks = () => {
 
   useEffect(() => {
     async function load() {
-      const res = await fetchBoth("/api/account/myAccountInfo?fields=firstName,lastName");
+      const res = await fetch("/api/account/myAccountInfo?fields=firstName,lastName");
       if (res.status === 401) {
         router.push("/");
         return;

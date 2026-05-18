@@ -2,7 +2,6 @@
 import {JSX, Suspense, useEffect, useState} from "react";
 import {useSearchParams, useRouter} from "next/navigation";
 import {getPeriod} from "@/utils/payperiod";
-import {fetchBoth} from "@/utils/fetchboth";
 import {Button} from "@/components/button";
 import {Circle, CircleCheckBig} from "lucide-react";
 
@@ -43,7 +42,7 @@ const Content = ({prev}: { prev: number }) => {
 
   useEffect(() => {
     async function load() {
-      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=upid,firstName,lastName,isDomestic");
+      const authRes = await fetch("/api/account/myAccountInfo?fields=upid,firstName,lastName,isDomestic");
       if (authRes.status === 401) {
         router.push("/");
         return;
@@ -54,8 +53,8 @@ const Content = ({prev}: { prev: number }) => {
       setCrewType(isDomestic ? "domestic" : "foreign");
 
       const [periodRes, weekRes] = await Promise.all([
-        fetchBoth(`/api/days/verifyDate?prev=${prev}`),
-        fetchBoth(`/api/days/getWorkWeek?prev=${prev}`),
+        fetch(`/api/days/verifyDate?prev=${prev}`),
+        fetch(`/api/days/getWorkWeek?prev=${prev}`),
       ]);
 
       const periodData = await periodRes.json();
@@ -91,7 +90,7 @@ const Content = ({prev}: { prev: number }) => {
     setSubmitting(true);
     setStatusMsg("preparing report...");
 
-    const res = await fetchBoth(`/api/days/sendPeriodInf?prev=${prev}`);
+    const res = await fetch(`/api/days/sendPeriodInf?prev=${prev}`);
 
     if (res.status === 200) {
       setStatusMsg("submitted!");

@@ -3,7 +3,6 @@ import {useState, useEffect} from "react";
 import {useRouter} from "next/navigation";
 import {ChevronLeft, ChevronRight, X} from "lucide-react";
 import {Button} from "@/components/button";
-import {fetchBoth} from "@/utils/fetchboth";
 import {getPeriod} from "@/utils/payperiod";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -23,7 +22,7 @@ export default function Home() {
   // Auth + account type — runs once
   useEffect(() => {
     async function init() {
-      const authRes = await fetchBoth("/api/account/myAccountInfo?fields=email,isDomestic");
+      const authRes = await fetch("/api/account/myAccountInfo?fields=email,isDomestic");
       if (authRes.status === 401) {
         router.push("/");
         return;
@@ -39,8 +38,8 @@ export default function Home() {
   useEffect(() => {
     async function loadWeek() {
       const [periodRes, weekRes] = await Promise.all([
-        fetchBoth(`/api/days/verifyDate?prev=${prev}`),
-        fetchBoth(`/api/days/getWorkWeek?prev=${prev}`),
+        fetch(`/api/days/verifyDate?prev=${prev}`),
+        fetch(`/api/days/getWorkWeek?prev=${prev}`),
       ]);
 
       const periodData = await periodRes.json();
@@ -62,11 +61,11 @@ export default function Home() {
   const checkBounds = async (direction: "prev" | "next") => {
     const candidate = direction === "prev" ? prev + 1 : prev - 1;
 
-    const res = await fetchBoth(`/api/days/verifyDate?prev=${candidate}`);
+    const res = await fetch(`/api/days/verifyDate?prev=${candidate}`);
     const {resp: candidateWeek} = await res.json();
 
     if (isDomestic) {
-      const domRes = await fetchBoth("/api/period/getLatestDomesticPeriod");
+      const domRes = await fetch("/api/period/getLatestDomesticPeriod");
       const {resp: domPeriod} = await domRes.json();
       return candidateWeek.some((d: string) => domPeriod.includes(d));
     } else {
@@ -112,7 +111,7 @@ export default function Home() {
       .map((day) => `${day}:${vessels[day]}`)
       .join(";");
 
-    const res = await fetchBoth(`/api/days/create?days=${daysParam}&prev=${prev}`);
+    const res = await fetch(`/api/days/create?days=${daysParam}&prev=${prev}`);
 
     if (res.status === 200) {
       setSaveMsg("saved!");
