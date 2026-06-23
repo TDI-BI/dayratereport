@@ -374,7 +374,7 @@ export default function Admin() {
                           key={day}
                           ship={ship}
                           day={day}
-                          vessels={VESSELS}
+                          vessels={VESSELS.slice(1)}
                           onUpdate={(d, v) => updateDay(user.email, d, v)}
                         />
                       );
