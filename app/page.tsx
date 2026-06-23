@@ -1,9 +1,8 @@
 import {redirect} from "next/navigation";
+import {fetchBoth} from "@/utils/fetchBoth";
 
 const home = async () => {
-  const response = await fetch(
-    `/api/account/whereto`,
-  );
+  const response = await fetchBoth(`/api/account/whereto`);
   const data = await response.json();
 
   if (data.success) {

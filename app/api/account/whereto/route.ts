@@ -1,4 +1,4 @@
-import {getSession} from '@/actions';
+  import {getSession} from '@/actions';
 import {NextResponse} from 'next/server';
 import {connectToDb} from '@/utils/connectToDb';
 
