@@ -1,7 +1,6 @@
 "use client";
 import {useState, useEffect} from "react";
 import {Mail, ChevronLeft, ChevronRight, Search} from "lucide-react";
-import {fetchBoth} from "@/utils/fetchboth";
 
 const timeAgo = (isoDate: string) => {
   const now = new Date();
@@ -28,12 +27,12 @@ const ViewEmails = () => {
 
   useEffect(() => {
     const load = async () => {
-      const res = await fetchBoth(`/api/admin/getEmails?user=${filter}&page=${page}&status=0`);
+      const res = await fetch(`/api/admin/getEmails?user=${filter}&page=${page}&status=0`);
       const json = await res.json();
       const raw = json.emails ?? [];
       setEmails(raw.sort((a: Record<string, string>, b: Record<string, string>) => a.id < b.id ? 1 : -1));
     };
-    load();
+    load().catch(console.error);
   }, [filter, page]);
 
   return (

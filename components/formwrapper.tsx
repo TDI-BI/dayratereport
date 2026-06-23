@@ -20,11 +20,7 @@ export const FormWrapper = ({
   }, [errorMessage]);
 
   return <div className="w-full max-w-[360px]">
-    {/* Card Container */}
     <div className="bg-tdi-blue p-10 space-y-10 shadow">
-
-      {/* Header with Logo */}
-
       <div className="flex items-center justify-between">
         <div><img
           src="https://www.tdi-bi.com/wp-content/uploads/2025/05/footer-logo.png"
@@ -32,7 +28,6 @@ export const FormWrapper = ({
           className="h-[35px] w-auto object-contain"
         />
         </div>
-
         {errorMessage && (
           <span
             key={errorMessage}
@@ -42,8 +37,6 @@ export const FormWrapper = ({
           </span>
         )}
       </div>
-
-      {/* Divider */}
       <div className="w-full h-[2px] bg-secondary"/>
       {children}
     </div>

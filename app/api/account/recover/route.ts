@@ -1,6 +1,4 @@
 // /api/account/recover/route.ts
-import { getPort } from '@/utils/getPort';
-const por = getPort();
 import { getSession } from '@/actions';
 import { NextRequest, NextResponse } from 'next/server';
 import { connectToDb } from '@/utils/connectToDb';
@@ -93,7 +91,7 @@ export const GET = async (request: NextRequest) => {
             <p style="font-size: 16px;">A recovery link for your account '${user.username}' is below.</p>
             <p style="font-size: 14px; color: #666;">This link is for one-time use only and will expire in 1 hour. Do not share this email with anyone.</p>
 
-            <a href="${process.env.NEXT_PUBLIC_TYPE}${por}/login/reset-password?token=${resetToken}"
+            <a href="${process.env.NEXT_PUBLIC_TYPE}${process.env.NEXT_PUBLIC_URL}/login/reset-password?token=${resetToken}"
                style="display: block; margin: 20px 0; text-decoration: none;">
                 <div style="background-color: #0066cc; padding: 20px; border-radius: 10px; text-align: center;">
                     <p style="font-size: 16px; font-weight: 600; color: white; margin: 0;">Recover Account</p>

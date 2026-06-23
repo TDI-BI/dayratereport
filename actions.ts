@@ -2,9 +2,9 @@
 import {getIronSession} from 'iron-session';
 import {cookies} from 'next/headers';
 import {redirect} from 'next/navigation';
-import {fetchBoth} from '@/utils/fetchboth';
-
 import {sessionOptions, sessionData, defaultSession} from '@/lib';
+
+//generally speaking, i should remove all the fetches from here anyway since this is only run server side
 
 const bcrypt = require('bcrypt');
 
@@ -31,7 +31,7 @@ export const login = async (
   }
 
   // Query API
-  const response = await fetchBoth(
+  const response = await fetch(
     `/api/account/login?username=${formUsername}`
   );
   const res = await response.json();
@@ -105,7 +105,7 @@ export const mkAccount = async (
   const hashword = await bcrypt.hash(formPassword, 10);
 
   // Query API with new schema fields
-  const response = await fetchBoth(
+  const response = await fetch(
     `/api/account/create?username=${formUsername}&password=${hashword}&token=${formToken}`
   );
   const res = await response.json();
@@ -134,7 +134,7 @@ export const recover = async (
   }
 
   // Query API
-  const response = await fetchBoth(`/api/account/recover?email=${formEmail}`);
+  const response = await fetch(`/api/account/recover?email=${formEmail}`);
 
   try {
     const res = await response.json();
@@ -167,7 +167,7 @@ export const resetPassword = async (
   const hashword = await bcrypt.hash(formPassword, 10);
 
   // Query API with token instead of oldhash
-  const response = await fetchBoth(
+  const response = await fetch(
     `/api/account/reset-password?password=${hashword}&token=${resetToken}`
   );
   const res = await response.json();
