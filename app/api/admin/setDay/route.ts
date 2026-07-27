@@ -1,9 +1,13 @@
-import {NextRequest} from "next/server";
+import {NextRequest, NextResponse} from "next/server";
 import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
 
 export const GET = async (request: NextRequest) => {
   const session = await getSession();
+
+  if (!session.isLoggedIn || !session.email) {
+    return NextResponse.json({success: false, error: "not logged in"}, {status: 401});
+  }
 
   const connection = await connectToDb();
   try {

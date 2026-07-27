@@ -10,6 +10,7 @@ export const GET = async (request: NextRequest) => {
   if (!session.isLoggedIn || !session.email) {
     return NextResponse.json({success: false, error: 'not logged in'}, {status: 401});
   }
+  const email = session.email;
 
   const {searchParams} = request.nextUrl;
   const prev = Number(searchParams.get('prev') ?? 0);
@@ -25,7 +26,7 @@ export const GET = async (request: NextRequest) => {
        FROM users u
        LEFT JOIN isDomestic id ON u.email = id.email
        WHERE u.email = ?`,
-      [session.email]
+      [email]
     );
     const account = (rows as any[])[0];
     if (!account || !account.isActive) {
@@ -65,12 +66,12 @@ export const GET = async (request: NextRequest) => {
       `DELETE
        FROM days
        WHERE userEmail = ? AND day IN (${period.map(() => '?').join(', ')})`,
-      [session.email, ...period]
+      [email, ...period]
     );
 
     if (workedDays.length > 0) {
       const placeholders = workedDays.map(() => '(?, ?, ?)').join(', ');
-      const values = workedDays.flatMap(({day, ship}) => [session.email, day, ship]);
+      const values = workedDays.flatMap(({day, ship}) => [email, day, ship]);
       await connection.execute(
         `INSERT INTO days (userEmail, day, ship)
          VALUES ${placeholders}`,

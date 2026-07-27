@@ -3,8 +3,13 @@ import {getSession} from "@/actions";
 import {connectToDb} from "@/utils/connectToDb";
 
 export const GET = async (request: NextRequest) => {
-  const connection = await connectToDb();
   const session = await getSession();
+
+  if (!session.isLoggedIn || !session.email) {
+    return NextResponse.json({success: false, error: "not logged in"}, {status: 401});
+  }
+
+  const connection = await connectToDb();
   try {
 
     const {searchParams} = new URL(request.url);
