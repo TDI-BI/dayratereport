@@ -3,6 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDb } from "@/utils/connectToDb";
 
 export const GET = async (request: NextRequest) => {
+  // DISABLED: no auth gate yet (see TODO below). Set to false to re-enable.
+  const DISABLED = true as boolean;
+  if (DISABLED) {
+    return NextResponse.json(
+      { success: false, error: "endpoint disabled" },
+      { status: 503 },
+    );
+  }
+
   try {
     /* TODO: re-enable before prod — auth + admin gate
     const session = await getSession();
