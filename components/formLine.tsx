@@ -9,11 +9,11 @@ interface lineprops {
 
 export const FormLine = (ins: lineprops) => {
   return (
-    <h1 className={`flex items-center gap-3 px-4 py-3 text-secondary focus-within:bg-secondary focus-within:text-primary transition-all duration-300 ease-in-out focus-within:shadow `}>
+    <h1 className={`flex items-center gap-3 px-4 py-3 text-secondary focus-within:bg-secondary focus-within:text-primary transition-all duration-300 ease-in-out focus-within:shadow-sm `}>
       <div>{ins.icon}</div>
       <div className="w-full">
         <input
-          className="peer bg-transparent outline-none w-full font-medium tracking-tight"
+          className="peer bg-transparent outline-hidden w-full font-medium tracking-tight"
           name={ins.name}
           type={ins.type}
           placeholder={ins.placeholder}

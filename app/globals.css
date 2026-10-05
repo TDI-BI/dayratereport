@@ -1,26 +1,41 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-:root {
-    --color-primary: 18, 18, 18;
-    --color-secondary: 240, 240, 240;
-    --tdi-blue: 33, 28, 102; /*PLAY WITH THIS*/
+/* Tailwind v4: theme config lives here instead of tailwind.config.ts */
+@theme {
+    --color-primary: rgb(18 18 18);
+    --color-secondary: rgb(240 240 240);
+    --color-tdi-blue: rgb(33 28 102); /*PLAY WITH THIS*/
 }
 
-.shadow {
+@utility bg-gradient-radial {
+    background-image: radial-gradient(var(--tw-gradient-stops));
 }
 
+@utility bg-gradient-conic {
+    background-image: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+}
+
+/*
+  v4 changed the default border color to currentColor and button cursor to default.
+  Keep the v3 behavior.
+*/
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentColor);
+    }
+
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+}
 
 body {
-    color: rgb(var(--color-primary));
+    color: var(--color-primary);
     background: rgb(219, 219, 219);
     padding-bottom: 20px;
-
-}
-
-@layer utilities {
-    .text-balance {
-        text-wrap: balance;
-    }
 }

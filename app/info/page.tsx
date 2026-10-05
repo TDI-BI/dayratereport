@@ -6,7 +6,7 @@ import {Button} from "@/components/button";
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const DayCard = ({day, index, ship}: { day: string; index: number; ship: string | undefined }) => (
-  <div className={`bg-secondary shadow flex flex-col px-3 py-2 ${ship ? "" : "opacity-50"}`}>
+  <div className={`bg-secondary shadow-sm flex flex-col px-3 py-2 ${ship ? "" : "opacity-50"}`}>
     <div className="text-xs font-semibold uppercase tracking-tight text-primary">
       {DAYS[index % 7]}
     </div>
@@ -110,7 +110,7 @@ const Profile = () => {
       <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
         {/* Account info card — header has name left, INFO right */}
-        <div className="bg-tdi-blue shadow flex flex-col">
+        <div className="bg-tdi-blue shadow-sm flex flex-col">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
             <span className="text-secondary/50 text-xs uppercase tracking-widest font-semibold">
               Name
@@ -133,7 +133,7 @@ const Profile = () => {
         </div>
 
         {/* Period card */}
-        <div className="bg-tdi-blue shadow flex flex-col">
+        <div className="bg-tdi-blue shadow-sm flex flex-col">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center justify-between">
                         <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
                             {account.isDomestic ? "Current Period" : "This Week"}

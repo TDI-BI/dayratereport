@@ -147,7 +147,7 @@ export default function Home() {
         </div>
 
         {/* Calendar — blue frame, white cards */}
-        <div className="bg-tdi-blue p-3 shadow grid grid-cols-2 gap-3">
+        <div className="bg-tdi-blue p-3 shadow-sm grid grid-cols-2 gap-3">
           {period.map((day, i) => (
             <div
               key={day}
@@ -155,7 +155,7 @@ export default function Home() {
               className={i === period.length - 1 ? "col-span-1" : ""}
             >
               <div
-                className="group cursor-pointer bg-secondary text-primary shadow transition-all duration-300 ease-in-out relative overflow-visible"
+                className="group cursor-pointer bg-secondary text-primary shadow-sm transition-all duration-300 ease-in-out relative overflow-visible"
                 onClick={() => setModalDay(day)}
               >
                 {/* Corner ticks */}
