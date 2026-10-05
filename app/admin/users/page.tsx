@@ -42,15 +42,15 @@ export default function UserManagementPage() {
       <div className="flex flex-col gap-4 flex-1 min-w-0">
 
         {/* Search island */}
-        <div className="bg-tdi-blue shadow px-4 py-3 flex items-center gap-2">
-          <Search size={14} className="text-secondary/50 flex-shrink-0"/>
+        <div className="bg-tdi-blue shadow-sm px-4 py-3 flex items-center gap-2">
+          <Search size={14} className="text-secondary/50 shrink-0"/>
           <div className="flex-1">
             <input
               type="text"
               placeholder="search..."
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
-              className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-none w-full"
+              className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-hidden w-full"
             />
             <div
               className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
@@ -58,14 +58,14 @@ export default function UserManagementPage() {
         </div>
 
         {/* Table */}
-        <div className="bg-tdi-blue shadow flex flex-col flex-1">
+        <div className="bg-tdi-blue shadow-sm flex flex-col flex-1">
           <div className="px-5 py-3 border-b border-secondary/20 flex items-center">
             <span className="text-secondary font-semibold uppercase tracking-tight text-sm flex-1">Users</span>
             <span
               className="text-secondary/40 text-xs uppercase tracking-widest font-semibold">{filteredUsers.length}</span>
           </div>
 
-          <div className="bg-secondary shadow mx-4 my-4 overflow-auto">
+          <div className="bg-secondary shadow-sm mx-4 my-4 overflow-auto">
             {/* Header row */}
             <div className="flex items-center px-4 py-2 border-b border-primary/10">
               <div className="w-[180px] text-xs font-semibold uppercase tracking-widest text-primary">Name</div>
@@ -93,7 +93,7 @@ export default function UserManagementPage() {
                 >
                   {/* Active indicator + name */}
                   <div className="w-[180px] flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 flex-shrink-0 ${user.isActive ? "bg-tdi-blue" : "bg-primary/20"}`}/>
+                    <div className={`w-1.5 h-1.5 shrink-0 ${user.isActive ? "bg-tdi-blue" : "bg-primary/20"}`}/>
                     <span className={`text-xs font-semibold uppercase tracking-tight truncate ${
                       user.isActive ? "text-primary" : "text-primary/30"
                     }`}>
@@ -130,7 +130,7 @@ export default function UserManagementPage() {
       </div>
 
       {/* ── RIGHT: Action panels ──────────────────────────── */}
-      <div className="flex flex-col gap-4 w-[320px] flex-shrink-0">
+      <div className="flex flex-col gap-4 w-[320px] shrink-0">
         <EditPanel selectedUser={selectedUser} updateUser={updateUser}/>
 
         <InvitePanel/>

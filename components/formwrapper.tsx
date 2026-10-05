@@ -20,7 +20,7 @@ export const FormWrapper = ({
   }, [errorMessage]);
 
   return <div className="w-full max-w-[360px]">
-    <div className="bg-tdi-blue p-10 space-y-10 shadow">
+    <div className="bg-tdi-blue p-10 space-y-10 shadow-sm">
       <div className="flex items-center justify-between">
         <div><img
           src="https://www.tdi-bi.com/wp-content/uploads/2025/05/footer-logo.png"

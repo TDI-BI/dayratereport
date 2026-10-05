@@ -52,7 +52,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
         <div className="flex items-center justify-between px-4 py-3 h-[62px]">
           {/* Menu button island */}
           <div
-            className="bg-tdi-blue shadow p-2 cursor-pointer flex items-center justify-center w-[38px] h-[38px] relative"
+            className="bg-tdi-blue shadow-sm p-2 cursor-pointer flex items-center justify-center w-[38px] h-[38px] relative"
             onClick={() => setIsOpen(!isOpen)}
           >
             <div className={`absolute transition-all duration-300 ease-in-out ${
@@ -69,7 +69,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
 
           {/* Logo island */}
           <div
-            className="bg-tdi-blue shadow px-4 py-2 h-[36px] w-[106px] flex items-center justify-center overflow-hidden">
+            className="bg-tdi-blue shadow-sm px-4 py-2 h-[36px] w-[106px] flex items-center justify-center overflow-hidden">
             <img
               src="https://www.tdi-bi.com/wp-content/uploads/2025/05/footer-logo.png"
               alt="TDI Logo"
@@ -90,7 +90,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
 
         {/* Mobile menu */}
         <div
-          className={`fixed top-[62px] left-4 right-4 z-[75] bg-tdi-blue shadow transition-all duration-300 ease-in-out ${
+          className={`fixed top-[62px] left-4 right-4 z-[75] bg-tdi-blue shadow-sm transition-all duration-300 ease-in-out ${
             isOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2 pointer-events-none"
           }`}>
           <Link
@@ -141,7 +141,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
       {/* ── DESKTOP (hidden below sm) ── */}
       <nav className="hidden sm:flex items-center justify-between px-6 py-4">
         {/* Logo island */}
-        <div className="bg-tdi-blue shadow px-5 py-3 max-w-[160px]">
+        <div className="bg-tdi-blue shadow-sm px-5 py-3 max-w-[160px]">
           <img
             src="https://www.tdi-bi.com/wp-content/uploads/2025/05/footer-logo.png"
             alt="TDI Logo"
@@ -150,7 +150,7 @@ const NavbarCl = ({loggedin}: NavbarProps) => {
         </div>
 
         {/* Links island */}
-        <div className="bg-tdi-blue shadow flex items-center">
+        <div className="bg-tdi-blue shadow-sm flex items-center">
           <Link href="/daysworked" className="group px-6 py-3 flex flex-col items-center">
             <span className="text-secondary text-sm font-semibold uppercase tracking-tight select-none">
               Days Worked

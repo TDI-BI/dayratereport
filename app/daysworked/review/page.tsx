@@ -109,12 +109,12 @@ const Content = ({prev}: { prev: number }) => {
 
         {/* Header */}
         <div
-          className="font-semibold uppercase tracking-tight text-secondary text-sm bg-tdi-blue flex justify-center p-5 shadow">
+          className="font-semibold uppercase tracking-tight text-secondary text-sm bg-tdi-blue flex justify-center p-5 shadow-sm">
           Confirm your report
         </div>
 
         {/* Summary Card */}
-        <div className="bg-tdi-blue flex flex-col shadow">
+        <div className="bg-tdi-blue flex flex-col shadow-sm">
 
           {/* Name + days worked */}
           <div className="px-4 py-3 flex items-center justify-between border-b border-secondary/20">
@@ -132,7 +132,7 @@ const Content = ({prev}: { prev: number }) => {
           </div>
 
           {/* Day rows — inset white ledger sheet */}
-          <div className="bg-secondary mx-3 mt-3 shadow">
+          <div className="bg-secondary mx-3 mt-3 shadow-sm">
             {period.map((day, i) => {
               const ship = vesselDict[day];
               return (
@@ -156,7 +156,7 @@ const Content = ({prev}: { prev: number }) => {
           {/* Acknowledgement — sign the form */}
           <div
             id="affirm-flash"
-            className="mx-3 mt-3 mb-3 px-4 py-3 bg-secondary shadow flex items-start gap-3 cursor-pointer transition-all duration-300 ease-in-out relative overflow-visible group"
+            className="mx-3 mt-3 mb-3 px-4 py-3 bg-secondary shadow-sm flex items-start gap-3 cursor-pointer transition-all duration-300 ease-in-out relative overflow-visible group"
             onClick={() => setAffirmed(!affirmed)}
           >
             {/* Corner ticks — top left */}
@@ -170,7 +170,7 @@ const Content = ({prev}: { prev: number }) => {
             <span
               className="absolute top-0 right-0 w-[2px] h-0 bg-primary group-hover:h-3 transition-all duration-300 ease-in-out"/>
 
-            <div className="relative w-5 h-5 flex-shrink-0 mt-0.5">
+            <div className="relative w-5 h-5 shrink-0 mt-0.5">
               <div className={`absolute transition-all duration-300 ease-in-out ${
                 affirmed ? "opacity-0 scale-0 rotate-90" : "opacity-100 scale-100 rotate-0"
               }`}>

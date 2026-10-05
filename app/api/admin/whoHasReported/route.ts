@@ -88,7 +88,9 @@ export const GET = async (request: NextRequest) => {
     // calculate date window: the DAYS full days ending yesterday, counting back
     const DAY_MS = 24 * 60 * 60 * 1000;
     const DAYS = 4;
-    const now = new Date();
+    // DEV: pinned so the window always covers the seeded fake data
+    // (2026-08-27 .. 2026-08-30). PROD: const now = new Date();
+    const now = new Date("2026-08-31T00:00:00Z");
     const startOfToday = new Date(
       Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()),
     );

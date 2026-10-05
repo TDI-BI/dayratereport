@@ -27,7 +27,7 @@ const Thanks = () => {
       <div className="w-full max-w-[360px] py-8 flex flex-col gap-6">
 
         {/* Message card — text flat on blue */}
-        <div className="bg-tdi-blue shadow px-5 py-5 flex flex-col gap-4 text-center">
+        <div className="bg-tdi-blue shadow-sm px-5 py-5 flex flex-col gap-4 text-center">
           <p className="text-secondary text-sm font-semibold uppercase tracking-tight">
             {name ? `Thank you, ${name}` : "Thank you"}, Your report has been submitted.
           </p>

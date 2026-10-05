@@ -42,8 +42,8 @@ const ViewEmails = () => {
       <div className="flex flex-col gap-4 flex-1 min-w-0">
 
         {/* Search + pagination island */}
-        <div className="bg-tdi-blue shadow px-4 py-3 flex items-center gap-4">
-          <Search size={14} className="text-secondary/50 flex-shrink-0"/>
+        <div className="bg-tdi-blue shadow-sm px-4 py-3 flex items-center gap-4">
+          <Search size={14} className="text-secondary/50 shrink-0"/>
           <div className="flex-1">
             <input
               type="text"
@@ -53,7 +53,7 @@ const ViewEmails = () => {
                 setPage(1);
                 setFilter(e.target.value);
               }}
-              className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-none w-full"
+              className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-hidden w-full"
             />
             <div
               className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
@@ -86,13 +86,13 @@ const ViewEmails = () => {
         </div>
 
         {/* Table */}
-        <div className="bg-tdi-blue shadow flex flex-col flex-1">
+        <div className="bg-tdi-blue shadow-sm flex flex-col flex-1">
           <div className="px-5 py-3 border-b border-secondary/20 flex items-center">
             <span className="text-secondary font-semibold uppercase tracking-tight text-sm flex-1">Emails</span>
             <span className="text-secondary/40 text-xs uppercase tracking-widest font-semibold">{emails.length}</span>
           </div>
 
-          <div className="bg-secondary shadow mx-4 my-4 overflow-auto">
+          <div className="bg-secondary shadow-sm mx-4 my-4 overflow-auto">
             {/* Header */}
             <div className="flex items-center px-4 py-2 border-b border-primary/10">
               <div className="w-[90px] text-xs font-semibold uppercase tracking-widest text-primary/40">Status</div>
@@ -121,7 +121,7 @@ const ViewEmails = () => {
                 >
                   {/* Status */}
                   <div className="w-[90px] flex items-center gap-2">
-                    <div className={`w-1.5 h-1.5 flex-shrink-0 ${isErr ? "bg-red-400" : "bg-tdi-blue"}`}/>
+                    <div className={`w-1.5 h-1.5 shrink-0 ${isErr ? "bg-red-400" : "bg-tdi-blue"}`}/>
                     <span className={`text-xs font-semibold uppercase tracking-tight ${
                       isErr ? "text-red-400" : "text-primary/60"
                     }`}>
@@ -146,8 +146,8 @@ const ViewEmails = () => {
       </div>
 
       {/* ── RIGHT: Email detail ───────────────────────────── */}
-      <div className="w-[400px] flex-shrink-0">
-        <div className="bg-tdi-blue shadow flex flex-col h-full">
+      <div className="w-[400px] shrink-0">
+        <div className="bg-tdi-blue shadow-sm flex flex-col h-full">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
             <Mail size={14} className="text-secondary/50"/>
             <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
@@ -158,7 +158,7 @@ const ViewEmails = () => {
           {selectedEmail ? (
             <div className="flex flex-col gap-3 px-4 py-4">
               {/* Meta */}
-              <div className="bg-secondary shadow px-4 py-3 flex flex-col gap-2">
+              <div className="bg-secondary shadow-sm px-4 py-3 flex flex-col gap-2">
                 {[
                   {label: "To", value: selectedEmail.sentTo},
                   {label: "Subject", value: selectedEmail.subject},
@@ -168,7 +168,7 @@ const ViewEmails = () => {
                   <div key={label}>
                     <div className="flex justify-between gap-4">
                       <span
-                        className="text-xs text-primary/40 uppercase tracking-widest font-semibold flex-shrink-0">{label}</span>
+                        className="text-xs text-primary/40 uppercase tracking-widest font-semibold shrink-0">{label}</span>
                       <span
                         className="text-xs font-semibold text-primary tracking-tight text-right truncate">{value}</span>
                     </div>
@@ -178,7 +178,7 @@ const ViewEmails = () => {
               </div>
 
               {/* Body */}
-              <div className="bg-secondary shadow px-4 py-3">
+              <div className="bg-secondary shadow-sm px-4 py-3">
                 <div className="text-xs text-primary/40 uppercase tracking-widest font-semibold mb-2">Body</div>
                 <div
                   className="text-xs text-primary leading-relaxed overflow-auto max-h-[400px]"

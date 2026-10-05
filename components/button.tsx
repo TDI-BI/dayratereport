@@ -19,7 +19,7 @@ export const Button = ({
     <button
       type={type}
       onClick={onClick}
-      className={`bg-tdi-blue text-secondary px-6 py-3 font-semibold uppercase tracking-tight hover:bg-secondary/100 hover:text-primary transition-all duration-300 ease-in-out ${className} ${noshadow ? '' : 'shadow'} relative group overflow-visible`}
+      className={`bg-tdi-blue text-secondary px-6 py-3 font-semibold uppercase tracking-tight hover:bg-secondary/100 hover:text-primary transition-all duration-300 ease-in-out ${className} ${noshadow ? '' : 'shadow-sm'} relative group overflow-visible`}
     >
       {/* Top-left corner */}
       <span

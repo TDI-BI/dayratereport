@@ -143,11 +143,11 @@ export default function Admin() {
     <main className="min-h-screen flex flex-col gap-4 p-6">
 
       {/* ── SPREADSHEET PANEL ────────────────────────────────── */}
-      <div className="bg-tdi-blue shadow flex flex-col flex-1">
+      <div className="bg-tdi-blue shadow-sm flex flex-col flex-1">
 
         <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-4 justify-between">
           <div className="flex items-center gap-2 px-1 group/search w-full">
-            <Search size={14} className="text-secondary/50 flex-shrink-0"/> {/*search section*/}
+            <Search size={14} className="text-secondary/50 shrink-0"/> {/*search section*/}
             <div className="w-full">
               <input
                 type="text"
@@ -155,7 +155,7 @@ export default function Admin() {
                 value={nameFilter}
                 onChange={(e) => setNameFilter(e.target.value)}
                 onClick={(e) => e.stopPropagation()}
-                className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-none w-full"
+                className="peer bg-transparent text-secondary text-xs font-semibold uppercase tracking-tight placeholder:text-secondary/30 outline-hidden w-full"
               />
               <div
                 className="h-[2px] w-full bg-secondary/20 mt-1 peer-focus:bg-secondary transition-colors duration-300 ease-in-out"/>
@@ -170,7 +170,7 @@ export default function Admin() {
             </span>
           <div className="w-full flex justify-between items-center">
             <div className="flex items-center gap-1">
-              <Ship size={14} className="text-secondary/50 flex-shrink-0 mr-2"/> {/*boat filter*/}
+              <Ship size={14} className="text-secondary/50 shrink-0 mr-2"/> {/*boat filter*/}
               {VESSELS.map((v, i) => (
                 <span key={v} className="flex items-center">
                                 {i > 0 && <Divider/>}
@@ -181,7 +181,7 @@ export default function Admin() {
               ))}
             </div>
             <div className="flex items-center gap-1">
-              <User size={14} className="text-secondary/50 flex-shrink-0 mr-2"/> {/*crew filter*/}
+              <User size={14} className="text-secondary/50 shrink-0 mr-2"/> {/*crew filter*/}
               {CREW.map((c, i) => (
                 <span key={c} className="flex items-center">
                                 {i > 0 && <Divider/>}
@@ -300,7 +300,7 @@ export default function Admin() {
         </div>
 
         {/* White inset table */}
-        <div className="bg-secondary shadow mx-4 my-4">
+        <div className="bg-secondary shadow-sm mx-4 my-4">
           {loading ? (
             <div className="text-primary/30 text-xs uppercase tracking-widest font-semibold p-6">
               loading...

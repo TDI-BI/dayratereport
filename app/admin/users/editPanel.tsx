@@ -67,7 +67,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
   return (<>
     <LoadOverlay message={editOverlayMessage}>
       {/* Detail panel */}
-      <div className="bg-tdi-blue shadow flex flex-col">
+      <div className="bg-tdi-blue shadow-sm flex flex-col">
         <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
           <Mail size={14} className="text-secondary/50"/>
           <span className="text-secondary font-semibold uppercase tracking-tight text-sm">
@@ -79,7 +79,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
 
           <div className="flex flex-col gap-3 px-4 py-4">
             {/* Editable fields */}
-            <div className="bg-secondary shadow px-4 py-3 flex flex-col gap-2">
+            <div className="bg-secondary shadow-sm px-4 py-3 flex flex-col gap-2">
               {/*type picker*/}
               <div>
                 <div className="flex justify-between items-center gap-4">
@@ -90,7 +90,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                     <span
                       key={t}
                       onClick={() => setEditState((prev: any) => ({...prev, isDomestic: t === 'Domestic'}))}
-                      className={`flex flex-grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
+                      className={`flex grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
                         (t === 'Domestic' && editState.isDomestic) || (t === 'Foreign' && !editState.isDomestic)
                           ? "border-primary"
                           : "border-transparent hover:border-primary"
@@ -111,7 +111,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                       <span
                         className="text-xs text-primary/40 uppercase tracking-widest font-semibold whitespace-nowrap">{label}</span>
                     <input
-                      className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-none text-right w-full max-w-[200px] py-0.5 transition-colors"
+                      className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-hidden text-right w-full max-w-[200px] py-0.5 transition-colors"
                       value={(editState as any)[field] ?? ""}
                       onChange={(e) => setEditState((prev: any) => ({...prev, [field]: e.target.value}))}
                     />
@@ -128,7 +128,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                         {editState.isDomestic ? 'Paycor' : 'tdi'} ID
                       </span>
                   <input
-                    className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-none text-right w-full max-w-[200px] py-0.5 transition-colors"
+                    className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-hidden text-right w-full max-w-[200px] py-0.5 transition-colors"
                     value={editState.id ?? ""}
                     onChange={(e) => setEditState((prev: any) => ({...prev, id: e.target.value || null}))}
                   />
@@ -143,7 +143,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                   <span
                     key={t}
                     onClick={() => setEditState((prev: any) => ({...prev, workType: t}))}
-                    className={`flex flex-grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
+                    className={`flex grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
                       editState.workType === t ? "border-primary" : "border-transparent hover:border-primary"
                     }`}
                   >
@@ -167,7 +167,7 @@ const EditPanel = ({selectedUser, updateUser}: EditPanelProps) => {
                   <button
                     key={field}
                     onClick={() => setEditState((prev: any) => ({...prev, [field]: !val}))}
-                    className={`flex-1 px-3 py-2 transition-all duration-300 ease-in-out text-xs font-semibold uppercase tracking-widest bg-secondary shadow hover:bg-secondary/90`}
+                    className={`flex-1 px-3 py-2 transition-all duration-300 ease-in-out text-xs font-semibold uppercase tracking-widest bg-secondary shadow-sm hover:bg-secondary/90`}
                   >
                     {label}: {val ? "Yes" : "No"}
                   </button>

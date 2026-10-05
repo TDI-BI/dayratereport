@@ -56,14 +56,14 @@ const InvitePanel = () => {
   return (<>
       {/* Invite panel */}
       <LoadOverlay message={inviteOverlayMessage}>
-        <div className="bg-tdi-blue shadow flex flex-col">
+        <div className="bg-tdi-blue shadow-sm flex flex-col">
           <div className="px-4 py-3 border-b border-secondary/20 flex items-center gap-2">
             <UserPlus size={14} className="text-secondary/50"/>
             <span className="text-secondary font-semibold uppercase tracking-tight text-sm">Invite New User</span>
           </div>
 
           <div className="flex flex-col gap-3 px-4 py-4">
-            <div className="bg-secondary shadow px-4 py-3 flex flex-col gap-2">
+            <div className="bg-secondary shadow-sm px-4 py-3 flex flex-col gap-2">
               {/*crew picker*/}
               <div className="flex justify-between items-center gap-4">
                   <span className="text-xs text-primary/40 uppercase tracking-widest font-semibold whitespace-nowrap">
@@ -73,7 +73,7 @@ const InvitePanel = () => {
                   <span
                     key={t}
                     onClick={() => setInviteCrew(t)}
-                    className={`flex flex-grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer pb-0.5 border-b-2 transition-colors ${
+                    className={`flex grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer pb-0.5 border-b-2 transition-colors ${
                       inviteCrew === t ? "border-primary" : "border-transparent hover:border-primary"
                     }`}
                   >
@@ -104,7 +104,7 @@ const InvitePanel = () => {
                       placeholder={placeholder}
                       value={value}
                       onChange={(e) => set(e.target.value)}
-                      className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-none text-right w-full max-w-[200px] py-0.5 transition-colors placeholder:text-primary/20"
+                      className="text-xs font-semibold text-primary tracking-tight bg-transparent border-b border-primary/10 focus:border-primary/40 outline-hidden text-right w-full max-w-[200px] py-0.5 transition-colors placeholder:text-primary/20"
                     />
                   </div>
                   <div className="h-[1px] bg-primary/10 mt-2"/>
@@ -119,7 +119,7 @@ const InvitePanel = () => {
                   <span
                     key={t}
                     onClick={() => setInviteType(t)}
-                    className={`flex flex-grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
+                    className={`flex grow items-center justify-center text-xs text-primary tracking-widest font-semibold whitespace-nowrap cursor-pointer border-b-2 transition-colors ${
                       inviteType === t ? "border-primary" : "border-transparent hover:border-primary"
                     }`}
                   >
